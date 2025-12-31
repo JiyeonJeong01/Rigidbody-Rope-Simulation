@@ -86,8 +86,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
-	delete pMainApp;
-	pMainApp = nullptr;
+	Safe_Delete(pMainApp);
 
 	return (int)msg.wParam;
 }

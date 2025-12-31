@@ -133,12 +133,18 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GraphicDevice.h" />
+    <ClInclude Include="Macro.h" />
     <ClInclude Include="MainApp.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Simulation.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Struct.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="VIBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphicDevice.cpp" />
@@ -146,7 +152,11 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Simulation.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="VIBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Simulation.rc" />

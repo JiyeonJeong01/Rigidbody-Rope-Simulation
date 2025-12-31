@@ -3,32 +3,79 @@
   "WorkspaceRootPath": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\MainApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\GraphicDevice.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Sphere.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Sphere.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Sphere.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Sphere.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Define.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Define.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Transform.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Transform.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Simulation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Simulation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\MainApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Macro.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Macro.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\VIBuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\VIBuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\VIBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\VIBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppCommon.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\MainApp.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\pch.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\pch.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\GraphicDevice.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\pch.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Resource.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -37,10 +84,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\GraphicDevice.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Define.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6EFBCCFF-BB66-468F-AC6E-F7710A701FB2}|Simulation\\Simulation.vcxproj|solutionrelative:Simulation\\Define.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,7 +93,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 13,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,7 +101,212 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Sphere.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Sphere.cpp",
+              "RelativeDocumentMoniker": "Simulation\\Sphere.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Sphere.cpp",
+              "RelativeToolTip": "Simulation\\Sphere.cpp",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAAGIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-31T05:43:54.591Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Sphere.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Sphere.h",
+              "RelativeDocumentMoniker": "Simulation\\Sphere.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Sphere.h",
+              "RelativeToolTip": "Simulation\\Sphere.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-31T05:40:52.27Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "VIBuffer.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\VIBuffer.cpp",
+              "RelativeDocumentMoniker": "Simulation\\VIBuffer.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\VIBuffer.cpp",
+              "RelativeToolTip": "Simulation\\VIBuffer.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-31T05:13:26.333Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "VIBuffer.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\VIBuffer.h",
+              "RelativeDocumentMoniker": "Simulation\\VIBuffer.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\VIBuffer.h",
+              "RelativeToolTip": "Simulation\\VIBuffer.h",
+              "ViewState": "AgIAABwAAAAAAAAAAAAAACcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-31T04:55:27.118Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "pch.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.h",
+              "RelativeDocumentMoniker": "Simulation\\pch.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.h",
+              "RelativeToolTip": "Simulation\\pch.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-30T16:08:35.36Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "MainApp.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.h",
+              "RelativeDocumentMoniker": "Simulation\\MainApp.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.h",
+              "RelativeToolTip": "Simulation\\MainApp.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-30T16:04:15.991Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MainApp.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.cpp",
+              "RelativeDocumentMoniker": "Simulation\\MainApp.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.cpp",
+              "RelativeToolTip": "Simulation\\MainApp.cpp",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAE4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-30T16:07:23.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Simulation.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Simulation.cpp",
+              "RelativeDocumentMoniker": "Simulation\\Simulation.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Simulation.cpp",
+              "RelativeToolTip": "Simulation\\Simulation.cpp",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-30T16:03:24.536Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Transform.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Transform.cpp",
+              "RelativeDocumentMoniker": "Simulation\\Transform.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Transform.cpp",
+              "RelativeToolTip": "Simulation\\Transform.cpp",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAD8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-31T04:27:38.426Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Transform.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Transform.h",
+              "RelativeDocumentMoniker": "Simulation\\Transform.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Transform.h",
+              "RelativeToolTip": "Simulation\\Transform.h",
+              "ViewState": "AgIAABUAAAAAAAAAAADwvyAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-31T04:26:34.941Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 6,
+              "Title": "Player.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Player.h",
+              "RelativeDocumentMoniker": "Simulation\\Player.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Player.h",
+              "RelativeToolTip": "Simulation\\Player.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-31T08:27:23.631Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Define.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Define.h",
+              "RelativeDocumentMoniker": "Simulation\\Define.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Define.h",
+              "RelativeToolTip": "Simulation\\Define.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAywA8AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-30T16:17:28.309Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Player.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Player.cpp",
+              "RelativeDocumentMoniker": "Simulation\\Player.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Player.cpp*",
+              "RelativeToolTip": "Simulation\\Player.cpp*",
+              "ViewState": "AgIAAEMAAAAAAAAAAAAiwEoAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-31T08:27:27.905Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Macro.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Macro.h",
+              "RelativeDocumentMoniker": "Simulation\\Macro.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Macro.h",
+              "RelativeToolTip": "Simulation\\Macro.h",
+              "ViewState": "AgIAABsAAAAAAAAAAAAywCcAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-31T05:39:51.921Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Microsoft.CppCommon.targets",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppCommon.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppCommon.targets",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppCommon.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppCommon.targets",
+              "ViewState": "AgIAAHUCAAAAAAAAAIAxwIICAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-12-31T08:41:06.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Struct.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Struct.h",
+              "RelativeDocumentMoniker": "Simulation\\Struct.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Struct.h",
+              "RelativeToolTip": "Simulation\\Struct.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-31T06:02:53.645Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
               "Title": "Utils.h",
               "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Utils.h",
               "RelativeDocumentMoniker": "Simulation\\Utils.h",
@@ -66,51 +314,11 @@
               "RelativeToolTip": "Simulation\\Utils.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-30T16:48:52.271Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-30T16:48:52.271Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Resource.h",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Resource.h",
-              "RelativeDocumentMoniker": "Simulation\\Resource.h",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Resource.h",
-              "RelativeToolTip": "Simulation\\Resource.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-30T16:36:30.85Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Define.h",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Define.h",
-              "RelativeDocumentMoniker": "Simulation\\Define.h",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Define.h",
-              "RelativeToolTip": "Simulation\\Define.h",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAuwBQAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-30T16:17:28.309Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "GraphicDevice.cpp",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.cpp",
-              "RelativeDocumentMoniker": "Simulation\\GraphicDevice.cpp",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.cpp",
-              "RelativeToolTip": "Simulation\\GraphicDevice.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-30T16:16:15.151Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 20,
               "Title": "GraphicDevice.h",
               "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.h",
               "RelativeDocumentMoniker": "Simulation\\GraphicDevice.h",
@@ -118,25 +326,35 @@
               "RelativeToolTip": "Simulation\\GraphicDevice.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-30T16:14:58.128Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-30T16:14:58.128Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "pch.h",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.h",
-              "RelativeDocumentMoniker": "Simulation\\pch.h",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.h",
-              "RelativeToolTip": "Simulation\\pch.h",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAATAAAAAAAAAA==",
+              "DocumentIndex": 17,
+              "Title": "GraphicDevice.cpp",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.cpp",
+              "RelativeDocumentMoniker": "Simulation\\GraphicDevice.cpp",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\GraphicDevice.cpp",
+              "RelativeToolTip": "Simulation\\GraphicDevice.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-30T16:16:15.151Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Resource.h",
+              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Resource.h",
+              "RelativeDocumentMoniker": "Simulation\\Resource.h",
+              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Resource.h",
+              "RelativeToolTip": "Simulation\\Resource.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-30T16:08:35.36Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-30T16:36:30.85Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 18,
               "Title": "pch.cpp",
               "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\pch.cpp",
               "RelativeDocumentMoniker": "Simulation\\pch.cpp",
@@ -144,47 +362,7 @@
               "RelativeToolTip": "Simulation\\pch.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-30T16:08:12.132Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainApp.cpp",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.cpp",
-              "RelativeDocumentMoniker": "Simulation\\MainApp.cpp",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.cpp*",
-              "RelativeToolTip": "Simulation\\MainApp.cpp*",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAACQAAABCAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-30T16:07:23.477Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MainApp.h",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.h",
-              "RelativeDocumentMoniker": "Simulation\\MainApp.h",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\MainApp.h",
-              "RelativeToolTip": "Simulation\\MainApp.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-30T16:04:15.991Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Simulation.cpp",
-              "DocumentMoniker": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Simulation.cpp",
-              "RelativeDocumentMoniker": "Simulation\\Simulation.cpp",
-              "ToolTip": "C:\\Users\\delay\\Jusin\\Rigidbody-Rope-Simulation\\Simulation\\Simulation\\Simulation.cpp",
-              "RelativeToolTip": "Simulation\\Simulation.cpp",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAAAFEAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-30T16:03:24.536Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-30T16:08:12.132Z"
             }
           ]
         },

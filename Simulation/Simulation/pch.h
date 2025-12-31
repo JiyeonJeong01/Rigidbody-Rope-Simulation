@@ -12,6 +12,8 @@
 #include <algorithm>
 
 #include "Define.h"
+#include "Macro.h"
+#include "Struct.h"
 
 #ifdef _DEBUG
 

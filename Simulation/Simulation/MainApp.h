@@ -1,6 +1,7 @@
 #pragma once
 
 class GraphicDevice;
+class Player;
 
 class MainApp
 {
@@ -19,12 +20,13 @@ private:
 	HRESULT		Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
-	GraphicDevice* m_pGraphicDevice;
-	LPDIRECT3DDEVICE9	 m_pGraphicDev;
+	GraphicDevice*				m_pGraphicDevice;
+	LPDIRECT3DDEVICE9		m_pGraphicDev;
 
-	void Free();
+	Player*							m_pPlayer;
 
 public: 
 	static MainApp* Create();
+	void Release();
 };
 
