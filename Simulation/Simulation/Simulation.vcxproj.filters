@@ -34,6 +34,9 @@
     <Filter Include="Object">
       <UniqueIdentifier>{dc1e64b0-2382-41a6-bed6-b4d7df7e0494}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Helper">
+      <UniqueIdentifier>{8bc4696f-7b9a-4ce3-9c15-7159da04f34a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.h">
@@ -81,6 +84,15 @@
     <ClInclude Include="Player.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorHelper.h">
+      <Filter>헤더 파일\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>헤더 파일\Helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulation.cpp">
@@ -106,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

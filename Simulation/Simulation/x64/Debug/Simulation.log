@@ -1,4 +1,5 @@
-﻿  Player.cpp
-  Sphere.cpp
-  코드를 생성하고 있습니다...
+﻿  Transform.cpp
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(31,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(26,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(21,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
   Simulation.vcxproj -> C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\x64\Debug\Simulation.exe

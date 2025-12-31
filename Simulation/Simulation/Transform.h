@@ -15,15 +15,16 @@ public:
 	{
 		m_vPosition += vDeltaPos;
 	}
-	void Rotate(AXIS eAxis, const float& fAngle) { *(((float*)&m_vDegree) + eAxis) += fAngle; }
+	void Rotate(AXIS eAxis, const float& fAngle);
+	void Rotate(const Vec3& vAxis, const float& fAngle);
 
 	// getter/setter
 	void Set_Scale(const Vec3& vScale) { m_vScale = vScale; }
 	const Vec3& Get_Scale() { return m_vScale; }
 
-	void Set_Rotation(float fX, float fY, float fZ) { m_vDegree = Vec3(fX, fY, fZ); }
-	void Set_Rotation(const Vec3& vAngle) { m_vDegree = vAngle; }
-	const Vec3& Get_Rotation() { return m_vDegree; }
+	void Set_Rotation(float fX, float fY, float fZ);
+	void Set_Rotation(const Vec3& vAngle);
+	const Vec3& Get_Rotation() { return m_vEuler; }
 
 	void Set_Position(float fX, float fY, float fZ) { m_vPosition = Vec3(fX, fY, fZ); }
 	void Set_Position(const Vec3& vPosition) { m_vPosition = vPosition; }
@@ -35,9 +36,13 @@ public:
 
 	void Get_Info(AXIS eAxis, Vec3* pAxis) { memcpy(pAxis, &m_matWorld.m[eAxis][0], sizeof(Vec3)); }
 
+private :
+	void Euler_ToQuaternion();
+
 private:
 	Vec3		m_vScale;
-	Vec3		m_vDegree, m_vRadian;
+	Vec3		m_vEuler;
+	Vec4		m_vQuaternion;
 	Vec3		m_vPosition;
 
 	Vec3			m_vRotation[AXIS_END];
@@ -49,3 +54,4 @@ public:
 	static Transform* Create(LPDIRECT3DDEVICE9 pGraphicDev);
 	void Release();
 };
+

@@ -43,7 +43,7 @@ void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 
 void MainApp::Render_MainApp()
 {
-    m_pGraphicDevice->Render_Begin(D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+    m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.f, 0.f, 0.f, 1.f));
 
     m_pPlayer->Render_GameObject();
 

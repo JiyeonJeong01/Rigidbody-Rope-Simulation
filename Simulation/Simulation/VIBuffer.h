@@ -28,6 +28,8 @@ public:
 	LPDIRECT3DVERTEXBUFFER9		Get_VertexBuffer() { return m_pVB; }
 	LPDIRECT3DINDEXBUFFER9			Get_IndexBuffer() { return m_pIB; }
 
+	const VIBUFFER_INFO&					Get_VIBufferInfo() { return m_tInfo; }
+
 protected:
 	VIBUFFER_INFO								m_tInfo;
 

@@ -70,6 +70,20 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 		
 	}
 
+	// TEST
+	if (GetAsyncKeyState('X') & 0x8000)
+	{
+		m_pTransform->Rotate(AXIS_X, 5.f);
+	}
+	else if (GetAsyncKeyState('Y') & 0x8000)
+	{
+		m_pTransform->Rotate(AXIS_Y, 5.f);
+	}
+	else if (GetAsyncKeyState('Z') & 0x8000)
+	{
+		m_pTransform->Rotate(AXIS_Z, 5.f);
+	}
+
 	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
 	{
 		m_pMesh->Set_Hilight(true);

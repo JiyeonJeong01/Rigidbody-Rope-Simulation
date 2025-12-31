@@ -14,3 +14,4 @@ typedef		D3DXMATRIX						Matrix;
 
 enum AXIS { AXIS_X, AXIS_Y, AXIS_Z, AXIS_END };
 enum FILL_MODE { SOLID, WIRE, RM_END };
+enum GEOMETRY_TYPE { SPHERE, BOX, G_END };

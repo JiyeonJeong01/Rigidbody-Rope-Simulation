@@ -1,10 +1,15 @@
 #include "pch.h"
 #include "Transform.h"
 
+#include "MathHelper.h"
+#include "VectorHelper.h"
+
 Transform::Transform(LPDIRECT3DDEVICE9 pGraphicDev)
-	: m_pGraphicDevice(pGraphicDev), m_vScale(1.f, 1.f, 1.f), m_vRadian(0.f, 0.f, 0.f)
+	: m_pGraphicDevice(pGraphicDev)
+		, m_vScale(1.f, 1.f, 1.f), m_vQuaternion(0.f, 0.f, 0.f, 1.f)
 {
 	ZeroMemory(m_vRotation, sizeof(m_vRotation));
+	
 	D3DXMatrixIdentity(&m_matWorld);
 }
 
@@ -43,20 +48,14 @@ int Transform::Update_Component(const float& fTimeDelta)
 	}
 
 	// 회전 계산
-	m_vRadian = Vec3((D3DXToRadian(m_vDegree.x)), (D3DXToRadian(m_vDegree.y)), (D3DXToRadian(m_vDegree.z)));
+	D3DXQUATERNION qRot (m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
 
-	Matrix matRot[AXIS_END];
-	D3DXMatrixRotationX(&matRot[AXIS_X], m_vRadian.x);
-	D3DXMatrixRotationY(&matRot[AXIS_Y], m_vRadian.y);
-	D3DXMatrixRotationZ(&matRot[AXIS_Z], m_vRadian.z);
+	Matrix	matRot;
+	D3DXMatrixRotationQuaternion(&matRot, &qRot);
 
-	for (int i = 0; i < AXIS_END; ++i)
-	{
-		for (int j = 0; j < AXIS_END; ++j)
-		{
-			D3DXVec3TransformNormal(&m_vRotation[i], &m_vRotation[i], &matRot[j]);
-		}
-	}
+	m_vRotation[AXIS_X] = Vec3(matRot._11, matRot._12, matRot._13);
+	m_vRotation[AXIS_Y] = Vec3(matRot._21, matRot._22, matRot._23);
+	m_vRotation[AXIS_Z] = Vec3(matRot._31, matRot._32, matRot._33);
 
 	// 크기, 회전, 위치를 월드 행렬에 복사
 	for (int i = 0; i < AXIS_END; ++i)
@@ -72,6 +71,44 @@ int Transform::Update_Component(const float& fTimeDelta)
 void Transform::LateUpdate_Component(const float& fTimeDelta)
 {
 }
+
+void Transform::Rotate(AXIS eAxis, const float& fAngle)
+{
+	Vec3 vAxis(0.f, 0.f, 0.f);
+	if (eAxis == AXIS_X) vAxis = VectorHelper::Right();
+	else if (eAxis == AXIS_Y) vAxis = VectorHelper::Up();
+	else if (eAxis == AXIS_Z) vAxis = VectorHelper::Look();
+
+	Rotate(vAxis, fAngle);
+}
+
+void Transform::Rotate(const Vec3& vAxis, const float& fAngle)
+{
+	D3DXQUATERNION qCur(m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
+	D3DXQUATERNION qDelta;
+	D3DXQuaternionRotationAxis(&qDelta, &vAxis, fAngle);
+
+	qCur = qCur * qDelta;
+
+	D3DXQuaternionNormalize(&qCur, &qCur);
+
+	m_vQuaternion = Vec4(qCur.x, qCur.y, qCur.z, qCur.w);
+
+	// TODO : Quaternion to Euler 가 빠짐
+}
+
+void Transform::Set_Rotation(float fX, float fY, float fZ)
+{
+	m_vEuler = Vec3(fX, fY, fZ);
+	MathHelper::Euler_ToQuaternion(m_vEuler, m_vQuaternion);
+}
+
+void Transform::Set_Rotation(const Vec3& vAngle)
+{
+	m_vEuler = vAngle;
+	MathHelper::Euler_ToQuaternion(m_vEuler, m_vQuaternion);
+}
+
 
 Transform* Transform::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
