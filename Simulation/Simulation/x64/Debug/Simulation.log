@@ -1,5 +1,12 @@
-﻿  Transform.cpp
-C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(31,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
-C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(26,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
-C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(21,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+﻿  Player.cpp
+  Rigidbody.cpp
+  Transform.cpp
+  코드를 생성하고 있습니다...
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(33,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Transform.cpp(123,1): warning C4172: 지역 변수 또는 임시 : matWorldRot의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(28,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(38,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Rigidbody.cpp(127,1): warning C4172: 지역 변수 또는 임시 의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(16,1): warning C4172: 지역 변수 또는 임시 : vTmp의 주소를 반환하는 중
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VectorHelper.h(23,1): warning C4172: 지역 변수 또는 임시 : vTmp의 주소를 반환하는 중
   Simulation.vcxproj -> C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\x64\Debug\Simulation.exe

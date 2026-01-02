@@ -24,7 +24,9 @@ public:
 
 	void Set_Rotation(float fX, float fY, float fZ);
 	void Set_Rotation(const Vec3& vAngle);
-	const Vec3& Get_Rotation() { return m_vEuler; }
+	const Vec3& Get_RotationEuler() { return m_vEuler; }
+	const Vec4& Get_RotationQuat() { return m_vQuaternion; }
+	const Matrix& Get_RotationMat();
 
 	void Set_Position(float fX, float fY, float fZ) { m_vPosition = Vec3(fX, fY, fZ); }
 	void Set_Position(const Vec3& vPosition) { m_vPosition = vPosition; }

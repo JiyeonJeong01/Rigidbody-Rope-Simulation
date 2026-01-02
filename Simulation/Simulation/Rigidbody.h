@@ -12,29 +12,37 @@ private:
 public :
 	// ============ 멤버 함수 ============
 	void Ready_Component(); // Find~ 함수들 실행하기
+	void Update_Component();					// m_fLinearVel, COM, m_fAngularVel, m_vLook 설정
+	void	LateUpdate_Component();
 
 	void Find_Dimension(); // m_vDimension과 m_vDimensionCenter를 구한다
 	void Find_Inertia();			//
 	void Find_ColliderRadius();
 
-	void Acclerate_Linearly(Vec3 vVel);		// m_fLinearVel += vVel
-	void Apply_Transform(Vec3 vTrans, const float& fTimeDelta);		// COM과 Transform의 위치를 vTrans만큼 이동
+	void Add_LinearImpulse(Vec3 vVel);		// m_fLinearVel += vVel
+	void Translate(const Vec3 vDeltaPos);
+
+	void Integrate_Transform(Vec3 vTrans, const float& fTimeDelta);		// COM과 Transform의 위치를 vTrans만큼 이동
 
 	const Vec3& Acclerate_Gyro(const float& fTimeDelta);							// 회전 저항 행렬을 고려한 각 속도 구하기
-	void Update_Component();					// m_fLinearVel, COM, m_fAngularVel, m_vLook 설정
 
-	void Apply_ImpulseAtPosition(Vec3 vImpluse, Vec3 vPos); // m_fLinearVel, m_fAngularVel 반영
+	void Add_ForceAtPoint(Vec3 vImpulse, Vec3 vPos); // m_fLinearVel, m_fAngularVel 반영
 
 	void Set_LinearVelocity(const Vec3& vVel) { m_vLinearVel = vVel; }
 	void Set_AngularVelocity(const Vec3 vVel) { m_vAngularVel = vVel; }
 
+	bool Get_Fixed() { return m_bFixed; }
+	void Set_Fixed(bool bFix) { m_bFixed = bFix; }
+
+	bool Get_IsKinematic() { return m_bKinematic; }
+	void Set_IsKinematic(bool bKinematic) { m_bKinematic = bKinematic; }
 
 private:
 	// ============ 멤버 변수 ============
 	float m_fMass, m_fMassI;			// 질량
 	float m_fFriction;						// 마찰 계수
 	float m_fRestritution;					// 반발 계수
-	Matrix m_matInertiaTensor, m_matInertiaTensorI; // 회전 저항 행렬과 역행렬
+	Matrix m_matInertiaTensor, m_matInertiaTensorInv; // 회전 저항 행렬과 역행렬
 
 	int m_iRotFreezeMask;			// 회전 잠금 축 마스크
 

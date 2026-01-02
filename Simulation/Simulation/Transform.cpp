@@ -84,9 +84,11 @@ void Transform::Rotate(AXIS eAxis, const float& fAngle)
 
 void Transform::Rotate(const Vec3& vAxis, const float& fAngle)
 {
+	float fRadian = D3DXToRadian(fAngle);
+
 	D3DXQUATERNION qCur(m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
 	D3DXQUATERNION qDelta;
-	D3DXQuaternionRotationAxis(&qDelta, &vAxis, fAngle);
+	D3DXQuaternionRotationAxis(&qDelta, &vAxis, fRadian);
 
 	qCur = qCur * qDelta;
 
@@ -107,6 +109,18 @@ void Transform::Set_Rotation(const Vec3& vAngle)
 {
 	m_vEuler = vAngle;
 	MathHelper::Euler_ToQuaternion(m_vEuler, m_vQuaternion);
+}
+
+const Matrix& Transform::Get_RotationMat()
+{
+	Matrix matWorldRot;
+	D3DXMatrixIdentity(&matWorldRot);
+	matWorldRot._11 = m_vQuaternion.x;
+	matWorldRot._22 = m_vQuaternion.y;
+	matWorldRot._33 = m_vQuaternion.z;
+	matWorldRot._44 = 1.f;
+
+	return matWorldRot;
 }
 
 
