@@ -7,10 +7,16 @@
 
 Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	, m_fMass(0), m_fMassI(0), m_fFriction(0), m_fRestritution(0)
-	, m_iRotFreezeMask(0)
+	, m_fMass(0), m_fMassI(0), m_fDrag(0), m_fRestritution(0)
+	, m_iRotFreezeMask(0), m_bFixed(false), m_bKinematic(false)
 	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
+	ZeroMemory(m_vCOM, sizeof(Vec3));
+	ZeroMemory(m_vDimension, sizeof(Vec3));
+	ZeroMemory(m_vDimensionCenter, sizeof(Vec3));
+	ZeroMemory(m_vLinearVel, sizeof(Vec3));
+	ZeroMemory(m_vLook, sizeof(Vec3));
+	ZeroMemory(m_vAngularVel, sizeof(Vec3));
 }
 
 Rigidbody::~Rigidbody()
@@ -19,6 +25,9 @@ Rigidbody::~Rigidbody()
 
 HRESULT Rigidbody::Ready_Component()
 {
+	m_pTransform = static_cast<Transform*>(m_pOwner->Find_Component(L"Transform"));
+	m_pVIBuffer = static_cast<VIBuffer*>(m_pOwner->Find_Component(L"Buffer"));
+
 	Find_Inertia();
 	Find_Dimension();
 	Find_ColliderRadius();
@@ -114,7 +123,7 @@ void Rigidbody::Translate(const Vec3 vDeltaPos)
 	m_pTransform->Translate(vDeltaPos);
 }
 
-void Rigidbody::Integrate_Transform(Vec3 vTrans, const float& fTimeDelta)
+void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 {
 	// 선 속도 적용
 	Vec3 vMoveDelta = m_vLinearVel * fTimeDelta;
@@ -159,6 +168,13 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 
 int Rigidbody::Update_Component(const float& fTimeDelta)
 {
+	m_vCOM = m_pTransform->Get_Position();
+
+	Apply_Drag(fTimeDelta);
+	Apply_Gravity(fTimeDelta);
+
+	Integrate_Transform(fTimeDelta);
+
 	return 0;
 }
 
@@ -166,7 +182,7 @@ void Rigidbody::LateUpdate_Component(const float& fTimeDelta)
 {
 }
 
-void Rigidbody::Add_ForceAtPoint(Vec3 vImpulse, Vec3 vPos)
+void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
 {
 	if (m_bFixed || m_bKinematic)
 		return;
@@ -192,6 +208,61 @@ void Rigidbody::Add_ForceAtPoint(Vec3 vImpulse, Vec3 vPos)
 	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vAngularMomentum, &matInertiaInv);
 
 	m_vAngularVel += vDeltaW;
+}
+
+void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
+{
+	const float fTimeDelta = 0.016f;
+	switch (eForce)
+	{
+	case FORCE_MODE::FORCE :
+		{
+			// 질량을 고려하여 지속적으로 힘을 가한다.
+			vImpulse *= fTimeDelta;
+		}
+		break;
+	case FORCE_MODE::IMPULSE :
+		{
+			// 질량을 고려하여 순간적인 힘을 가한다.
+		}
+		break;
+	}
+
+	Add_ImpulseAtPoint(vImpulse, m_vCOM, 1.f);
+}
+
+void Rigidbody::Apply_Drag(const float& fTimeDelta)
+{
+	// 유체 저항 적용하기 
+	if (m_fDrag > 0.f)
+	{
+		m_vLinearVel -= m_vLinearVel * m_fDrag * fTimeDelta;
+		m_vAngularVel -= m_vAngularVel * m_fDrag * fTimeDelta;
+
+		if (D3DXVec3LengthSq(&m_vLinearVel) < fEpsilon * fEpsilon)
+			m_vLinearVel = VectorHelper::Zero();
+
+		if (D3DXVec3LengthSq(&m_vAngularVel) < fEpsilon * fEpsilon)
+			m_vAngularVel = VectorHelper::Zero();
+	}
+}
+
+void Rigidbody::Apply_Gravity(const float& fTimeDelta)
+{
+	Vec3 vGravity{ 0.f, -9.81f, 0.f };
+	m_vLinearVel += vGravity * fTimeDelta;
+
+	float fTmpY = m_pTransform->Get_Position().y + m_vLinearVel.y * fTimeDelta;
+
+	if (fTmpY < -0.1f)
+	{
+		m_vLinearVel.y = 0.f;
+
+		Vec3 vPos = m_pTransform->Get_Position();
+		vPos.y = 0.f;
+		m_pTransform->Set_Position(vPos);
+	}
+	printf("%.2f\n", m_pTransform->Get_Position().y);
 }
 
 Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)

@@ -24,12 +24,18 @@ public :
 	void Add_LinearImpulse(Vec3 vVel);		// m_fLinearVel += vVel
 	void Translate(const Vec3 vDeltaPos);
 
-	void Integrate_Transform(Vec3 vTrans, const float& fTimeDelta);		// COM과 Transform의 위치를 vTrans만큼 이동
+	void Integrate_Transform(const float& fTimeDelta);		// COM과 Transform의 위치를 vTrans만큼 이동
 
 	Vec3 Acclerate_Gyro(const float& fTimeDelta);							// 회전 저항 행렬을 고려한 각 속도 구하기
 
-	void Add_ForceAtPoint(Vec3 vImpulse, Vec3 vPos); // m_fLinearVel, m_fAngularVel 반영
+	void Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMassVal); // m_fLinearVel, m_fAngularVel 반영
+	void Add_Force(Vec3 vImpulse, FORCE_MODE eForce);
 
+private :
+	void Apply_Drag(const float& fTimeDelta);
+	void Apply_Gravity(const float& fTimeDelta);
+
+public:
 	void Set_LinearVelocity(const Vec3& vVel) { m_vLinearVel = vVel; }
 	void Set_AngularVelocity(const Vec3 vVel) { m_vAngularVel = vVel; }
 
@@ -39,10 +45,16 @@ public :
 	bool Get_IsKinematic() { return m_bKinematic; }
 	void Set_IsKinematic(bool bKinematic) { m_bKinematic = bKinematic; }
 
+	void Set_Mass(const float& fMass) { m_fMass = fMass; m_fMassI = 1.f/m_fMass; }
+	float Get_Mass() const { return m_fMass; }
+
+	void Set_Drag(const float& fDrag) { m_fDrag = fDrag; }
+	float Get_Drag() const { return m_fDrag; }
+
 private:
 	// ============ 멤버 변수 ============
 	float m_fMass, m_fMassI;			// 질량
-	float m_fFriction;						// 마찰 계수
+	float m_fDrag;						// 마찰 계수
 	float m_fRestritution;					// 반발 계수
 	Matrix m_matInertiaTensor, m_matInertiaTensorInv; // 회전 저항 행렬과 역행렬
 
@@ -61,6 +73,8 @@ private:
 
 	Transform* m_pTransform;
 	VIBuffer* m_pVIBuffer;
+
+	const float fEpsilon = 0.01f;
 
 public:
 	static Rigidbody* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);

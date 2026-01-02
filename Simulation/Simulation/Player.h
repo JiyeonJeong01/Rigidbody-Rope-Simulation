@@ -2,6 +2,7 @@
 #include "Object.h"
 
 class Transform;
+class Rigidbody;
 class Sphere;
 
 class Player : public Object
@@ -21,6 +22,7 @@ private :
 
 private :
 	Transform*									m_pTransform;
+	Rigidbody*									m_pRigidbody;
 	Sphere*										m_pMesh;
 
 public :

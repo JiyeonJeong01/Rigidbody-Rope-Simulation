@@ -15,6 +15,7 @@ public:
 	virtual void					Render_GameObject();
 
 	void								Add_Component(wstring wsKey, Component* pComponent) { m_mapComponents.insert({ wsKey, pComponent }); }
+	Component*				Find_Component(wstring wsKey);
 
 protected:
 	LPDIRECT3DDEVICE9										m_pGraphicDevice;

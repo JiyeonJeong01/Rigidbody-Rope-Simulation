@@ -41,6 +41,19 @@ void Object::Render_GameObject()
 	}
 }
 
+Component* Object::Find_Component(wstring wsKey)
+{
+	for (auto& p : m_mapComponents)
+	{
+		if (p.first.compare(wsKey) == 0)
+		{
+			return p.second;
+		}
+	}
+
+	return nullptr;
+}
+
 void Object::Release()
 {
 	for_each(m_mapComponents.begin(), m_mapComponents.end(),
@@ -52,4 +65,6 @@ void Object::Release()
 				p.second = nullptr;
 			}
 	});
+
+	delete this;
 }

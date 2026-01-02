@@ -11,7 +11,6 @@ MainApp::MainApp()
 
 MainApp::~MainApp()
 {
-    Release();
 }
 
 HRESULT MainApp::Ready_MainApp()
@@ -61,8 +60,8 @@ HRESULT MainApp::Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev)
 
     Matrix     matView, matProj;
 
-    Vec3   vEye = { 0.f, 0.f, -10.f };
-    Vec3   vAt = { 0.f, 0.f, 10.f };
+    Vec3   vEye = { 0.f, 5.f, -10.f };
+    Vec3   vAt = { 0.f, 0.f, 0.f };
     Vec3   vUp = { 0.f, 1.f, 0.f };
 
     D3DXMatrixLookAtLH(&matView, &vEye, &vAt, &vUp);
@@ -95,7 +94,10 @@ MainApp* MainApp::Create()
 void MainApp::Release()
 {
     // Objects
-    m_pPlayer->Release();
+    Safe_Release(m_pPlayer);
 
+    // Singleton
     GraphicDevice::DestroyInstance();
+
+    delete this;
 }

@@ -34,6 +34,7 @@ public:
 
 	void Set_Position(float fX, float fY, float fZ) { m_vPosition = Vec3(fX, fY, fZ); }
 	void Set_Position(const Vec3& vPosition) { m_vPosition = vPosition; }
+	const Vec3& Get_Position() { return m_vPosition; }
 
 	Matrix* Get_WorldMatrix()
 	{

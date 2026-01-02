@@ -38,6 +38,10 @@ namespace VectorHelper
 		return Vec3(0.f, 0.f, 1.f);
 	}
 
+	static Vec3 Zero()
+	{
+		return Vec3(0.f, 0.f, 0.f);
+	}
 
 
 
