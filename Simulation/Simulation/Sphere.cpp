@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "Sphere.h"
 #include "VIBuffer.h"
+#include "Object.h"
 
-Sphere::Sphere(LPDIRECT3DDEVICE9 pGraphicDevice)
-: m_pGraphicDevice(pGraphicDevice)
-, m_pMesh(nullptr), m_pVIBuffer(nullptr)
+Sphere::Sphere(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner)
+: m_pGraphicDevice(pGraphicDevice), m_pOwner(pOwner)
+, m_pVIBuffer(nullptr)
 , m_dwColor(0), m_fRadius(0.f)
 , m_bHilight(false), m_dwHilghtColor(D3DCOLOR_ARGB(255, 255, 0, 0))
 {
@@ -12,7 +13,6 @@ Sphere::Sphere(LPDIRECT3DDEVICE9 pGraphicDevice)
 
 Sphere::~Sphere()
 {
-	Safe_Delete(m_pVIBuffer);
 }
 
 HRESULT Sphere::Ready_Mesh(unsigned long dwColor, float fRadius, int iSlice)
@@ -42,7 +42,7 @@ HRESULT Sphere::Ready_Mesh(unsigned long dwColor, float fRadius, int iSlice)
 	tInfo.IdxFmt = D3DFMT_INDEX16;
 	tInfo.dwIdxSize = sizeof(INDEX16);
 
-	m_pVIBuffer = VIBuffer::Create(m_pGraphicDevice, tInfo);
+	m_pVIBuffer = VIBuffer::Create(m_pGraphicDevice, m_pOwner, tInfo);
 
 	struct SphereVertex
 	{
@@ -112,9 +112,9 @@ void Sphere::Set_FillMode(FILL_MODE eMode)
 	}
 }
 
-Sphere* Sphere::Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fRadius, int iSlice)
+Sphere* Sphere::Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner, unsigned long dwColor, float fRadius, int iSlice)
 {
-	Sphere* pSphere = new Sphere(pGraphicDevice);
+	Sphere* pSphere = new Sphere(pGraphicDevice, pOwner);
 	if (FAILED(pSphere->Ready_Mesh(dwColor, fRadius, iSlice)))
 	{
 		Safe_Delete(pSphere);

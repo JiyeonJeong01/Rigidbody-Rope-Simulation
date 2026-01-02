@@ -1,9 +1,10 @@
 #pragma once
+#include "Object.h"
 
 class Transform;
 class Sphere;
 
-class Player
+class Player : public Object
 {
 private :
 	Player(LPDIRECT3DDEVICE9 pGraphicDevice);
@@ -19,13 +20,11 @@ private :
 	void					Handle_PlayerInput(const float& fTimeDelta);
 
 private :
-	LPDIRECT3DDEVICE9					m_pGraphicDevice;
-
 	Transform*									m_pTransform;
 	Sphere*										m_pMesh;
 
 public :
 	static Player* Create(LPDIRECT3DDEVICE9 pGraphicDevice);
-	void Release();
+	void Release() override;
 };
 

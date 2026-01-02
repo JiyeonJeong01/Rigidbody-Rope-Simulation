@@ -9,7 +9,9 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
+#include <string>
 
 #include "Define.h"
 #include "Macro.h"

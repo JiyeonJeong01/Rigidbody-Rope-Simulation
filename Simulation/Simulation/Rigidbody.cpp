@@ -1,13 +1,15 @@
 #include "pch.h"
 #include "Rigidbody.h"
+#include "Object.h"
 #include "Transform.h"
 #include "VIBuffer.h"
 #include "VectorHelper.h"
 
-Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev)
-	: m_fMass(0), m_fMassI(0), m_fFriction(0), m_fRestritution(0)
-	  , m_iRotFreezeMask(0)
-	  , m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
+Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
+	: Component(pGraphicDev, pOwner)
+	, m_fMass(0), m_fMassI(0), m_fFriction(0), m_fRestritution(0)
+	, m_iRotFreezeMask(0)
+	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
 }
 
@@ -15,7 +17,7 @@ Rigidbody::~Rigidbody()
 {
 }
 
-void Rigidbody::Ready_Component()
+HRESULT Rigidbody::Ready_Component()
 {
 	Find_Inertia();
 	Find_Dimension();
@@ -26,6 +28,8 @@ void Rigidbody::Ready_Component()
 	* 현재 VRAM의 버텍스 버퍼를 한 번 생성한 뒤 수정하지 않는 구조인데, 회전을 어떻게 적용하는가에 따라
 	* 원본 버텍스를 별도로 저장해야 할 수 있다. 
 	*/
+
+	return S_OK;
 }
 
 void Rigidbody::Find_Dimension()
@@ -133,7 +137,7 @@ void Rigidbody::Integrate_Transform(Vec3 vTrans, const float& fTimeDelta)
 	}
 }
 
-const Vec3& Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
+Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 {
 	//Matrix matRot = m_pTransform->Get_RotationMat();
 	//Matrix matRotInv = *D3DXMatrixInverse(&matRotInv, 0, &matRot);
@@ -153,11 +157,12 @@ const Vec3& Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 	return Vec3();
 }
 
-void Rigidbody::Update_Component()
+int Rigidbody::Update_Component(const float& fTimeDelta)
 {
+	return 0;
 }
 
-void Rigidbody::LateUpdate_Component()
+void Rigidbody::LateUpdate_Component(const float& fTimeDelta)
 {
 }
 
@@ -187,4 +192,20 @@ void Rigidbody::Add_ForceAtPoint(Vec3 vImpulse, Vec3 vPos)
 	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vAngularMomentum, &matInertiaInv);
 
 	m_vAngularVel += vDeltaW;
+}
+
+Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
+{
+	Rigidbody* pBody = new Rigidbody(pGraphicDev, pOwner);
+	if (FAILED(pBody->Ready_Component()))
+	{
+		Safe_Delete(pBody);
+	}
+	pOwner->Add_Component(L"Rigidbody", pBody);
+	return pBody;
+}
+
+void Rigidbody::Release()
+{
+	Component::Release();
 }

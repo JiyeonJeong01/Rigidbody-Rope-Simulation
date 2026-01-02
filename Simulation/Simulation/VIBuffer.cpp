@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "VIBuffer.h"
+#include "Object.h"
 
-VIBuffer::VIBuffer(LPDIRECT3DDEVICE9 pGraphicDev, VIBUFFER_INFO tInfo)
-    : m_pGraphicDevice(pGraphicDev), m_tInfo(tInfo)
+VIBuffer::VIBuffer(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, VIBUFFER_INFO tInfo)
+    : Component(pGraphicDev, pOwner)
+	, m_tInfo(tInfo)
    , m_pVB(nullptr), m_pIB(nullptr)
 {
 
@@ -46,18 +48,19 @@ void VIBuffer::Render_Buffer()
     m_pGraphicDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_tInfo.dwVtxCnt, 0, m_tInfo.dwTriCnt);
 }
 
-VIBuffer* VIBuffer::Create(LPDIRECT3DDEVICE9 pGraphicDev, VIBUFFER_INFO tInfo)
+VIBuffer* VIBuffer::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwenr, VIBUFFER_INFO tInfo)
 {
-    VIBuffer* pBuffer = new VIBuffer(pGraphicDev, tInfo);
+    VIBuffer* pBuffer = new VIBuffer(pGraphicDev, pOwenr, tInfo);
     if (FAILED(pBuffer->Ready_Component()))
     {
         Safe_Delete(pBuffer);
     }
 
+    pOwenr->Add_Component(L"Buffer", pBuffer);
     return pBuffer;
 }
 
 void VIBuffer::Release()
 {
-    delete this;
+    Component::Release();
 }

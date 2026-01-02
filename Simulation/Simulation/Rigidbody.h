@@ -1,19 +1,21 @@
 #pragma once
+#include "Component.h"
 
+class Object;
 class Transform;
 class VIBuffer;
 
-class Rigidbody
+class Rigidbody : public Component
 {
 private:
-	Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev);
+	Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
 	~Rigidbody();
 
 public :
 	// ============ 멤버 함수 ============
-	void Ready_Component(); // Find~ 함수들 실행하기
-	void Update_Component();					// m_fLinearVel, COM, m_fAngularVel, m_vLook 설정
-	void	LateUpdate_Component();
+	HRESULT Ready_Component() override; // Find~ 함수들 실행하기
+	int			Update_Component(const float& fTimeDelta)override;					// m_fLinearVel, COM, m_fAngularVel, m_vLook 설정
+	void			LateUpdate_Component(const float& fTimeDelta) override;
 
 	void Find_Dimension(); // m_vDimension과 m_vDimensionCenter를 구한다
 	void Find_Inertia();			//
@@ -24,7 +26,7 @@ public :
 
 	void Integrate_Transform(Vec3 vTrans, const float& fTimeDelta);		// COM과 Transform의 위치를 vTrans만큼 이동
 
-	const Vec3& Acclerate_Gyro(const float& fTimeDelta);							// 회전 저항 행렬을 고려한 각 속도 구하기
+	Vec3 Acclerate_Gyro(const float& fTimeDelta);							// 회전 저항 행렬을 고려한 각 속도 구하기
 
 	void Add_ForceAtPoint(Vec3 vImpulse, Vec3 vPos); // m_fLinearVel, m_fAngularVel 반영
 
@@ -59,5 +61,9 @@ private:
 
 	Transform* m_pTransform;
 	VIBuffer* m_pVIBuffer;
+
+public:
+	static Rigidbody* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
+	void Release() override;
 };
 

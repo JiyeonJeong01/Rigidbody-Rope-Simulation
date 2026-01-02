@@ -1,10 +1,12 @@
 #pragma once
+
+class Object;
 class VIBuffer;
 
 class Sphere
 {
 private :
-	Sphere(LPDIRECT3DDEVICE9 pGraphicDevice);
+	Sphere(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner);
 	~Sphere();
 
 public :
@@ -16,8 +18,7 @@ public :
 
 private :
 	LPDIRECT3DDEVICE9		m_pGraphicDevice;
-	LPD3DXMESH					m_pMesh;
-
+	Object*							m_pOwner;
 	VIBuffer*							m_pVIBuffer;
 
 	unsigned long					m_dwColor;
@@ -29,7 +30,8 @@ private :
 	bool									m_bHilight;
 
 public :
-	static Sphere* Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fRadius, int iSlice);
+	static Sphere* Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner,
+											unsigned long dwColor, float fRadius, int iSlice);
 	void Release();
 };
 

@@ -37,6 +37,12 @@
     <Filter Include="헤더 파일\Helper">
       <UniqueIdentifier>{8bc4696f-7b9a-4ce3-9c15-7159da04f34a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\Component">
+      <UniqueIdentifier>{7617cd31-aa08-4ab7-a5a3-2a2c2565ed8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Object">
+      <UniqueIdentifier>{8e069558-78c3-4719-ab49-e9a6b8ee694a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.h">
@@ -93,6 +99,12 @@
     <ClInclude Include="MathHelper.h">
       <Filter>헤더 파일\Helper</Filter>
     </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Object\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulation.cpp">
@@ -121,6 +133,12 @@
     </ClCompile>
     <ClCompile Include="Rigidbody.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Object\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

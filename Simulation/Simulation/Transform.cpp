@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "Transform.h"
-
+#include "Object.h"
 #include "MathHelper.h"
 #include "VectorHelper.h"
 
-Transform::Transform(LPDIRECT3DDEVICE9 pGraphicDev)
-	: m_pGraphicDevice(pGraphicDev)
+Transform::Transform(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
+	: Component(pGraphicDev, pOwner)
 		, m_vScale(1.f, 1.f, 1.f), m_vQuaternion(0.f, 0.f, 0.f, 1.f)
 {
 	ZeroMemory(m_vRotation, sizeof(m_vRotation));
@@ -111,7 +111,7 @@ void Transform::Set_Rotation(const Vec3& vAngle)
 	MathHelper::Euler_ToQuaternion(m_vEuler, m_vQuaternion);
 }
 
-const Matrix& Transform::Get_RotationMat()
+Matrix Transform::Get_RotationMat()
 {
 	Matrix matWorldRot;
 	D3DXMatrixIdentity(&matWorldRot);
@@ -124,20 +124,22 @@ const Matrix& Transform::Get_RotationMat()
 }
 
 
-Transform* Transform::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+Transform* Transform::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 {
-	Transform* pTransform = new Transform(pGraphicDev);
+	Transform* pTransform = new Transform(pGraphicDev, pOwner);
 
 	if (FAILED(pTransform->Ready_Component()))
 	{
 		delete pTransform;
 		pTransform = nullptr;
 	}
+	pOwner->Add_Component(L"Transform", pTransform);
 
 	return pTransform;
 }
 
 void Transform::Release()
 {
-
+	Component::Release();
 }
+

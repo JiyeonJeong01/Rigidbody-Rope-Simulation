@@ -1,14 +1,18 @@
 #pragma once
-class Transform
+#include "Component.h"
+
+class Object;
+
+class Transform : public  Component
 {
 private:
-	Transform(LPDIRECT3DDEVICE9 pGraphicDev);
+	Transform(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
 	~Transform();
 
 public:
-	HRESULT		Ready_Component();
-	int				Update_Component(const float& fTimeDelta);
-	void				LateUpdate_Component(const float& fTimeDelta);
+	HRESULT		Ready_Component() override;
+	int				Update_Component(const float& fTimeDelta) override;
+	void				LateUpdate_Component(const float& fTimeDelta) override;
 
 public:
 	void Translate(const Vec3& vDeltaPos)
@@ -26,7 +30,7 @@ public:
 	void Set_Rotation(const Vec3& vAngle);
 	const Vec3& Get_RotationEuler() { return m_vEuler; }
 	const Vec4& Get_RotationQuat() { return m_vQuaternion; }
-	const Matrix& Get_RotationMat();
+	Matrix Get_RotationMat();
 
 	void Set_Position(float fX, float fY, float fZ) { m_vPosition = Vec3(fX, fY, fZ); }
 	void Set_Position(const Vec3& vPosition) { m_vPosition = vPosition; }
@@ -50,10 +54,8 @@ private:
 	Vec3			m_vRotation[AXIS_END];
 	Matrix		m_matWorld;
 
-	LPDIRECT3DDEVICE9 m_pGraphicDevice;
-
 public:
-	static Transform* Create(LPDIRECT3DDEVICE9 pGraphicDev);
-	void Release();
+	static Transform* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
+	void Release() override;
 };
 

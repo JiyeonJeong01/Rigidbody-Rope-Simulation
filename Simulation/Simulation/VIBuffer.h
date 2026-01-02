@@ -1,5 +1,6 @@
 #pragma once
-
+#include "Component.h"
+class Object;
 typedef struct tagVIBufferInfo
 {
 	unsigned long					dwVtxSize;	// 버텍스 구조체 크기
@@ -15,10 +16,10 @@ typedef struct tagVIBufferInfo
 	{ }
 }VIBUFFER_INFO;
 
-class VIBuffer
+class VIBuffer : public Component
 {
 protected:
-	VIBuffer(LPDIRECT3DDEVICE9 pGraphicDev, VIBUFFER_INFO tInfo);
+	VIBuffer(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, VIBUFFER_INFO tInfo);
 	~VIBuffer();
 
 public:
@@ -33,12 +34,11 @@ public:
 protected:
 	VIBUFFER_INFO								m_tInfo;
 
-	LPDIRECT3DDEVICE9						m_pGraphicDevice;
 	LPDIRECT3DVERTEXBUFFER9		m_pVB;
 	LPDIRECT3DINDEXBUFFER9			m_pIB;
 
 public :
-	static VIBuffer* Create(LPDIRECT3DDEVICE9 pGraphicDev, VIBUFFER_INFO tInfo);
-	void Release();
+	static VIBuffer* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, VIBUFFER_INFO tInfo);
+	void Release() override;
 };
 

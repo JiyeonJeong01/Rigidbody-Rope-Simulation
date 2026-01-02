@@ -5,20 +5,19 @@
 #include "Transform.h"
 
 Player::Player(LPDIRECT3DDEVICE9 pGraphicDevice)
-	: m_pGraphicDevice(pGraphicDevice), m_pTransform(nullptr), m_pMesh(nullptr)
+	: Object(pGraphicDevice)
+	, m_pTransform(nullptr), m_pMesh(nullptr)
 {
 }
 
 Player::~Player()
 {
-	m_pTransform->Release();
-	m_pMesh->Release();
 }
 
 HRESULT Player::Ready_GameObject()
 {
-	m_pTransform = Transform::Create(m_pGraphicDevice);
-	m_pMesh = Sphere::Create(m_pGraphicDevice, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
+	m_pTransform = Transform::Create(m_pGraphicDevice, this);
+	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
 
 	return S_OK;
 }
@@ -103,5 +102,7 @@ Player* Player::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
 
 void Player::Release()
 {
-	delete this;
+	m_pMesh->Release();
+
+	Object::Release();
 }
