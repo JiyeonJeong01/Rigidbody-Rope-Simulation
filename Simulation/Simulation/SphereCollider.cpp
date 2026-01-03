@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SphereCollider.h"
-#include "obje"
+#include "Object.h"
+#include "CollisionSystem.h"
 
 SphereCollider::SphereCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Collider(pGraphicDev, pOwner)
@@ -50,11 +51,14 @@ SphereCollider* SphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pO
 	{
 		Safe_Delete(pCol);
 	}
+
+	CollisionSystem::GetInstance()->Add_Collider(pCol);
 	pOwner->Add_Component(L"SphereCollider", pCol);
+
 	return pCol;
 }
 
 void SphereCollider::Release()
 {
-	Collider::Release();
+	Component::Release();
 }

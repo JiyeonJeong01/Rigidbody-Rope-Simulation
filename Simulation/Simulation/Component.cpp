@@ -29,6 +29,11 @@ void Component::Render_Component()
 {
 }
 
+Transform* Component::Get_Transform()
+{
+	return m_pOwner->Get_Transform();
+}
+
 
 void Component::Release()
 {

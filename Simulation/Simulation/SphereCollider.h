@@ -4,7 +4,7 @@ class SphereCollider : public Collider
 {
 private :
 	SphereCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
-	~SphereCollider() override;
+	~SphereCollider();
 
 public:
 	HRESULT						Ready_Component() override;

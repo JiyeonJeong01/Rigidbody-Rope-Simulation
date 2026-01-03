@@ -302,6 +302,14 @@ void Rigidbody::Apply_Gravity(const float& fTimeDelta)
 	printf("%.2f\n", m_pTransform->Get_Position().y);
 }
 
+Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const
+{
+	Vec3 vComToPoint = vPoint - m_vCOM;
+	Vec3 vRot = *D3DXVec3Cross(&vRot, &m_vAngularVel, &vComToPoint);
+	vRot = -vRot; // ¿Þ¼Õ ÁÂÇ¥°è·Î º¯°æ 
+	return m_vLinearVel + vRot;
+}
+
 Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 {
 	Rigidbody* pBody = new Rigidbody(pGraphicDev, pOwner);

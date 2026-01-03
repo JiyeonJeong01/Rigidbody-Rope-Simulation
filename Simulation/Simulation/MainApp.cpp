@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "MainApp.h"
 #include "GraphicDevice.h"
+#include "CollisionSystem.h"
 
 #include "Player.h"
+#include "Enemy.h"
 
 MainApp::MainApp()
     : m_pGraphicDevice(nullptr), m_pGraphicDev(nullptr)
@@ -22,6 +24,7 @@ HRESULT MainApp::Ready_MainApp()
         return E_FAIL;
 
     m_pPlayer = Player::Create(m_pGraphicDev);
+    m_pEnemy = Enemy::Create(m_pGraphicDev);
 
     return S_OK;
 }
@@ -29,7 +32,10 @@ HRESULT MainApp::Ready_MainApp()
 int MainApp::Update_MainApp(const float& fTimeDelta)
 {
 
+    CollisionSystem::GetInstance()->Update_System();
+    
     m_pPlayer->Update_GameObject(fTimeDelta);
+    m_pEnemy->Update_GameObject(fTimeDelta);
 
     return 0;
 }
@@ -37,7 +43,7 @@ int MainApp::Update_MainApp(const float& fTimeDelta)
 void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 {
     m_pPlayer->LateUpdate_GameObject(fTimeDelta);
-
+    m_pEnemy->LateUpdate_GameObject(fTimeDelta);
 }
 
 void MainApp::Render_MainApp()
@@ -45,6 +51,7 @@ void MainApp::Render_MainApp()
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f));
 
     m_pPlayer->Render_GameObject();
+    m_pEnemy->Render_GameObject();
 
     m_pGraphicDevice->Render_End();
 }
@@ -95,8 +102,10 @@ void MainApp::Release()
 {
     // Objects
     Safe_Release(m_pPlayer);
+    Safe_Release(m_pEnemy);
 
     // Singleton
+    CollisionSystem::DestroyInstance();
     GraphicDevice::DestroyInstance();
 
     delete this;

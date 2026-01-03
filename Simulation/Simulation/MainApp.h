@@ -2,6 +2,7 @@
 
 class GraphicDevice;
 class Player;
+class Enemy;
 
 class MainApp
 {
@@ -24,6 +25,7 @@ private:
 	LPDIRECT3DDEVICE9		m_pGraphicDev;
 
 	Player*							m_pPlayer;
+	Enemy*							m_pEnemy;
 
 public: 
 	static MainApp* Create();

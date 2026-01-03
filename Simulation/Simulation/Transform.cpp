@@ -133,6 +133,7 @@ Transform* Transform::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 		pTransform = nullptr;
 	}
 	pOwner->Add_Component(L"Transform", pTransform);
+	pOwner->Set_Transform(pTransform);
 
 	return pTransform;
 }

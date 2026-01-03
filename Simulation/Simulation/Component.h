@@ -1,6 +1,7 @@
 #pragma once
 
 class Object;
+class Transform;
 
 class Component
 {
@@ -14,6 +15,7 @@ public :
 	virtual void				LateUpdate_Component(const float& fTimeDelta);
 	virtual void				Render_Component();
 
+	Transform*				Get_Transform();
 	Object*					Get_Object() const { return m_pOwner; }
 
 protected :

@@ -4,6 +4,7 @@
 #include "Sphere.h"
 #include "Transform.h"
 #include "Rigidbody.h"
+#include "SphereCollider.h"
 
 Player::Player(LPDIRECT3DDEVICE9 pGraphicDevice)
 	: Object(pGraphicDevice)
@@ -21,6 +22,7 @@ HRESULT Player::Ready_GameObject()
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
+	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	m_pRigidbody->Set_Mass(10.f);
 	m_pRigidbody->Set_Drag(0.5f);
@@ -49,6 +51,24 @@ void Player::Render_GameObject()
 {
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
+}
+
+void Player::On_CollisionEnter(const Collision& tCollision)
+{
+	Object::On_CollisionEnter(tCollision);
+}
+
+void Player::On_CollisionStay(const Collision& tCollision)
+{
+	Object::On_CollisionStay(tCollision);
+
+	m_pMesh->Set_Hilight(true);
+}
+
+void Player::On_CollisionExit(const Collision& tCollision)
+{
+	Object::On_CollisionExit(tCollision);
+	m_pMesh->Set_Hilight(false);
 }
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)

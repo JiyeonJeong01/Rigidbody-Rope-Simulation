@@ -30,6 +30,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	//_CrtSetBreakAlloc(367);
+	//_CrtSetBreakAlloc(368);
+	//_CrtSetBreakAlloc(369);
+	//_CrtSetBreakAlloc(370);
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 

@@ -38,6 +38,8 @@ private :
 	void Apply_Gravity(const float& fTimeDelta);
 
 public:
+	Vec3 Get_PointVelocity(const Vec3& vPoint) const;
+
 	void Set_LinearVelocity(const Vec3& vVel) { m_vLinearVel = vVel; }
 	const Vec3& Get_LinearVelocity(const Vec3& vVel) const { return m_vLinearVel; }
 
