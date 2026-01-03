@@ -7,8 +7,8 @@
 
 Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	, m_fMass(0), m_fMassI(0), m_fDrag(0), m_fRestritution(0)
-	, m_iRotFreezeMask(0), m_bFixed(false), m_bKinematic(false)
+	, m_fMass(1.f), m_fMassI(1.f), m_fDrag(0.f), m_fAngularDrag(0.f),m_fRestritution(0.f)
+	, m_iRotFreezeMask(0), m_bFixed(false), m_bKinematic(false), m_bGravity(false)
 	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
 	ZeroMemory(m_vCOM, sizeof(Vec3));
@@ -28,8 +28,8 @@ HRESULT Rigidbody::Ready_Component()
 	m_pTransform = static_cast<Transform*>(m_pOwner->Find_Component(L"Transform"));
 	m_pVIBuffer = static_cast<VIBuffer*>(m_pOwner->Find_Component(L"Buffer"));
 
-	Find_Inertia();
 	Find_Dimension();
+	Find_Inertia();
 	Find_ColliderRadius();
 
 	/*
@@ -39,6 +39,28 @@ HRESULT Rigidbody::Ready_Component()
 	*/
 
 	return S_OK;
+}
+
+int Rigidbody::Update_Component(const float& fTimeDelta)
+{
+	m_vCOM = m_pTransform->Get_Position();
+
+	if (m_fDrag > 0.f)
+		Apply_Drag(fTimeDelta);
+
+	if (m_fAngularDrag > 0.f)
+		Apply_AngularDrag(fTimeDelta);
+
+	if (m_bGravity)
+		Apply_Gravity(fTimeDelta);
+
+	Integrate_Transform(fTimeDelta);
+
+	return 0;
+}
+
+void Rigidbody::LateUpdate_Component(const float& fTimeDelta)
+{
 }
 
 void Rigidbody::Find_Dimension()
@@ -130,7 +152,7 @@ void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 	m_vCOM += vMoveDelta;
 
 	// 각 속도 적용
-	if (!VectorHelper::Is_ZeroVector(m_vAngularVel))
+	if (!VectorHelper::Is_Zero(m_vAngularVel))
 	{
 		// TODO : 보정 로직 추가하기 
 		// m_vAngularVel = Acclerate_Gyro(fTimeDelta);
@@ -166,43 +188,27 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 	return Vec3();
 }
 
-int Rigidbody::Update_Component(const float& fTimeDelta)
-{
-	m_vCOM = m_pTransform->Get_Position();
-
-	Apply_Drag(fTimeDelta);
-	Apply_Gravity(fTimeDelta);
-
-	Integrate_Transform(fTimeDelta);
-
-	return 0;
-}
-
-void Rigidbody::LateUpdate_Component(const float& fTimeDelta)
-{
-}
-
 void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
 {
 	if (m_bFixed || m_bKinematic)
 		return;
 
 	// ===== 1. Linear Velocity =====
-	// 선 속도 += (impulse / 질량)
-	m_vLinearVel += vImpulse * m_fMassI;
+	m_vLinearVel += vImpulse * m_fMassI; // 선 속도 += (impulse / 질량)
 
 	// ===== 2. Angular Velocity =====
-	//  r = position - centerOfMass : 질량 중심에서 힘이 작용한 위치까지의 벡터 
-	Vec3 vR = vPos - m_vCOM;
+	Vec3 vR = vPos - m_vCOM; //  r = position - centerOfMass : 질량 중심에서 힘이 작용한 위치까지의 벡터
+
+	if (VectorHelper::Is_NearlyZero(vR))
+		return;
 
 	// 각 운동량 L = r × impulse
 	Vec3 vAngularMomentum = -1.f * VectorHelper::CrossProduct(vR, vImpulse); // 왼손 좌표계 
 
 	// ===== 3. Inertia Tensor =====
-	// Inverse(I_World) = R * Inverse(I_Local) * Transpose(R)
 	Matrix matR = m_pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT;
+	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT; // Inverse(I_World) = R * Inverse(I_Local) * Transpose(R)
 
 	// ===== 4. 각속도 변화량, vDeltaW 구하기 =====
 	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vAngularMomentum, &matInertiaInv);
@@ -212,6 +218,9 @@ void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
 
 void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
 {
+	if (m_bFixed || m_bKinematic)
+		return;
+
 	const float fTimeDelta = 0.016f;
 	switch (eForce)
 	{
@@ -228,23 +237,51 @@ void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
 		break;
 	}
 
-	Add_ImpulseAtPoint(vImpulse, m_vCOM, 1.f);
+	m_vLinearVel += vImpulse * m_fMassI; // 선 속도 += (impulse / 질량)
+}
+
+void Rigidbody::Add_Torque(Vec3 vImpulse, FORCE_MODE eForce)
+{
+	if (m_bFixed || m_bKinematic)
+		return;
+
+	const float fTimeDelta = 0.016f;
+	switch (eForce)
+	{
+	case FORCE_MODE::FORCE:
+	{
+		vImpulse *= fTimeDelta;
+	}
+	break;
+	case FORCE_MODE::IMPULSE:
+	{
+	}
+	break;
+	}
+
+	Matrix matR = m_pTransform->Get_RotationMat();
+	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
+	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT;
+
+	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vImpulse, &matInertiaInv);
+
+	m_vAngularVel += vDeltaW;
 }
 
 void Rigidbody::Apply_Drag(const float& fTimeDelta)
 {
-	// 유체 저항 적용하기 
-	if (m_fDrag > 0.f)
-	{
-		m_vLinearVel -= m_vLinearVel * m_fDrag * fTimeDelta;
-		m_vAngularVel -= m_vAngularVel * m_fDrag * fTimeDelta;
+	m_vLinearVel -= m_vLinearVel * m_fDrag * fTimeDelta;
 
-		if (D3DXVec3LengthSq(&m_vLinearVel) < fEpsilon * fEpsilon)
-			m_vLinearVel = VectorHelper::Zero();
+	if (D3DXVec3LengthSq(&m_vLinearVel) < fEpsilon * fEpsilon)
+		m_vLinearVel = VectorHelper::Zero();
+}
 
-		if (D3DXVec3LengthSq(&m_vAngularVel) < fEpsilon * fEpsilon)
-			m_vAngularVel = VectorHelper::Zero();
-	}
+void Rigidbody::Apply_AngularDrag(const float& fTimeDelta)
+{
+	m_vAngularVel -= m_vAngularVel * m_fAngularDrag * fTimeDelta;
+
+	if (D3DXVec3LengthSq(&m_vAngularVel) < fEpsilon * fEpsilon)
+		m_vAngularVel = VectorHelper::Zero();
 }
 
 void Rigidbody::Apply_Gravity(const float& fTimeDelta)
@@ -254,7 +291,7 @@ void Rigidbody::Apply_Gravity(const float& fTimeDelta)
 
 	float fTmpY = m_pTransform->Get_Position().y + m_vLinearVel.y * fTimeDelta;
 
-	if (fTmpY < -0.1f)
+	if (fTmpY < -0.01f)
 	{
 		m_vLinearVel.y = 0.f;
 

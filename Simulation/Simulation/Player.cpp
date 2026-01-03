@@ -24,6 +24,8 @@ HRESULT Player::Ready_GameObject()
 
 	m_pRigidbody->Set_Mass(10.f);
 	m_pRigidbody->Set_Drag(0.5f);
+	m_pRigidbody->Set_AngularDrag(5.f);
+	m_pRigidbody->Set_GeometryType(SPHERE);
 
 	return S_OK;
 }
@@ -79,10 +81,10 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 		// m_pMesh->Set_Hilight(true);
 		m_pRigidbody->Add_Force({ 0.f, fSpeed, 0.f }, FORCE_MODE::IMPULSE);
 	}
-	//if (GetAsyncKeyState('X') & 0x8000)
-	//{
-	//	m_pRigidbody->
-	//}
+	if (GetAsyncKeyState('X') & 0x8000)
+	{
+		m_pRigidbody->Add_Torque({ 0.f, fSpeed, 0.f }, FORCE_MODE::FORCE);
+	}
 	//else if (GetAsyncKeyState('Y') & 0x8000)
 	//{
 	//	m_pTransform->Rotate(AXIS_Y, 5.f);

@@ -4,9 +4,16 @@
 
 namespace VectorHelper
 {
-	static bool Is_ZeroVector(const Vec3& v)
+	static bool Is_Zero(const Vec3& v)
 	{
 		return v.x == 0.f && v.y == 0.f && v.z == 0.f;
+	}
+
+	static bool Is_NearlyZero(const Vec3& v, float eps = 1e-6f)
+	{
+		return fabsf(v.x) < eps &&
+			fabsf(v.y) < eps &&
+			fabsf(v.z) < eps;
 	}
 
 	static Vec3 Get_Normalized(const Vec3& vSrc)

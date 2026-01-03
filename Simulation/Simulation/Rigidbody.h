@@ -30,14 +30,19 @@ public :
 
 	void Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMassVal); // m_fLinearVel, m_fAngularVel 반영
 	void Add_Force(Vec3 vImpulse, FORCE_MODE eForce);
+	void Add_Torque(Vec3 vImpulse, FORCE_MODE eForce);
 
 private :
 	void Apply_Drag(const float& fTimeDelta);
+	void Apply_AngularDrag(const float& fTimeDelta);
 	void Apply_Gravity(const float& fTimeDelta);
 
 public:
 	void Set_LinearVelocity(const Vec3& vVel) { m_vLinearVel = vVel; }
+	const Vec3& Get_LinearVelocity(const Vec3& vVel) const { return m_vLinearVel; }
+
 	void Set_AngularVelocity(const Vec3 vVel) { m_vAngularVel = vVel; }
+	const Vec3& Get_AngularVelocity(const Vec3 vVel) const { return m_vAngularVel; }
 
 	bool Get_Fixed() { return m_bFixed; }
 	void Set_Fixed(bool bFix) { m_bFixed = bFix; }
@@ -45,17 +50,26 @@ public:
 	bool Get_IsKinematic() { return m_bKinematic; }
 	void Set_IsKinematic(bool bKinematic) { m_bKinematic = bKinematic; }
 
+	void Set_GeometryType(GEOMETRY_TYPE eGeometry) { m_eGeometryType = eGeometry; }
+	GEOMETRY_TYPE Get_GeometryType() const { return m_eGeometryType; }
+
 	void Set_Mass(const float& fMass) { m_fMass = fMass; m_fMassI = 1.f/m_fMass; }
 	float Get_Mass() const { return m_fMass; }
 
 	void Set_Drag(const float& fDrag) { m_fDrag = fDrag; }
 	float Get_Drag() const { return m_fDrag; }
 
+	void Set_AngularDrag(const float& fDrag) { m_fAngularDrag = fDrag; }
+	float Get_AngularDrag() const { return m_fAngularDrag; }
+
+	void Set_Gravity(const float& bGravity) { m_bGravity = bGravity; }
+	float Get_Gravity() const { return m_bGravity; }
+
 private:
 	// ============ 멤버 변수 ============
-	float m_fMass, m_fMassI;			// 질량
-	float m_fDrag;						// 마찰 계수
-	float m_fRestritution;					// 반발 계수
+	float m_fMass, m_fMassI;				// 질량
+	float m_fDrag, m_fAngularDrag;	// 저항 
+	float m_fRestritution;						// 반발 계수
 	Matrix m_matInertiaTensor, m_matInertiaTensorInv; // 회전 저항 행렬과 역행렬
 
 	int m_iRotFreezeMask;			// 회전 잠금 축 마스크
@@ -69,7 +83,7 @@ private:
 	Vec3 m_vDimensionCenter;	// 바운드 박스의 중심
 	GEOMETRY_TYPE	m_eGeometryType;
 
-	bool				m_bFixed, m_bKinematic;
+	bool				m_bFixed, m_bKinematic, m_bGravity;
 
 	Transform* m_pTransform;
 	VIBuffer* m_pVIBuffer;

@@ -113,14 +113,13 @@ void Transform::Set_Rotation(const Vec3& vAngle)
 
 Matrix Transform::Get_RotationMat()
 {
-	Matrix matWorldRot;
-	D3DXMatrixIdentity(&matWorldRot);
-	matWorldRot._11 = m_vQuaternion.x;
-	matWorldRot._22 = m_vQuaternion.y;
-	matWorldRot._33 = m_vQuaternion.z;
-	matWorldRot._44 = 1.f;
+	Matrix R;
+	D3DXQUATERNION q(m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
 
-	return matWorldRot;
+	D3DXQuaternionNormalize(&q, &q);
+
+	D3DXMatrixRotationQuaternion(&R, &q);
+	return R;
 }
 
 
