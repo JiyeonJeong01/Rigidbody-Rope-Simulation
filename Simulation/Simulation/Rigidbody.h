@@ -44,8 +44,8 @@ public:
 	void Set_AngularVelocity(const Vec3 vVel) { m_vAngularVel = vVel; }
 	const Vec3& Get_AngularVelocity(const Vec3 vVel) const { return m_vAngularVel; }
 
-	bool Get_Fixed() { return m_bFixed; }
-	void Set_Fixed(bool bFix) { m_bFixed = bFix; }
+	bool Get_Fixed() { return m_bStatic; }
+	void Set_Fixed(bool bFix) { m_bStatic = bFix; }
 
 	bool Get_IsKinematic() { return m_bKinematic; }
 	void Set_IsKinematic(bool bKinematic) { m_bKinematic = bKinematic; }
@@ -83,7 +83,7 @@ private:
 	Vec3 m_vDimensionCenter;	// 바운드 박스의 중심
 	GEOMETRY_TYPE	m_eGeometryType;
 
-	bool				m_bFixed, m_bKinematic, m_bGravity;
+	bool				m_bStatic, m_bKinematic, m_bGravity;
 
 	Transform* m_pTransform;
 	VIBuffer* m_pVIBuffer;

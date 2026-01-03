@@ -8,7 +8,7 @@
 Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
 	, m_fMass(1.f), m_fMassI(1.f), m_fDrag(0.f), m_fAngularDrag(0.f),m_fRestritution(0.f)
-	, m_iRotFreezeMask(0), m_bFixed(false), m_bKinematic(false), m_bGravity(false)
+	, m_iRotFreezeMask(0), m_bStatic(false), m_bKinematic(false), m_bGravity(false)
 	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
 	ZeroMemory(m_vCOM, sizeof(Vec3));
@@ -133,7 +133,7 @@ void Rigidbody::Find_ColliderRadius()
 
 void Rigidbody::Add_LinearImpulse(Vec3 vVel)
 {
-	if (m_bFixed | m_bKinematic)
+	if (m_bStatic | m_bKinematic)
 		return;
 
 	m_vLinearVel += vVel;
@@ -190,7 +190,7 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 
 void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
 {
-	if (m_bFixed || m_bKinematic)
+	if (m_bStatic || m_bKinematic)
 		return;
 
 	// ===== 1. Linear Velocity =====
@@ -218,7 +218,7 @@ void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
 
 void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
 {
-	if (m_bFixed || m_bKinematic)
+	if (m_bStatic || m_bKinematic)
 		return;
 
 	const float fTimeDelta = 0.016f;
@@ -242,7 +242,7 @@ void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
 
 void Rigidbody::Add_Torque(Vec3 vImpulse, FORCE_MODE eForce)
 {
-	if (m_bFixed || m_bKinematic)
+	if (m_bStatic || m_bKinematic)
 		return;
 
 	const float fTimeDelta = 0.016f;

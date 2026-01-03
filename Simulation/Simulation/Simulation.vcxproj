@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="framework.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
@@ -152,6 +154,7 @@
     <ClInclude Include="VIBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GraphicDevice.cpp" />
     <ClCompile Include="MainApp.cpp" />
@@ -163,6 +166,7 @@
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VIBuffer.cpp" />
   </ItemGroup>

@@ -1,3 +1,4 @@
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Collider.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\Collider.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Component.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\Component.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\GraphicDevice.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\GraphicDevice.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\MainApp.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\MainApp.obj
@@ -7,5 +8,6 @@ C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Player.cpp;
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Rigidbody.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\Rigidbody.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Simulation.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\Simulation.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Sphere.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\Sphere.obj
+C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\SphereCollider.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\SphereCollider.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\Transform.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\Transform.obj
 C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\VIBuffer.cpp;C:\Users\delay\Jusin\Rigidbody-Rope-Simulation\Simulation\Simulation\x64\Debug\VIBuffer.obj
