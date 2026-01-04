@@ -38,7 +38,7 @@ bool SphereCollider::Check_Collision(Collider* pCollider)
 	case SPHERE:
 
 		break;
-	case BOX:
+	case CUBE:
 		break;
 	}
 	return false;

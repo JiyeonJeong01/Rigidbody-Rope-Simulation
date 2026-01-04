@@ -111,7 +111,7 @@ void Rigidbody::Find_Inertia()
 		D3DXMatrixInverse(&m_matInertiaTensorInv, 0, &m_matInertiaTensor);
 		}
 		break;
-	case BOX:
+	case CUBE:
 		{
 		float k = (1.f / 12.f) * m_fMass;
 
@@ -149,23 +149,20 @@ void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 {
 	// 선 속도 적용
 	Vec3 vMoveDelta = m_vLinearVel * fTimeDelta;
-	m_vCOM += vMoveDelta;
+	m_pTransform->Translate(vMoveDelta);
 
 	// 각 속도 적용
 	if (!VectorHelper::Is_Zero(m_vAngularVel))
 	{
 		// TODO : 보정 로직 추가하기 
 		// m_vAngularVel = Acclerate_Gyro(fTimeDelta);
-		Vec3 vRotAxis = VectorHelper::Get_Normalized(m_vAngularVel) * fTimeDelta;
-		float fRotMagnitude = D3DXVec3Length(&m_vAngularVel);
+		Vec3 vRotAxis = VectorHelper::Get_Normalized(m_vAngularVel);
+		float fRotMagnitude = D3DXVec3Length(&m_vAngularVel) * fTimeDelta;
 
 		m_pTransform->Rotate(vRotAxis, fRotMagnitude);
-		m_pTransform->Get_Info(AXIS_Z, &m_vLook);
 	}
-	else
-	{
-		m_pTransform->Translate(vMoveDelta);
-	}
+
+	m_pTransform->Get_Info(AXIS_Z, &m_vLook);
 }
 
 Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
@@ -203,12 +200,12 @@ void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
 		return;
 
 	// 각 운동량 L = r × impulse
-	Vec3 vAngularMomentum = -1.f * VectorHelper::CrossProduct(vR, vImpulse); // 왼손 좌표계 
+	Vec3 vAngularMomentum =  VectorHelper::CrossProduct(vR, vImpulse);
 
 	// ===== 3. Inertia Tensor =====
 	Matrix matR = m_pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT; // Inverse(I_World) = R * Inverse(I_Local) * Transpose(R)
+	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR ; // R * Inverse(I_Local) * Transpose(R) * v
 
 	// ===== 4. 각속도 변화량, vDeltaW 구하기 =====
 	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vAngularMomentum, &matInertiaInv);
@@ -261,7 +258,7 @@ void Rigidbody::Add_Torque(Vec3 vImpulse, FORCE_MODE eForce)
 
 	Matrix matR = m_pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT;
+	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR;
 
 	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vImpulse, &matInertiaInv);
 

@@ -20,7 +20,7 @@ public:
 		m_vPosition += vDeltaPos;
 	}
 	void Rotate(AXIS eAxis, const float& fAngle);
-	void Rotate(const Vec3& vAxis, const float& fAngle);
+	void Rotate(const Vec3& vAxis, const float& fDegree);
 
 	// getter/setter
 	void Set_Scale(const Vec3& vScale) { m_vScale = vScale; }

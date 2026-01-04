@@ -72,19 +72,19 @@ void Transform::LateUpdate_Component(const float& fTimeDelta)
 {
 }
 
-void Transform::Rotate(AXIS eAxis, const float& fAngle)
+void Transform::Rotate(AXIS eAxis, const float& fDegree)
 {
 	Vec3 vAxis(0.f, 0.f, 0.f);
 	if (eAxis == AXIS_X) vAxis = VectorHelper::Right();
 	else if (eAxis == AXIS_Y) vAxis = VectorHelper::Up();
 	else if (eAxis == AXIS_Z) vAxis = VectorHelper::Look();
 
-	Rotate(vAxis, fAngle);
+	Rotate(vAxis, fDegree);
 }
 
-void Transform::Rotate(const Vec3& vAxis, const float& fAngle)
+void Transform::Rotate(const Vec3& vAxis, const float& fDegree)
 {
-	float fRadian = D3DXToRadian(fAngle);
+	float fRadian = D3DXToRadian(fDegree);
 
 	D3DXQUATERNION qCur(m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
 	D3DXQUATERNION qDelta;

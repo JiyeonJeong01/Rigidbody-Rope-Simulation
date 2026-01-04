@@ -42,7 +42,7 @@ void CollisionSystem::Update_System()
 			bool bOnCollision(false);
 			RESOLVE_INFO tResolve;
 
-			if (eCldr == BOX && eClde == BOX)
+			if (eCldr == CUBE && eClde == CUBE)
 			{
 				
 			}
