@@ -286,17 +286,17 @@ void Rigidbody::Apply_Gravity(const float& fTimeDelta)
 	Vec3 vGravity{ 0.f, -9.81f, 0.f };
 	m_vLinearVel += vGravity * fTimeDelta;
 
-	float fTmpY = m_pTransform->Get_Position().y + m_vLinearVel.y * fTimeDelta;
+	//float fTmpY = m_pTransform->Get_Position().y + m_vLinearVel.y * fTimeDelta;
 
-	if (fTmpY < -0.01f)
-	{
-		m_vLinearVel.y = 0.f;
+	//if (fTmpY < -0.01f)
+	//{
+	//	m_vLinearVel.y = 0.f;
 
-		Vec3 vPos = m_pTransform->Get_Position();
-		vPos.y = 0.f;
-		m_pTransform->Set_Position(vPos);
-	}
-	printf("%.2f\n", m_pTransform->Get_Position().y);
+	//	Vec3 vPos = m_pTransform->Get_Position();
+	//	vPos.y = 0.f;
+	//	m_pTransform->Set_Position(vPos);
+	//}
+	//printf("%.2f\n", m_pTransform->Get_Position().y);
 }
 
 Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const

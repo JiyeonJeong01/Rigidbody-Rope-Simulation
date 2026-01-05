@@ -28,6 +28,7 @@ HRESULT Player::Ready_GameObject()
 	m_pRigidbody->Set_Drag(0.5f);
 	m_pRigidbody->Set_AngularDrag(5.f);
 	m_pRigidbody->Set_GeometryType(SPHERE);
+	m_pRigidbody->Set_Gravity(true);
 
 	return S_OK;
 }

@@ -8,7 +8,7 @@
 
 Ground::Ground(LPDIRECT3DDEVICE9 pGraphicDevice)
 	: Object(pGraphicDevice)
-	, m_pTransform(nullptr), m_pRigidbody(nullptr), m_pMesh(nullptr)
+	, m_pTransform(nullptr), m_pMesh(nullptr)
 {
 }
 
@@ -21,16 +21,10 @@ HRESULT Ground::Ready_GameObject()
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 10.f, 10.f);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
-	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
-	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
-
 	m_pTransform->Rotate(AXIS_X, 90.f);
-	m_pTransform->Set_Position({ 0.f, -1.f, 0.f });
+	m_pTransform->Set_Position({ 0.f, -2.f, 0.f });
 
-	m_pRigidbody->Set_Mass(10.f);
-	m_pRigidbody->Set_Drag(0.5f);
-	m_pRigidbody->Set_AngularDrag(5.f);
-	m_pRigidbody->Set_GeometryType(PLANE);
+	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
 
 	return S_OK;
 }

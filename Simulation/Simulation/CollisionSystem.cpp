@@ -142,13 +142,21 @@ bool CollisionSystem::Detect_ShpereCollision(SphereCollider* pCollider, SphereCo
 bool CollisionSystem::Detect_SpherePlaneCollition(RESOLVE_INFO* tOut, SphereCollider* pSphere, PlaneCollider* pPlane)
 {
 	Vec3 vSpherePos = pSphere->Get_Transform()->Get_Position() + pSphere->Get_Offset();
-	Vec3 vPlanePos = pPlane->Get_Transform()->Get_Position() + pPlane->Get_Offset();
 
-	// 1. 평면위에 투영된 원의 중심 구하기
+	// 평면 위에 투영된 원의 중심과 원의 중심 간의 거리 구하기
 	float fDistSphereToPlane = pPlane->Calculate_DistToPlane(vSpherePos);
 	float fSphereRadius = pSphere->Get_Radius() * pSphere->Get_Scale();
 
-	return fabsf(fDistSphereToPlane) < fSphereRadius;
+	if (fabsf(fDistSphereToPlane) > fSphereRadius)
+		return false;
+
+	tOut->vN = pPlane->Calculate_DirToPlane(vSpherePos);
+	tOut->vPoint = vSpherePos + tOut->vN * fabsf(fDistSphereToPlane);
+	tOut->fDepth = fmaxf(0.f, fabsf(fDistSphereToPlane));
+
+	pSphere->Get_Transform()->Translate(tOut->vN * tOut->fDepth);
+
+	return true;
 }
 
 void CollisionSystem::Add_Collider(Collider* pCollider)

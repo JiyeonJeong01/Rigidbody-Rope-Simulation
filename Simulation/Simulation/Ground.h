@@ -2,7 +2,6 @@
 #include "Object.h"
 
 class Transform;
-class Rigidbody;
 class PlaneCollider;
 class Plane;
 
@@ -24,7 +23,6 @@ public:
 
 private:
 	Transform*			m_pTransform;
-	Rigidbody*			m_pRigidbody;
 	PlaneCollider*	m_pCollider;
 	Plane*					m_pMesh;
 

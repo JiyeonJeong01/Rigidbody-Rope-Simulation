@@ -66,7 +66,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			if (WM_QUIT == msg.message)
 				break;
 
-			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			if (!hAccelTable || !TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);

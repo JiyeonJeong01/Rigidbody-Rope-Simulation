@@ -18,11 +18,13 @@ public:
 	GEOMETRY_TYPE		Get_GeometryType() override			{ return PLANE; }
 	bool								Is_OnPlane(const Vec3& vPoint) const;
 	float								Calculate_DistToPlane(const Vec3& vPoint) const;
+	Vec3								Calculate_DirToPlane(const Vec3& vPoint) const;
 
 	bool								Get_IsInfinite() const							{ return m_bInfinite; }	
 	void								Set_IsInfinite(bool bInfinite)				{ m_bInfinite = bInfinite; }
 
 	const Vec3&				Get_NormVector() const						{ return m_vNorm; }
+	const float&					Get_D() const										{ return m_fD; } 
 
 private:
 	bool								m_bInfinite;

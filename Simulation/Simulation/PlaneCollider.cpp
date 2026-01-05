@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "CollisionSystem.h"
 #include "Transform.h"
+#include "VectorHelper.h"
 
 PlaneCollider::PlaneCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Collider(pGraphicDev, pOwner)
@@ -59,7 +60,15 @@ bool PlaneCollider::Is_OnPlane(const Vec3& vPoint) const
 
 float PlaneCollider::Calculate_DistToPlane(const Vec3& vPoint) const
 {
+	// dot(n, (p - p0)) = dot(n, p) + d
 	return D3DXVec3Dot(&m_vNorm, &vPoint) + m_fD;
+}
+
+Vec3 PlaneCollider::Calculate_DirToPlane(const Vec3& vPoint) const
+{
+	Vec3 vProjectedPoint = vPoint - m_vNorm * Calculate_DistToPlane(vPoint);
+	Vec3 vDiff = vProjectedPoint - vPoint;
+	return VectorHelper::Get_Normalized(vDiff);
 }
 
 PlaneCollider* PlaneCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
