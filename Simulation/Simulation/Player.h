@@ -10,7 +10,7 @@ class Player : public Object
 {
 private :
 	Player(LPDIRECT3DDEVICE9 pGraphicDevice);
-	~Player();
+	~Player() override;
 
 public :
 	HRESULT			Ready_GameObject();

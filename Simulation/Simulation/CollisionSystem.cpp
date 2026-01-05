@@ -20,6 +20,8 @@ CollisionSystem::~CollisionSystem()
 
 void CollisionSystem::Update_System()
 {
+	Remove_CheckedColliderListAll();
+
 	size_t iTotalColCnt = m_vecCollider.size();
 
 	for (int i = 0; i < iTotalColCnt; ++i)
@@ -35,9 +37,10 @@ void CollisionSystem::Update_System()
 			if (pCollidee == nullptr || pCollidee->Get_Object() == nullptr || pCollidee->Get_Transform() == nullptr)
 				continue;
 
+			pCollidee->Add_CheckedCollider(pCollider->Get_ColliderID());
+
 			GEOMETRY_TYPE eCldr = pCollider->Get_GeometryType();
 			GEOMETRY_TYPE eClde = pCollidee->Get_GeometryType();
-
 
 			bool bOnCollision(false);
 			RESOLVE_INFO tResolve;
@@ -152,6 +155,12 @@ void CollisionSystem::Remove_CheckCollider(Collider* pCollider)
 		if (p && p != pCollider)
 			p->Remove_ContactCollider(pCollider);
 	}
+}
+
+void CollisionSystem::Remove_CheckedColliderListAll()
+{
+	for (auto* c : m_vecCollider)
+		if (c) c->Clear_CheckedCollider();
 }
 
 void CollisionSystem::Release()

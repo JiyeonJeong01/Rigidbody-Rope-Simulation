@@ -43,6 +43,9 @@
     <Filter Include="Object\Object">
       <UniqueIdentifier>{8e069558-78c3-4719-ab49-e9a6b8ee694a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mesh\Mesh">
+      <UniqueIdentifier>{4b77a89d-f5ae-4486-aa16-f2ba948da35c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.h">
@@ -108,14 +111,32 @@
     <ClInclude Include="Collider.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="SphereCollider.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CollisionSystem.h">
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Mesh\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneCollider.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,14 +176,29 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="SphereCollider.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionSystem.cpp">
       <Filter>System</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Mesh\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneCollider.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

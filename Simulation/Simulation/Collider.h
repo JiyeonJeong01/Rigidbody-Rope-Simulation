@@ -22,16 +22,22 @@ class Collider :  public Component
 {
 protected:
 	Collider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
-	~Collider();
+	~Collider() override;
 
 public :
 	virtual GEOMETRY_TYPE		Get_GeometryType()							PURE;
-	virtual  bool							Check_Collision(Collider* pCollider) PURE;
 
 	bool											Is_Contacted(Collider* pCollider);
 	void											Add_ContactCollider(Collider* pCollider);
 	void											Remove_ContactCollider(Collider* pCollider);
 	int											Get_ContactCount() const					{ return (int)m_usetContactCols.size(); }
+
+	void											Add_CheckedCollider(uint_fast16_t iId);
+	void											Clear_CheckedCollider()					{ m_CheckedCollidersList.clear(); }
+	bool											Is_CheckedCollider(uint_fast16_t iId);
+
+	uint_fast16_t							Get_ColliderID() const					{ return m_iId;}	
+	void											Set_ColliderID(uint_fast16_t iId)	{ m_iId = iId; }
 
 protected:
 	Rigidbody*								Find_Rigidbody();
@@ -67,6 +73,9 @@ protected :
 	float											m_fScale = 1.f;
 
 	unordered_set<Collider*>		m_usetContactCols;
+
+	uint_fast16_t									m_iId;
+	list< uint_fast16_t>							m_CheckedCollidersList;
 
 	Rigidbody*								m_pRigidbody;
 

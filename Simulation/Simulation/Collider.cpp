@@ -32,6 +32,23 @@ void Collider::Remove_ContactCollider(Collider* pCollider)
 		m_usetContactCols.erase(pCollider);
 }
 
+void Collider::Add_CheckedCollider(uint_fast16_t iId)
+{
+	if (Is_CheckedCollider(iId))
+		return;
+
+	m_CheckedCollidersList.push_back(iId);
+}
+
+bool Collider::Is_CheckedCollider(uint_fast16_t iId)
+{
+	for (auto id : m_CheckedCollidersList)
+		if (id == iId)
+			return true;
+
+	return false;
+}
+
 Rigidbody* Collider::Find_Rigidbody()
 {
 	if (m_pOwner == nullptr)

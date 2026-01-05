@@ -8,7 +8,7 @@ class Object
 {
 protected:
 	Object(LPDIRECT3DDEVICE9 pGraphicDevice);
-	~Object();
+	virtual ~Object();
 
 public:
 	virtual HRESULT			Ready_GameObject();

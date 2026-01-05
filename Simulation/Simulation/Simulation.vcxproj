@@ -137,11 +137,17 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GraphicDevice.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="MainApp.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="PlaneCollider.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Rigidbody.h" />
@@ -161,11 +167,16 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GraphicDevice.cpp" />
+    <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="MainApp.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PlaneCollider.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Simulation.cpp" />

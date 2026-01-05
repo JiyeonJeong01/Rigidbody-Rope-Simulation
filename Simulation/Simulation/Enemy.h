@@ -10,7 +10,7 @@ class Enemy : public Object
 {
 private:
 	Enemy(LPDIRECT3DDEVICE9 pGraphicDevice);
-	~Enemy();
+	~Enemy() override;
 
 public:
 	HRESULT			Ready_GameObject();

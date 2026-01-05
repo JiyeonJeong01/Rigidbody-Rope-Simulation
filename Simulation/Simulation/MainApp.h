@@ -3,6 +3,7 @@
 class GraphicDevice;
 class Player;
 class Enemy;
+class Ground;
 
 class MainApp
 {
@@ -26,6 +27,7 @@ private:
 
 	Player*							m_pPlayer;
 	Enemy*							m_pEnemy;
+	Ground*							m_pGround;
 
 public: 
 	static MainApp* Create();

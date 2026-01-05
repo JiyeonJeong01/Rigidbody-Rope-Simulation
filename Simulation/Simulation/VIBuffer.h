@@ -20,7 +20,7 @@ class VIBuffer : public Component
 {
 protected:
 	VIBuffer(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, VIBUFFER_INFO tInfo);
-	~VIBuffer();
+	~VIBuffer() override;
 
 public:
 	HRESULT		Ready_Component();

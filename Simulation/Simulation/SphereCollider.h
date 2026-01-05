@@ -4,7 +4,7 @@ class SphereCollider : public Collider
 {
 private :
 	SphereCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
-	~SphereCollider();
+	~SphereCollider() override;
 
 public:
 	HRESULT						Ready_Component() override;
@@ -13,7 +13,6 @@ public:
 
 public :
 	GEOMETRY_TYPE		Get_GeometryType() override		{ return SPHERE; }
-	bool								Check_Collision(Collider* pCollider) override;
 
 	float								Get_Radius() const							{ return m_fRadius; }
 	void								Set_Radius(const float& fRadius)	{ m_fRadius = fRadius; }

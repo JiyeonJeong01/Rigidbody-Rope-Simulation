@@ -7,7 +7,7 @@ class Transform : public  Component
 {
 private:
 	Transform(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
-	~Transform();
+	~Transform() override;
 
 public:
 	HRESULT		Ready_Component() override;

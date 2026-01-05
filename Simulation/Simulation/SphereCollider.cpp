@@ -31,19 +31,6 @@ void SphereCollider::LateUpdate_Component(const float& fTimeDelta)
 	Collider::LateUpdate_Component(fTimeDelta);
 }
 
-bool SphereCollider::Check_Collision(Collider* pCollider)
-{
-	switch (pCollider->Get_GeometryType())
-	{
-	case SPHERE:
-
-		break;
-	case CUBE:
-		break;
-	}
-	return false;
-}
-
 SphereCollider* SphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 {
 	SphereCollider* pCol = new SphereCollider(pGraphicDev, pOwner);

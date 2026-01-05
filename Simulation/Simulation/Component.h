@@ -7,7 +7,7 @@ class Component
 {
 protected:
 	Component(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
-	~Component();
+	virtual ~Component();
 
 public :
 	virtual HRESULT		Ready_Component();

@@ -9,7 +9,7 @@ class Rigidbody : public Component
 {
 private:
 	Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
-	~Rigidbody();
+	~Rigidbody() override;
 
 public :
 	// ============ ¸â¹ö ÇÔ¼ö ============
