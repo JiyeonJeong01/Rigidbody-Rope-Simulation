@@ -2,6 +2,7 @@
 
 class Collider;
 class SphereCollider;
+class PlaneCollider;
 
 typedef struct tagResolveInfo
 {
@@ -26,7 +27,7 @@ public :
 	void					Clear_CollisionGroup();
 
 	static bool		Detect_ShpereCollision(SphereCollider* pCollider, SphereCollider* pCollidee, RESOLVE_INFO* tOut);
-	//static bool		Detect_SpherePlaneCollition(SphereCollider* pCollider, )
+	static bool		Detect_SpherePlaneCollition(RESOLVE_INFO* tOut, SphereCollider* pCollider, PlaneCollider* pCollidee);
 
 	void					Add_Collider(Collider* pCollider);
 	void					Remove_Collider(Collider* pCollider);

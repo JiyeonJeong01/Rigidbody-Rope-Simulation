@@ -29,7 +29,7 @@ HRESULT MainApp::Ready_MainApp()
 
     m_pPlayer = Player::Create(m_pGraphicDev);
     //m_pEnemy = Enemy::Create(m_pGraphicDev);
-    //m_pGround = Ground::Create(m_pGraphicDev);
+    m_pGround = Ground::Create(m_pGraphicDev);
 
     return S_OK;
 }
@@ -40,8 +40,8 @@ int MainApp::Update_MainApp(const float& fTimeDelta)
     InputSystem::GetInstance()->Update_System();
 
     m_pPlayer->Update_GameObject(fTimeDelta);
-    //m_pEnemy->Update_GameObject(fTimeDelta);
-    //m_pGround->Update_GameObject(fTimeDelta);
+   // m_pEnemy->Update_GameObject(fTimeDelta);
+    m_pGround->Update_GameObject(fTimeDelta);
 
     return 0;
 }
@@ -50,7 +50,7 @@ void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 {
     m_pPlayer->LateUpdate_GameObject(fTimeDelta);
     //m_pEnemy->LateUpdate_GameObject(fTimeDelta);
-    //m_pGround->LateUpdate_GameObject(fTimeDelta);
+    m_pGround->LateUpdate_GameObject(fTimeDelta);
 }
 
 void MainApp::Render_MainApp()
@@ -58,8 +58,8 @@ void MainApp::Render_MainApp()
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f));
 
     m_pPlayer->Render_GameObject();
-    //m_pEnemy->Render_GameObject();
-    //m_pGround->Render_GameObject();
+   //m_pEnemy->Render_GameObject();
+    m_pGround->Render_GameObject();
 
     m_pGraphicDevice->Render_End();
 }
@@ -111,7 +111,7 @@ void MainApp::Release()
     // Objects
     Safe_Release(m_pPlayer);
     //Safe_Release(m_pEnemy);
-    //Safe_Release(m_pGround);
+    Safe_Release(m_pGround);
 
     // Singleton
     CollisionSystem::DestroyInstance();

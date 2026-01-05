@@ -1,8 +1,11 @@
 #include "pch.h"
 #include "CollisionSystem.h"
 
-#include "SphereCollider.h"
 #include "Object.h"
+
+#include "SphereCollider.h"
+#include "PlaneCollider.h"
+
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "VectorHelper.h"
@@ -52,6 +55,10 @@ void CollisionSystem::Update_System()
 			else if (eCldr == SPHERE && eClde == SPHERE)
 			{
 				bOnCollision = Detect_ShpereCollision(static_cast<SphereCollider*>(pCollider), static_cast<SphereCollider*>(pCollidee), &tResolve);
+			}
+			else if (eCldr == SPHERE && eClde == PLANE)
+			{
+				bOnCollision = Detect_SpherePlaneCollition(&tResolve, static_cast<SphereCollider*>(pCollider), static_cast<PlaneCollider*>(pCollidee));
 			}
 
 			Collision tCldr, tClde;
@@ -130,6 +137,18 @@ bool CollisionSystem::Detect_ShpereCollision(SphereCollider* pCollider, SphereCo
 	tOut->vRelativeVel = vCldeVel - vCldrVel;
 
 	return true;
+}
+
+bool CollisionSystem::Detect_SpherePlaneCollition(RESOLVE_INFO* tOut, SphereCollider* pSphere, PlaneCollider* pPlane)
+{
+	Vec3 vSpherePos = pSphere->Get_Transform()->Get_Position() + pSphere->Get_Offset();
+	Vec3 vPlanePos = pPlane->Get_Transform()->Get_Position() + pPlane->Get_Offset();
+
+	// 1. 평면위에 투영된 원의 중심 구하기
+	float fDistSphereToPlane = pPlane->Calculate_DistToPlane(vSpherePos);
+	float fSphereRadius = pSphere->Get_Radius() * pSphere->Get_Scale();
+
+	return fabsf(fDistSphereToPlane) < fSphereRadius;
 }
 
 void CollisionSystem::Add_Collider(Collider* pCollider)

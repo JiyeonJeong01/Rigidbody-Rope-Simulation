@@ -15,4 +15,5 @@ namespace MathHelper
 
 		vQuaternion = Vec4(q.x, q.y, q.z, q.w);
 	}
+
 }
