@@ -14,6 +14,8 @@ typedef struct tagResolveInfo
 }RESOLVE_INFO;
 
 
+struct tagRay;
+
 class CollisionSystem
 {
 	DECLARE_SINGLETON(CollisionSystem)
@@ -24,16 +26,22 @@ private :
 
 public :
 	void					Update_System();
+	void					Check_ObjectToObject();
 	void					Clear_CollisionGroup();
 
 	static bool		Detect_ShpereCollision(SphereCollider* pCollider, SphereCollider* pCollidee, RESOLVE_INFO* tOut);
 	static bool		Detect_SpherePlaneCollition(RESOLVE_INFO* tOut, SphereCollider* pCollider, PlaneCollider* pCollidee);
+
+	bool					Detect_Ray(tagRay* pRay);
+	static bool		Detect_RayPlaneCollision(tagRay* pRay, PlaneCollider* pPlane);
+
 
 	void					Add_Collider(Collider* pCollider);
 	void					Remove_Collider(Collider* pCollider);
 	void					Remove_CheckCollider(Collider* pCollider);
 
 	void					Remove_CheckedColliderListAll();
+
 
 private :
 	vector<Collider*>		m_vecCollider;

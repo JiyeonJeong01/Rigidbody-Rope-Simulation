@@ -16,4 +16,9 @@ namespace MathHelper
 		vQuaternion = Vec4(q.x, q.y, q.z, q.w);
 	}
 
+	static bool Float_InRange(const float& fV, const float& fMin, const float& fMax)
+	{
+		return fV >= fMin && fV <= fMax;
+	}
+
 }

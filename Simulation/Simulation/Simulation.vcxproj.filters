@@ -138,6 +138,12 @@
     <ClInclude Include="PlaneCollider.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="Raycast.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulation.cpp">
@@ -199,6 +205,12 @@
     </ClCompile>
     <ClCompile Include="PlaneCollider.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Raycast.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Player.h"
 
+#include "Raycast.h"
 #include "Sphere.h"
 #include "Transform.h"
 #include "Rigidbody.h"
@@ -97,15 +98,29 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	}
 
 	// TEST
-	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
-		// m_pMesh->Set_Hilight(true);
 		m_pRigidbody->Add_Force({ 0.f, fSpeed, 0.f }, FORCE_MODE::IMPULSE);
 	}
 	if (GetAsyncKeyState('X') & 0x8000)
 	{
 		m_pRigidbody->Add_Torque({ 0.f, fSpeed, 0.f }, FORCE_MODE::FORCE);
 	}
+
+	// Raycast Å×½ºÆ®
+	if (GetAsyncKeyState('T') & 0x8000)
+	{
+		POINT	ptMouse{};
+		GetCursorPos(&ptMouse);
+		ScreenToClient(g_hWnd, &ptMouse);
+
+		RAYCAST_HIT hit;
+		static int iskdfjlsdkf = 0;
+		if (Raycast::Intersect_Ray(&hit, ptMouse))
+			printf("%d\n", iskdfjlsdkf++);
+	}
+
+
 	//else if (GetAsyncKeyState('Y') & 0x8000)
 	//{
 	//	m_pTransform->Rotate(AXIS_Y, 5.f);

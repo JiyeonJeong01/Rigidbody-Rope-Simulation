@@ -68,8 +68,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			if (!hAccelTable || !TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
+				_CrtCheckMemory();
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+				_CrtCheckMemory();
 			}
 		}
 		else

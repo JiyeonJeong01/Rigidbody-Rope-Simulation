@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -149,6 +150,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PlaneCollider.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Raycast.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Simulation.h" />
@@ -160,6 +162,7 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VectorHelper.h" />
     <ClInclude Include="VIBuffer.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
@@ -178,12 +181,14 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="PlaneCollider.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Raycast.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VIBuffer.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Simulation.rc" />

@@ -7,6 +7,8 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Ground.h"
+#include "Raycast.h"
+#include "Wall.h"
 
 MainApp::MainApp()
     : m_pGraphicDevice(nullptr), m_pGraphicDev(nullptr)
@@ -26,10 +28,21 @@ HRESULT MainApp::Ready_MainApp()
         return E_FAIL;
 
     InputSystem::GetInstance()->Ready_System();
+    Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
-    m_pPlayer = Player::Create(m_pGraphicDev);
-    //m_pEnemy = Enemy::Create(m_pGraphicDev);
-    m_pGround = Ground::Create(m_pGraphicDev);
+    Object* pPlayer = Player::Create(m_pGraphicDev);
+    Object* pEnemy = Enemy::Create(m_pGraphicDev);
+    Object* pGround1 = Ground::Create(m_pGraphicDev);
+    Wall* pWall1 = Wall::Create(m_pGraphicDev);
+    pWall1->Set_Position({ 5.f, 0.f, 6.f });
+    Wall* pWall2 = Wall::Create(m_pGraphicDev);
+    pWall2->Set_Position({ -5.f, 0.f, 6.f });
+
+    m_ObjectList.push_back(pPlayer);
+    m_ObjectList.push_back(pEnemy);
+    m_ObjectList.push_back(pGround1);
+    m_ObjectList.push_back(pWall1);
+    m_ObjectList.push_back(pWall2);
 
     return S_OK;
 }
@@ -39,27 +52,26 @@ int MainApp::Update_MainApp(const float& fTimeDelta)
     CollisionSystem::GetInstance()->Update_System();
     InputSystem::GetInstance()->Update_System();
 
-    m_pPlayer->Update_GameObject(fTimeDelta);
-   // m_pEnemy->Update_GameObject(fTimeDelta);
-    m_pGround->Update_GameObject(fTimeDelta);
+    for (auto* pObj : m_ObjectList)
+        pObj->Update_GameObject(fTimeDelta);
 
     return 0;
 }
 
 void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 {
-    m_pPlayer->LateUpdate_GameObject(fTimeDelta);
-    //m_pEnemy->LateUpdate_GameObject(fTimeDelta);
-    m_pGround->LateUpdate_GameObject(fTimeDelta);
+    for (auto* pObj : m_ObjectList)
+        pObj->LateUpdate_GameObject(fTimeDelta);
 }
 
 void MainApp::Render_MainApp()
 {
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f));
 
-    m_pPlayer->Render_GameObject();
-   //m_pEnemy->Render_GameObject();
-    m_pGround->Render_GameObject();
+    for (auto* pObj : m_ObjectList)
+        pObj->Render_GameObject();
+
+    Raycast::GetInstance()->Render_Ray();
 
     m_pGraphicDevice->Render_End();
 }
@@ -109,9 +121,8 @@ MainApp* MainApp::Create()
 void MainApp::Release()
 {
     // Objects
-    Safe_Release(m_pPlayer);
-    //Safe_Release(m_pEnemy);
-    Safe_Release(m_pGround);
+    for (auto* pObj : m_ObjectList)
+        Safe_Release(pObj);
 
     // Singleton
     CollisionSystem::DestroyInstance();

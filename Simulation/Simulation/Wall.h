@@ -1,16 +1,15 @@
 #pragma once
 #include "Object.h"
-#include "Transform.h"
 
 class Transform;
 class PlaneCollider;
 class Plane;
 
-class Ground : public Object
+class Wall : public Object
 {
 private:
-	Ground(LPDIRECT3DDEVICE9 pGraphicDevice);
-	~Ground() override;
+	Wall(LPDIRECT3DDEVICE9 pGraphicDevice);
+	~Wall() override;
 
 public:
 	HRESULT			Ready_GameObject();
@@ -22,12 +21,15 @@ public:
 	void					On_CollisionStay(const Collision& tCollision) override;
 	void					On_CollisionExit(const Collision& tCollision) override;
 
+	void					Set_Position(const Vec3& vPosition);
+
 private:
-	Transform*			m_pTransform;
-	PlaneCollider*	m_pCollider;
-	Plane*					m_pMesh;
+	Transform* m_pTransform;
+	PlaneCollider* m_pCollider;
+	Plane* m_pMesh;
 
 public:
-	static Ground* Create(LPDIRECT3DDEVICE9 pGraphicDevice);
+	static Wall* Create(LPDIRECT3DDEVICE9 pGraphicDevice);
 	void Release() override;
 };
+

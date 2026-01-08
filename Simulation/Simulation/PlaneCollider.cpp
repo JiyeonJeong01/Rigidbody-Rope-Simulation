@@ -9,6 +9,8 @@ PlaneCollider::PlaneCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Collider(pGraphicDev, pOwner)
 	, m_bInfinite(true)
 {
+	m_vDimension = {1.f, 1.f};
+	m_eColType = STATIC;
 }
 
 PlaneCollider::~PlaneCollider()
@@ -53,9 +55,16 @@ void PlaneCollider::Find_EquationOfPlane()
 	m_fD = -D3DXVec3Dot(&m_vNorm, &m_vPoint);
 }
 
-bool PlaneCollider::Is_OnPlane(const Vec3& vPoint) const
+bool PlaneCollider::Is_OnPlane(const Vec3& vPoint)
 {
-	return fabsf(Calculate_DistToPlane(vPoint)) < 1e-2f;
+	if (m_bInfinite)
+		return fabsf(Calculate_DistToPlane(vPoint)) < 1e-2f;
+	
+	Vec3 vDiff = Get_Transform()->Get_Position() - vPoint;
+	float fDist = D3DXVec3Length(&vDiff);
+
+	// TODO : 아 너무 힘들다 일단은 구로 변경해서 AABB 처리 했는데 RECT 로 바꿔야 함
+	return (fDist ) < m_vDimension.x * 0.5f;
 }
 
 float PlaneCollider::Calculate_DistToPlane(const Vec3& vPoint) const
@@ -69,6 +78,34 @@ Vec3 PlaneCollider::Calculate_DirToPlane(const Vec3& vPoint) const
 	Vec3 vProjectedPoint = vPoint - m_vNorm * Calculate_DistToPlane(vPoint);
 	Vec3 vDiff = vProjectedPoint - vPoint;
 	return VectorHelper::Get_Normalized(vDiff);
+}
+
+Vec3 PlaneCollider::Project_OnPlane(const Vec3& vPoint) const
+{
+	return Vec3();
+}
+
+const RECT_F& PlaneCollider::Get_Bound()
+{
+	if (m_eColType != STATIC)
+	{
+		Vec3 vPos = Get_Transform()->Get_Position();
+		Vec2 vHalfDim = m_vDimension * 0.5f;
+		m_tBound = {
+			vPos.x -= vHalfDim.x,
+			vPos.y += vHalfDim.y,
+			vPos.x += vHalfDim.x,
+			vPos.y -= vHalfDim.y,
+		};
+	}
+
+	return m_tBound;
+}
+
+void PlaneCollider::Set_Dimension(const Vec2& vDim)
+{
+	m_vDimension = vDim;
+	m_bInfinite = false;
 }
 
 PlaneCollider* PlaneCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)

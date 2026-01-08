@@ -25,3 +25,11 @@ typedef struct tagIndex32
 	unsigned long	 _2;
 
 }INDEX32;
+
+
+typedef struct tagRectFloat {
+	float left;
+	float top;
+	float right;
+	float bottom;
+}RECT_F;

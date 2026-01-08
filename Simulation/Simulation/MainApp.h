@@ -1,9 +1,7 @@
 #pragma once
 
 class GraphicDevice;
-class Player;
-class Enemy;
-class Ground;
+class Object;
 
 class MainApp
 {
@@ -24,10 +22,7 @@ private:
 private:
 	GraphicDevice*				m_pGraphicDevice;
 	LPDIRECT3DDEVICE9		m_pGraphicDev;
-
-	Player*							m_pPlayer;
-	Enemy*							m_pEnemy;
-	Ground*							m_pGround;
+	list<Object*>					m_ObjectList;
 
 public: 
 	static MainApp* Create();

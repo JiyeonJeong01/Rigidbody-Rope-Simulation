@@ -9,6 +9,9 @@
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "VectorHelper.h"
+#include "Raycast.h"
+
+#include "MathHelper.h"
 
 IMPLEMENT_SINGLETON(CollisionSystem)
 
@@ -22,6 +25,11 @@ CollisionSystem::~CollisionSystem()
 }
 
 void CollisionSystem::Update_System()
+{
+	Check_ObjectToObject();
+}
+
+void CollisionSystem::Check_ObjectToObject()
 {
 	Remove_CheckedColliderListAll();
 
@@ -50,7 +58,7 @@ void CollisionSystem::Update_System()
 
 			if (eCldr == CUBE && eClde == CUBE)
 			{
-				
+
 			}
 			else if (eCldr == SPHERE && eClde == SPHERE)
 			{
@@ -78,7 +86,7 @@ void CollisionSystem::Update_System()
 				}
 			}
 			else
-			{				
+			{
 				if (pCollider->Is_Contacted(pCollidee))
 				{
 					pCollider->Remove_ContactCollider(pCollidee);
@@ -157,6 +165,43 @@ bool CollisionSystem::Detect_SpherePlaneCollition(RESOLVE_INFO* tOut, SphereColl
 	pSphere->Get_Transform()->Translate(tOut->vN * tOut->fDepth);
 
 	return true;
+}
+
+bool CollisionSystem::Detect_Ray(tagRay* pRay)
+{
+	size_t iTotalColCnt = m_vecCollider.size();
+
+	for (int i = 0; i < iTotalColCnt; ++i)
+	{
+		if (m_vecCollider[i]->Get_GeometryType() == PLANE)
+		{
+			if (Detect_RayPlaneCollision(pRay, static_cast<PlaneCollider*>(m_vecCollider[i])))
+				return true;
+		}
+	}
+
+	return false;
+}
+
+bool CollisionSystem::Detect_RayPlaneCollision(struct tagRay* pRay, PlaneCollider* pPlane)
+{
+	Vec3 vRayOrigin = pRay->vOrigin;
+	Vec3 vRayDirection = pRay->vDiretion;
+
+	Vec3 vPlaneNorm = pPlane->Get_NormVector();
+	float fD = pPlane->Get_D();
+
+	if (D3DXVec3Dot(&vPlaneNorm, &vRayDirection) == 0)
+		return false;
+
+	float t = D3DXVec3Dot(&vPlaneNorm, &vRayOrigin) * -1.f / D3DXVec3Dot(&vPlaneNorm, &vRayDirection);
+
+	if (t < 0)
+		return false;
+
+	const Vec3 vHitPoint = vRayOrigin + vRayDirection * t;
+
+	return pPlane->Is_OnPlane(vHitPoint);
 }
 
 void CollisionSystem::Add_Collider(Collider* pCollider)

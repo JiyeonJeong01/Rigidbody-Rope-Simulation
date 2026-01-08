@@ -31,7 +31,7 @@ HRESULT Plane::Ready_Mesh(unsigned long dwColor, float fWidth, float fHeight)
 	m_pVIBuffer = VIBuffer::Create(m_pGraphicDevice, m_pOwner, tInfo);
 
 	VTXCOL* pDstVertices = nullptr;
-	INDEX16* pDstIndices = nullptr;
+	WORD* pDstIndices = nullptr;
 
 	m_pVIBuffer->Get_VertexBuffer()->Lock(0, 0, reinterpret_cast<void**>(&pDstVertices), 0);
 	m_pVIBuffer->Get_IndexBuffer()->Lock(0, 0, reinterpret_cast<void**>(&pDstIndices), 0);
@@ -43,25 +43,25 @@ HRESULT Plane::Ready_Mesh(unsigned long dwColor, float fWidth, float fHeight)
 
 	// 0: Left-Top
 	tmpVtx.vPosition = { vMin.x, vMax.y, 0.f };
-	pDstVertices[1] = tmpVtx;
+	pDstVertices[0] = tmpVtx;
 
 	// 1: Right-Top
 	tmpVtx.vPosition = { vMax.x, vMax.y, 0.f };
-	pDstVertices[2] = tmpVtx;
+	pDstVertices[1] = tmpVtx;
 
 	// 2: Right-Bottom
 	tmpVtx.vPosition = { vMax.x, vMin.y, 0.f };
-	pDstVertices[3] = tmpVtx;
+	pDstVertices[2] = tmpVtx;
 
 	// 3: Left-Bottom
 	tmpVtx.vPosition = { vMin.x, vMin.y, 0.f };
-	pDstVertices[0] = tmpVtx;
+	pDstVertices[3] = tmpVtx;
 
 	for (int i = 0; i < 4; ++i)
 		pDstVertices[i].dwColor = m_dwColor;
 
 	// Index-Buffer
-	const INDEX16 indices[6] = { 0, 1, 2, 0, 2, 3 };
+	const WORD indices[6] = { 0, 1, 2, 0, 2, 3 };
 
 	for (int i = 0; i < 6; ++i)
 		pDstIndices[i] = indices[i];
