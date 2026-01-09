@@ -20,6 +20,7 @@ public :
 	void Find_Dimension(); // m_vDimension과 m_vDimensionCenter를 구한다
 	void Find_Inertia();			//
 	void Find_ColliderRadius();
+	float Find_InvInertiaOfAxis(const Vec3& vAxis);
 
 	void Add_LinearImpulse(Vec3 vVel);		// m_fLinearVel += vVel
 	void Translate(const Vec3 vDeltaPos);
@@ -28,7 +29,7 @@ public :
 
 	Vec3 Acclerate_Gyro(const float& fTimeDelta);							// 회전 저항 행렬을 고려한 각 속도 구하기
 
-	void Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMassVal); // m_fLinearVel, m_fAngularVel 반영
+	void Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos); // m_fLinearVel, m_fAngularVel 반영
 	void Add_Force(Vec3 vImpulse, FORCE_MODE eForce);
 	void Add_Torque(Vec3 vImpulse, FORCE_MODE eForce);
 
@@ -57,6 +58,7 @@ public:
 
 	void Set_Mass(const float& fMass) { m_fMass = fMass; m_fMassI = 1.f/m_fMass; }
 	float Get_Mass() const { return m_fMass; }
+	float Get_InvMass() const { return m_fMassI; }
 
 	void Set_Drag(const float& fDrag) { m_fDrag = fDrag; }
 	float Get_Drag() const { return m_fDrag; }
@@ -67,11 +69,19 @@ public:
 	void Set_Gravity(const float& bGravity) { m_bGravity = bGravity; }
 	float Get_Gravity() const { return m_bGravity; }
 
+	void Set_Friction(const float&  fFriction) { m_fFriction = fFriction; }
+	const float& Get_Friction() const { return m_fFriction; }
+
+	const Vec3& Get_COM() { return m_vCOM; }
+
+	const float& Get_Restitution() { return m_fRestitution;  }
+
 private:
 	// ============ 멤버 변수 ============
 	float m_fMass, m_fMassI;				// 질량
 	float m_fDrag, m_fAngularDrag;	// 저항 
-	float m_fRestritution;						// 반발 계수
+	float m_fRestitution;						// 반발 계수
+	float m_fFriction;							// 마찰 계수
 	Matrix m_matInertiaTensor, m_matInertiaTensorInv; // 회전 저항 행렬과 역행렬
 
 	int m_iRotFreezeMask;			// 회전 잠금 축 마스크

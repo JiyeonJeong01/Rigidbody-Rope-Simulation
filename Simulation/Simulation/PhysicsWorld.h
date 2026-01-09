@@ -41,6 +41,7 @@ private :
 
 private:
 	vector<Collider*>		m_vecCollider;
+	const float m_fGravity = -9.81f;
 
 public :
 	void Release();

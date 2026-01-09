@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PhysicsWorld.h"
-
+class Rigidbody;
 class Solver
 {
 	Solver();
@@ -20,6 +20,7 @@ private :
 
 private :
 	const float m_fSloap = 0.001f;
+	Rigidbody* m_pStaticBody;
 
 public :
 	static Solver* Create();

@@ -5,9 +5,10 @@
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "DebugHelper.h"
+#include "VectorHelper.h"
 
 
-Solver::Solver()
+Solver::Solver(): m_pStaticBody(nullptr)
 {
 }
 
@@ -17,11 +18,14 @@ Solver::~Solver()
 
 HRESULT Solver::Ready_System()
 {
+	m_pStaticBody;
+
 	return S_OK;
 }
 
 void Solver::Solve_Contacts(CONTACT_INFO* pInfo)
 {
+	Solve_Impulse(pInfo);
 	Solve_Penetration(pInfo);
 }
 
@@ -30,148 +34,115 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	if (Is_Seperating(pInfo))
 		return;
 
-	// 상대 속도 구하기
-	/*
-		Vector3D vCldrP0 = collider->getVelocityOfPoint(colPoint);
-		Vector3D vCldeP0 = collidee->getVelocityOfPoint(colPoint);
-		Vector3D velRel = vCldeP0.sub(vCldrP0);
-	 */
+	Collider* A = pInfo->A;
+	Collider* B = pInfo->B;
+	Rigidbody* aBody = A->Get_Rigidbody();
+	Rigidbody* bBody = B->Get_Rigidbody();
+	Vec3 vPoint = pInfo->vPoint;					// 충돌 지점 
+	Vec3 vNorm = pInfo->vPenetrateN_A;	// A가 B로 침범하는 방향
 
-	
+	// 충돌 지점에서의 속도 구하기
+	const Vec3 vVel_A = aBody->Get_PointVelocity(vPoint);
+	const Vec3 vVel_B = bBody->Get_PointVelocity(vPoint);
 
-	// 충돌 지점에서 COM 으로의 벡터 구하기
-	/*
-	 	Vector3D rClde(collidee->getCenterOfMass(), colPoint);
-		Vector3D rCldr(collider->getCenterOfMass(), colPoint);
-	 */
+	// B가 A에 대해 움직이는 상대속도
+	Vec3 vVel_Rel = vVel_B - vVel_A; 
+
+	// 충돌 지점에서 COM 으로의 벡터 r 구하기
+	Vec3 vR_A = vPoint - aBody->Get_COM();
+	Vec3 vR_B = vPoint - bBody->Get_COM();
 
 	// COM과 노말 외적해서 임펄스 회전 축 구하기
-	/*
-		Vector3D jRotAxisCldr = rCldr.crossProduct(nV);
-		Vector3D jRotAxisClde = rClde.crossProduct(nV);
-	 */
+	Vec3 vJAxis_A = VectorHelper::CrossProduct(vR_A, vNorm);
+	Vec3 vJAxis_B = VectorHelper::CrossProduct(vR_B, vNorm);
 
-	// 해당 회전 축에 대한 회전 저항(관성)의 역수 구하기
-	/*
-		double invIClde = collidee->findInverseInertiaOfAxis(jRotAxisClde);
-		double invICldr = collider->findInverseInertiaOfAxis(jRotAxisCldr);
-	 */
+	// 해당 축에 대한 회전 저항(관성)의 역수 구하기 : 해당 축을 기준으로 얼마나 회전하는지 
+	const float fInvInertia_A = aBody->Find_InvInertiaOfAxis(vJAxis_A);
+	const float fInvInertia_B = bBody->Find_InvInertiaOfAxis(vJAxis_B);
 
-	// 노말에 대한 속도 구하기
-	/*
-	 	double normVel = nV.dotProduct(velRel);
-	 */
+	// 법선 벡터에 대한 상대 속도 구하기 : 상대속도를 법선 방향으로 투영한 스칼라 값
+	float fVel_Norm = VectorHelper::DotProduct(vNorm, vVel_Rel);
 
-	// 노말과 COM 외적하기
-	/*
-	 	Vector3D rCldeXn = rClde.crossProduct(nV);
-		Vector3D rCldrXn = rCldr.crossProduct(nV);
-	 */
-
-	// 노말 방향으로의 상대 속도 구하기
-	/*
-	 	double numerator = -(restitution + 1) * normVel;
-	 */
-
+	// 법선 방향으로의 상대 속도 구하기
+	// 반발계수 e : 접근하던 속도의 e배만큼 반대 방향으로 튕겨 나오게 한다
+	const float fThreshold = 9.81f / 2.25f;
+	float fRestitution = (fabsf(fVel_Norm) < fThreshold) ? 0.f : aBody->Get_Restitution();
+	float fNumerator = -(fRestitution + 1) * fVel_Norm;
 
 	// 충돌에 대한 저항값 구하기
-	// (1/mA + 1/mB)
-	/*
-	 	double denomenator = (collider->getInverseMass() + collidee->getInverseMass() + rCldrXn.getMagnitudeSquared() * invICldr + rCldeXn.getMagnitudeSquared() * invIClde);
-	 */
+	// 임펄스 1이 속도를 얼마나 바꾸는지, 같은 임펄스를 줬을 때 얼마나 저항하는지
+	// 이 충돌에서 임펄스 1을 줬을 때, 선형 + 회전까지 포함해서 노멀 상대속도가 얼마나 변하는가
+	float fMagSq_J_A = VectorHelper::DotProduct(vJAxis_A, vJAxis_A);
+	float fMagSq_J_B = VectorHelper::DotProduct(vJAxis_B, vJAxis_B);
+	float fDenominator = aBody->Get_InvMass() + bBody->Get_InvMass() + fMagSq_J_A * fInvInertia_A + fMagSq_J_B * fInvInertia_B;
 
-	// j = numerator / denominator
-	/*
-	 	double impulseMagnitude = abs(numerator / denomenator);
-		Vector3D impulse = nV.multiply(impulseMagnitude);
-	 */
+	// impulse = numerator / denominator
+	float fJ = fNumerator / fDenominator;
 
-	// 노멀 임펄스(반발) 계산한 다음, 접촉점에서 미끄러지는 방향
-	// 점선 방향 k 만들기
-	/*
-		Vector3D velParralel = nV.multiply(normVel);
-		Vector3D k = velRel.sub(velParralel);
-	 */
+	//DebugHelper::Print_Float(L"Norm Velocity", fVel_Norm);
+	//DebugHelper::Print_Float(L"Numerator", fNumerator);
+	//DebugHelper::Print_Float(L"Denominator", fDenominator);
+	DebugHelper::Print_Float(L"Impulse", fJ);
 
-	// k = velRel - velParralel
-	//→ 상대속도에서 노멀 성분을 제거 = “접선 성분(미끄러지는 성분)”
-	//	즉, k는 접촉면을 따라 미끄러지는 방향(정확히는 벡터, 아직 단위벡터 아님)
-	/*
-		if (k.notZero()) {
-		k = k.getUnitVector();
-	 */
+	if (fJ < 0.f)
+		fJ = 0.f;
+	
+	Vec3 vImpulse = vNorm * fJ;
 
-	// 마찰 임펄스도 “충돌점 임펄스”라서 회전 항이 분모에 들어감
-	/*
-	  	jRotAxisCldr = rCldr.crossProduct(k);
-		jRotAxisClde = rClde.crossProduct(k);
-		invIClde = collidee->findInverseInertiaOfAxis(jRotAxisClde);
-		invICldr = collider->findInverseInertiaOfAxis(jRotAxisCldr);
-	 */
+	// 아래로 떨어지는 속도: 노멀 성분 (바닥을 파고듦)
+	Vec3 vVel_Parralel = vNorm * fVel_Norm;
 
-	//numerator: “접선 방향 상대속도를 0으로 만들고 싶다”
-	/*
-		 numerator = k.dotProduct(velRel);
-	 */
+	// 옆으로 미끄러지는 속도 : 접선 성분(마찰이 막아야 함)
+	// 상대속도에서 노멀 성분을 제거 = “접선 성분(미끄러지는 성분)”
+	Vec3 vVel_Tangent = vVel_Rel - vVel_Parralel;
+	Vec3 vJFriction = VectorHelper::Zero();
 
+	if (!VectorHelper::Is_Zero(vVel_Tangent))
+	{
+		vVel_Tangent = VectorHelper::Get_Normalized(vVel_Tangent);
 
-	// denominator: 접선 방향 “effective mass”
-	/*
-		Vector3D rCldrXk = rCldr.crossProduct(k);
-		Vector3D rCldeXk = rClde.crossProduct(k);
-		denomenator = (invMassA + invMassB
-		    + |rA×k|^2 * invIA
-		    + |rB×k|^2 * invIB);
-	 */
+		const Vec3 vTangentAxis_A = VectorHelper::CrossProduct(vR_A, vVel_Tangent);
+		const Vec3 vTangentAxis_B = VectorHelper::CrossProduct(vR_B, vVel_Tangent);
 
-	// 5) 마찰 임펄스 크기 계산 + 클램프
-	/*
-		double frictionImpMag = abs(numerator / denomenator);
-		double maxFriction = impulseMagnitude * collidee->getFriction();
-		if (frictionImpMag > maxFriction) frictionImpMag = maxFriction;
-		frictionImpulse = k.multiply(frictionImpMag);
-	 */
+		float fInvInertiaT_A = aBody->Find_InvInertiaOfAxis(vTangentAxis_A);
+		float fInvInertiaT_B = bBody->Find_InvInertiaOfAxis(vTangentAxis_B);
 
-	// 근데 현재 코드의 문제점 2개 (중요)
-	/*
-		frictionImpMag = abs(numerator / denomenator);
-		frictionImpulse = k * frictionImpMag;
+		float fMagSq_TAxis_A = VectorHelper::DotProduct(vTangentAxis_A, vTangentAxis_A);
+		float fMagSq_TAxis_B = VectorHelper::DotProduct(vTangentAxis_B, vTangentAxis_B);
 
-		-> 고치라고 한다
-		double vt = dot(velRel, k);
-		double jt = -vt / denom;
-		jt = clamp(jt, -mu * jn, +mu * jn);
-		frictionImpulse = k * jt;
-	 */
+		float fDenominatorT = aBody->Get_InvMass() + bBody->Get_InvMass() +
+												fMagSq_TAxis_A * fInvInertiaT_A +
+												fMagSq_TAxis_B * fInvInertiaT_B;
 
-	// Impulse가 Zero가 아니라면
-	/*
-	if (impulse.notZero()) {
-		collider->applyImpulseAtPosition(impulse, colPoint);
-		impulse = impulse.multiply(-1);
-		collidee->applyImpulseAtPosition(impulse, colPoint);
+		// 여기서 vVel_Tangent는 단위 t
+		float vt = VectorHelper::DotProduct(vVel_Rel, vVel_Tangent); 
+		float fImpulseT = -vt / fDenominatorT;
 
-		//collision history is meant to be used by outside classes to be able to know what physics
-		//stuff has taken place since their last checked
-		if (collider->trackingCollHistory()) {
-			collider->addToColHistory(collidee->getID(), impulseMagnitude);
-		}
-		if (collidee->trackingCollHistory()) {
-			collidee->addToColHistory(collider->getID(), impulseMagnitude);
-		}
+		float fMaxFriction = fJ * bBody->Get_Friction();
+		if (fImpulseT > fMaxFriction)
+			fImpulseT = fMaxFriction;
+		if (fImpulseT < -fMaxFriction) 
+			fImpulseT = -fMaxFriction;
+
+		vJFriction = vVel_Tangent * fImpulseT;
 	}
-	 */
 
-	// 마찰력이 Zero가 아니라면 
-	/*
-	 	if (frictionImpulse.notZero()) {
-		collider->applyImpulseAtPosition(frictionImpulse, colPoint);
-		frictionImpulse = frictionImpulse.multiply(-1);
-		collidee->applyImpulseAtPosition(frictionImpulse, colPoint);
-		double angVelAfter = collider->getAngularVelocity().getMagnitudeSquared();
+	if (!VectorHelper::Is_Zero(vImpulse))
+	{
+		vImpulse *= 0.2f;
+		aBody->Add_ImpulseAtPoint(vImpulse * -1.f, vPoint);
+		bBody->Add_ImpulseAtPoint(vImpulse, vPoint);
 	}
-	 */
 
+	if (!VectorHelper::Is_Zero(vJFriction))
+	{
+		vJFriction *= 0.2f;
+		aBody->Add_ImpulseAtPoint(vJFriction * -1.f, vPoint);
+		bBody->Add_ImpulseAtPoint(vJFriction, vPoint);
+
+		DebugHelper::Print_Vec3(L"Friction_A", vJFriction * -1.f);
+		DebugHelper::Print_Vec3(L"Friction_A", vJFriction);
+	}
 }
 
 void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
@@ -189,8 +160,6 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	if (fTotalInv < 0.f)
 		return;
 
-	//float fCorrected = fmaxf(0.f, pInfo->fDepth - m_fSloap);
-
 	if (pInfo->B->Get_ColType() == STATIC)
 	{
 		fInvB = 0.f;
@@ -200,17 +169,17 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	float fMoveA = pInfo->fDepth * (fInvA / fTotalInv);
 	float fMoveB = pInfo->fDepth * (fInvB / fTotalInv);
 
-	DebugHelper::Print_Vec3(L"Norm", pInfo->vN);
-	DebugHelper::Print_Float(L"MoveA", fMoveA);
-	DebugHelper::Print_Float(L"MoveB", fMoveB);
+	//DebugHelper::Print_Vec3(L"Norm", pInfo->vN);
+	//DebugHelper::Print_Float(L"MoveA", fMoveA);
+	//DebugHelper::Print_Float(L"MoveB", fMoveB);
 
 	if (fMoveA > 0.f)
-		pInfo->A->Get_Transform()->Translate(pInfo->vN * fMoveA);
+		pInfo->A->Get_Transform()->Translate(pInfo->vN_PlaneB * fMoveA);
 
 	if (fMoveB > 0.f)
-		pInfo->B->Get_Transform()->Translate(pInfo->vN * fMoveB);
+		pInfo->B->Get_Transform()->Translate(pInfo->vN_PlaneA * fMoveB);
 
-	DebugHelper::Print_Vec3(L"Pos A", pInfo->A->Get_Transform()->Get_Position());
+	//DebugHelper::Print_Vec3(L"Pos A", pInfo->A->Get_Transform()->Get_Position());
 }
 
 float Solver::Get_InvMass(Collider* pCollider)
@@ -231,18 +200,26 @@ float Solver::Get_InvMass(Collider* pCollider)
 
 bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 {
-	// 두 개의 상대 속도를 가져와서,  노멀 벡터와 내적한 값이 양수면 멀어지는 중이다.
-	// 노멀은 A -> B 
-	Vec3 vVelA = pInfo->A->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
-	Vec3 vVelB= pInfo->B->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
+	// vResolveN_A : "A를 B에게서 멀어지게 하는 방향" (A separation direction)
+	// vRel = vB - vA : A 기준에서 본 B의 상대속도
+	Vec3 vA, vB;
+	if (pInfo->A->Get_ColType() == STATIC)
+		vA = VectorHelper::Zero();
+	else
+		vA = pInfo->A->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
 
-	Vec3 vVelRelative = vVelB - vVelA;
+	if (pInfo->B->Get_ColType() == STATIC)
+		vB = VectorHelper::Zero();
+	else 
+		vB = pInfo->B->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
 
-	if( D3DXVec3Dot(&vVelRelative, &pInfo->vN) > 0)
-	{
-		return true;
-	}
-	return false;
+	const Vec3 vRel = vB - vA;
+
+	// dot(vRel, vResolveN_A) < 0  => B가 -resolve 방향으로 움직임 => A와 B가 서로 멀어지는 중 (separating)
+	const float vn = VectorHelper::DotProduct(vRel, pInfo->vResolveN_A);
+	const float eps = 1e-4f;
+
+	return vn < -eps;
 }
 
 Solver* Solver::Create()

@@ -18,20 +18,21 @@ Enemy::~Enemy()
 
 HRESULT Enemy::Ready_GameObject()
 {
-	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 1.f, 10);
+	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 255), 1.f, 10);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
-	m_pTransform->Set_Position(2.f, 0.f, 1.f);
+	m_pTransform->Set_Position(3.f, 0.f, 0.f);
 
-	// m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
+	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
 
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
-
-	//m_pRigidbody->Set_Mass(10.f);
-	//m_pRigidbody->Set_Drag(0.5f);
-	//m_pRigidbody->Set_AngularDrag(5.f);
-	//m_pRigidbody->Set_GeometryType(SPHERE);
+	m_pRigidbody->Set_Mass(1.f);
+	m_pRigidbody->Set_Drag(0.5f);
+	m_pRigidbody->Set_AngularDrag(5.f);
+	m_pRigidbody->Set_Friction(1.f);
+	m_pRigidbody->Set_GeometryType(SPHERE);
+	m_pRigidbody->Set_Gravity(true);
 
 	return S_OK;
 }
@@ -53,6 +54,24 @@ void Enemy::Render_GameObject()
 {
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
+}
+
+void Enemy::On_CollisionEnter(const Collision& tCollision)
+{
+	Object::On_CollisionEnter(tCollision);
+}
+
+void Enemy::On_CollisionStay(const Collision& tCollision)
+{
+	Object::On_CollisionStay(tCollision);
+
+	m_pMesh->Set_Hilight(true);
+}
+
+void Enemy::On_CollisionExit(const Collision& tCollision)
+{
+	Object::On_CollisionExit(tCollision);
+	m_pMesh->Set_Hilight(false);
 }
 
 Enemy* Enemy::Create(LPDIRECT3DDEVICE9 pGraphicDevice)

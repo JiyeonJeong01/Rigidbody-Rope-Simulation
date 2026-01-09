@@ -63,17 +63,9 @@ void Mesh::Render_Mesh()
 }
 
 
-void Mesh::Set_FillMode(FILL_MODE eMode)
+void Mesh::Set_FillMode(D3DFILLMODE eMode)
 {
-	switch (eMode)
-	{
-	case SOLID:
-		m_fillMode = D3DFILL_SOLID;
-		break;
-	case WIRE:
-		m_fillMode = D3DFILL_WIREFRAME;
-		break;
-	}
+	m_fillMode = eMode;
 }
 
 void Mesh::Release()

@@ -51,7 +51,7 @@ int Player::Update_GameObject(const float& fTimeDelta)
 
 	Object::Update_GameObject(fTimeDelta);
 
-	m_pCamera->Update_GameObject(fTimeDelta);
+	//m_pCamera->Update_GameObject(fTimeDelta);
 
 	return 0;
 }
@@ -61,10 +61,10 @@ void Player::LateUpdate_GameObject(const float& fTimeDelta)
 	Object::LateUpdate_GameObject(fTimeDelta);
 
 	Vec3 vPlayer = m_pTransform->Get_Position();
-	m_pCamera->Set_Position({ vPlayer.x, vPlayer.y + 3.f, vPlayer.z - 10.f });
+	m_pCamera->Set_Position({ vPlayer.x, vPlayer.y + 4.f, vPlayer.z - 12.f });
 	m_pCamera->LateUpdate_GameObject(fTimeDelta);
 
-	DebugHelper::Print_Vec3(L"Player", vPlayer);
+	//DebugHelper::Print_Vec3(L"Player", vPlayer);
 }
 
 void Player::Render_GameObject()
@@ -93,24 +93,24 @@ void Player::On_CollisionExit(const Collision& tCollision)
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)
 {
-	const float fSpeed = 20.f;
+	const float fSpeed = 30.f;
 
 	// »óÇÏ
-	if (GetAsyncKeyState('W') & 0x8000)
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed}, FORCE_MODE::FORCE);
 	}
-	else if (GetAsyncKeyState('S') & 0x8000)
+	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
 	}
 
 	// ÁÂ¿ì
-	if (GetAsyncKeyState('A') & 0x8000)
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
 	}
-	else if (GetAsyncKeyState('D') & 0x8000)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
 	}

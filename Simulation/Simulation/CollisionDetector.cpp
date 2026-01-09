@@ -99,29 +99,16 @@ bool CollisionDetector::Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollide
 
 	if (fRadiusSum < fDist)
 		return false;
+
 	pOut->A = pCollider;
 	pOut->B = pCollidee;
 
+	pOut->vResolveN_A = VectorHelper::Get_Normalized(pCollider->Get_Rigidbody()->Get_COM() - pCollidee->Get_Rigidbody()->Get_COM());
+	pOut->vPenetrateN_A = pOut->vResolveN_A * -1.f;
+	pOut->vPoint = vCldrPos - pOut->vResolveN_A * fCldrRadius;
+	pOut->vN_PlaneA = pCollider->Calculate_COMToPoint(pOut->vPoint);
+	pOut->vN_PlaneB = pCollidee->Calculate_COMToPoint(pOut->vPoint);
 	pOut->fDepth = fRadiusSum - fDist;
-	if (fDist < 1e-6f)
-		pOut->vN = Vec3(0.f, 1.f, 0.f); // 임의 축 또는 이전 프레임 normal
-	else
-		pOut->vN = vDiff / fDist;
-
-	pOut->vPoint = vCldrPos + pOut->vN * (fCldrRadius - pOut->fDepth * 0.5f);
-
-	// TODO : 솔버로 옮길 거 
-	//Vec3 vCldrVel, vCldeVel;
-
-	//if (pCollider->Get_ColType() != STATIC)
-	//	vCldrVel = pCollider->Get_Rigidbody()->Get_PointVelocity(pOut->vPoint);
-	//else
-	//	vCldrVel = VectorHelper::Zero();
-
-	//if (pCollidee->Get_ColType() != STATIC)
-	//	vCldeVel = pCollidee->Get_Rigidbody()->Get_PointVelocity(pOut->vPoint);
-	//else
-	//	vCldeVel = VectorHelper::Zero();
 
 	return true;
 }
@@ -131,7 +118,7 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	Vec3 vSpherePos = pSphere->Get_Transform()->Get_Position() + pSphere->Get_Offset();
 
 	// 평면 위에 투영된 원의 중심과 원의 중심 간의 거리 구하기
-	float fDistSphereToPlane = pPlane->Calculate_DistToPlane(vSpherePos);
+	float fDistSphereToPlane = pPlane->Calculate_SignedDistToPlane(vSpherePos);
 	float fAbsDist = fabsf(fDistSphereToPlane);
 	float fSphereRadius = pSphere->Get_Radius() * pSphere->Get_Scale();
 
@@ -141,12 +128,12 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	pOut->A = pSphere;
 	pOut->B = pPlane;
 
-	// NOTE !! 노멀 벡터를 뭘 써야할지 명확히 해야 한다.
-	// 1. 표면의 법선 벡터를 쓸지? 아니면 충돌한 방향을 정규화할지? 
-	//pOut->vN = pPlane->Calculate_DirToPlane(vSpherePos);
-	pOut->vN = pPlane->Get_NormVector();
-	pOut->vN = fDistSphereToPlane >= 0 ? pOut->vN : -pOut->vN;
-	pOut->vPoint = vSpherePos - pOut->vN * fSphereRadius;
+	// vResolveN_A : A를 B에게서 멀어지게 하는 법선 벡터 
+	pOut->vResolveN_A = pPlane->Calculate_ResolveDirFromPlane(vSpherePos);
+	pOut->vPenetrateN_A = pPlane->Calculate_PenetrationDirToPlane(vSpherePos);
+	pOut->vN_PlaneA = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
+	pOut->vN_PlaneB = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
+	pOut->vPoint = vSpherePos - pOut->vResolveN_A * fSphereRadius;
 	pOut->fDepth = fSphereRadius - fAbsDist;
 
 	return true;

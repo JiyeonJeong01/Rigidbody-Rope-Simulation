@@ -23,10 +23,27 @@ namespace VectorHelper
 		return vTmp;
 	}
 
+	static float Get_Length(const Vec3& vSrc)
+	{
+		return D3DXVec3Length(&vSrc);
+	}
+
 	static Vec3 CrossProduct(const Vec3& v1, const Vec3& v2)
 	{
 		Vec3 vTmp; 
 		D3DXVec3Cross(&vTmp, &v1, &v2);
+		return vTmp;
+	}
+
+	static float DotProduct(const Vec3& v1, const Vec3& v2)
+	{
+		return D3DXVec3Dot(&v1, &v2);
+	}
+
+	static Vec3 TransformNormal(Vec3* pVec, Matrix* pMat)
+	{
+		Vec3 vTmp;
+		D3DXVec3TransformNormal(&vTmp, pVec, pMat);
 		return vTmp;
 	}
 

@@ -6,7 +6,10 @@ typedef struct tagContactInfo
 {
 	Collider*			A;
 	Collider*			B;
-	Vec3					vN;
+	Vec3					vResolveN_A;		// A가 겹침을 해결하는 방향
+	Vec3					vPenetrateN_A;	// A가 침범하는 방향
+	Vec3					vN_PlaneA;
+	Vec3					vN_PlaneB;
 	Vec3					vPoint;
 	float					fDepth;
 }CONTACT_INFO;

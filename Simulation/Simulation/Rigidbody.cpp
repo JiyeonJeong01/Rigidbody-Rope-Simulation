@@ -9,7 +9,7 @@
 
 Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	, m_fMass(1.f), m_fMassI(1.f), m_fDrag(0.f), m_fAngularDrag(0.f),m_fRestritution(0.f)
+	, m_fMass(1.f), m_fMassI(1.f), m_fDrag(0.f), m_fAngularDrag(0.f),m_fRestitution(0.f)
 	, m_iRotFreezeMask(0), m_bStatic(false), m_bKinematic(false), m_bGravity(false)
 	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
@@ -133,6 +133,22 @@ void Rigidbody::Find_ColliderRadius()
 	// TODO : 콜라이더 구현 이후 
 }
 
+float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
+{
+	if (VectorHelper::Is_Zero(vAxis))
+		return 0.f; 
+
+	Vec3 vBaseAxis = VectorHelper::Get_Normalized(vAxis);
+
+	Matrix matR = m_pTransform->Get_RotationMat();
+	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
+	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR; // R * Inverse(I_Local) * Transpose(R) * v
+
+	Vec3 vInvAxis = VectorHelper::TransformNormal(&vBaseAxis, &matInertiaInv);
+
+	return VectorHelper::DotProduct(vAxis, vInvAxis);
+}
+
 void Rigidbody::Add_LinearImpulse(Vec3 vVel)
 {
 	if (m_bStatic | m_bKinematic)
@@ -166,7 +182,7 @@ void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 
 	m_pTransform->Get_Info(AXIS_Z, &m_vLook);
 
-	DebugHelper::Print_Vec3(L"Rigidbody", m_pTransform->Get_Position());
+	//DebugHelper::Print_Vec3(L"Rigidbody", m_pTransform->Get_Position());
 }
 
 Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
@@ -189,7 +205,7 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 	return Vec3();
 }
 
-void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos, float fMass)
+void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos)
 {
 	if (m_bStatic || m_bKinematic)
 		return;
@@ -306,7 +322,7 @@ void Rigidbody::Apply_Gravity(const float& fTimeDelta)
 Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const
 {
 	Vec3 vComToPoint = vPoint - m_vCOM;
-	Vec3 vRot = *D3DXVec3Cross(&vRot, &m_vAngularVel, &vComToPoint);
+	Vec3 vRot = VectorHelper::CrossProduct(m_vAngularVel, vComToPoint);
 	return m_vLinearVel + vRot;
 }
 

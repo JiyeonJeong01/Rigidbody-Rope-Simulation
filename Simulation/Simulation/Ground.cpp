@@ -19,6 +19,7 @@ Ground::~Ground()
 HRESULT Ground::Ready_GameObject()
 {
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 20.f, 20.f);
+	m_pMesh->Set_FillMode(D3DFILL_SOLID);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_X, 90.f);
@@ -59,13 +60,13 @@ void Ground::On_CollisionStay(const Collision& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
-	m_pMesh->Set_Hilight(true);
+	//m_pMesh->Set_Hilight(true);
 }
 
 void Ground::On_CollisionExit(const Collision& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	m_pMesh->Set_Hilight(false);
+	//m_pMesh->Set_Hilight(false);
 }
 
 Ground* Ground::Create(LPDIRECT3DDEVICE9 pGraphicDevice)

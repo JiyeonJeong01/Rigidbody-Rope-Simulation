@@ -32,7 +32,7 @@ HRESULT MainApp::Ready_MainApp()
     Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
     Object* pPlayer = Player::Create(m_pGraphicDev);
-    //Object* pEnemy = Enemy::Create(m_pGraphicDev);
+    Object* pEnemy = Enemy::Create(m_pGraphicDev);
     Object* pGround1 = Ground::Create(m_pGraphicDev);
     //Wall* pWall1 = Wall::Create(m_pGraphicDev);
     //pWall1->Set_Position({ 5.f, 0.f, 6.f });
@@ -40,7 +40,7 @@ HRESULT MainApp::Ready_MainApp()
     //pWall2->Set_Position({ -5.f, 0.f, 6.f });
 
     m_ObjectList.push_back(pPlayer);
-    //m_ObjectList.push_back(pEnemy);
+    m_ObjectList.push_back(pEnemy);
     m_ObjectList.push_back(pGround1);
     //m_ObjectList.push_back(pWall1);
     //m_ObjectList.push_back(pWall2);
@@ -93,7 +93,7 @@ HRESULT MainApp::Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev)
 
     Matrix     matView, matProj;
 
-    Vec3   vEye = { 0.f, 5.f, -10.f };
+    Vec3   vEye = { 0.f, -3.f, -2.f };
     Vec3   vAt = { 0.f, 0.f, 0.f };
     Vec3   vUp = { 0.f, 1.f, 0.f };
 

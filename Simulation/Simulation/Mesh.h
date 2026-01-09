@@ -12,7 +12,7 @@ protected:
 public:
 	virtual void						Render_Mesh();
 
-	virtual void						Set_FillMode(FILL_MODE eMode);
+	virtual void						Set_FillMode(D3DFILLMODE eMode);
 	virtual void						Set_Hilight(bool bOn) { m_bHilight = bOn; }
 
 protected:

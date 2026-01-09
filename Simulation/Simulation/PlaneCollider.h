@@ -18,8 +18,9 @@ private :
 public:
 	GEOMETRY_TYPE		Get_GeometryType() override			{ return PLANE; }
 	bool								Is_OnPlane(const Vec3& vPoint);
-	float								Calculate_DistToPlane(const Vec3& vPoint) const;
-	Vec3								Calculate_DirToPlane(const Vec3& vPoint) const;
+	float								Calculate_SignedDistToPlane(const Vec3& vPoint) const;
+	Vec3								Calculate_PenetrationDirToPlane(const Vec3& vPoint) const;
+	Vec3								Calculate_ResolveDirFromPlane(const Vec3& vPoint) const;
 	Vec3								Project_OnPlane(const Vec3& vPoint) const;
 
 	bool								Get_IsInfinite() const							{ return m_bInfinite; }	
