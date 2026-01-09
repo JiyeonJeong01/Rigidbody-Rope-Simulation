@@ -14,8 +14,8 @@ typedef struct tagRay
 	Vec3 vDiretion;
 	float fMaxDist;
 	unsigned long dwDebugColor;
-
-	tagRay(Vec3 vO, Vec3 vD) : vOrigin(vO), vDiretion(vD), fMaxDist(100.f), dwDebugColor(0) {}
+	tagRay() {};
+	tagRay(Vec3 vO, Vec3 vD, float fDist, unsigned long dwColor) : vOrigin(vO), vDiretion(vD), fMaxDist(100.f), dwDebugColor(0) {}
 }RAY;
 
 class Raycast

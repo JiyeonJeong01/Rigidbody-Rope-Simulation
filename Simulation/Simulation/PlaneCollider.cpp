@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "PlaneCollider.h"
 #include "Object.h"
-#include "CollisionSystem.h"
+#include "CollisionDetector.h"
 #include "Transform.h"
 #include "VectorHelper.h"
 
@@ -26,10 +26,10 @@ HRESULT PlaneCollider::Ready_Component()
 
 int PlaneCollider::Update_Component(const float& fTimeDelta)
 {
-	if (m_eColType == DYNAMIC || m_eColType == KINEMATIC)
-	{
-		Find_EquationOfPlane();
-	}
+	//if (m_eColType == DYNAMIC || m_eColType == KINEMATIC)
+	//{
+	//	Find_EquationOfPlane();
+	//}
 	Find_EquationOfPlane();
 	return Collider::Update_Component(fTimeDelta);
 }
@@ -48,7 +48,7 @@ void PlaneCollider::Find_EquationOfPlane()
 	m_vPoint = pTransform->Get_Position();
 
 	// 법선 (월드 기준)
-	pTransform->Get_Info(AXIS_Z, &m_vNorm);
+	m_vNorm = pTransform->Get_RotationAxis(AXIS_Z);
 	D3DXVec3Normalize(&m_vNorm, &m_vNorm);
 
 	// ax + by + cz + d = 0
@@ -116,7 +116,7 @@ PlaneCollider* PlaneCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwn
 		Safe_Delete(pCol);
 	}
 
-	CollisionSystem::GetInstance()->Add_Collider(pCol);
+	PhysicsWorld::GetInstance()->Add_Collider(pCol);
 	pOwner->Add_Component(L"PlaneCollider", pCol);
 
 	return pCol;

@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 
+class Camera;
 class Transform;
 class Rigidbody;
 class SphereCollider;
@@ -26,6 +27,8 @@ private :
 	void					Handle_PlayerInput(const float& fTimeDelta);
 
 private :
+	Camera*										m_pCamera;
+
 	Transform*									m_pTransform;
 	Rigidbody*									m_pRigidbody;
 	SphereCollider*							m_pCollider;

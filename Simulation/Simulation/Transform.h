@@ -29,6 +29,7 @@ public:
 	void Set_Rotation(float fX, float fY, float fZ);
 	void Set_Rotation(const Vec3& vAngle);
 	const Vec3& Get_RotationEuler() { return m_vEuler; }
+	Vec3 Get_RotationAxis(AXIS eAxis);
 	const Vec4& Get_RotationQuat() { return m_vQuaternion; }
 	Matrix Get_RotationMat();
 

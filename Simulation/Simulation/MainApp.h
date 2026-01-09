@@ -12,6 +12,7 @@ public:	// 持失切, 社瑚切
 public:
 	HRESULT Ready_MainApp();
 	int		Update_MainApp(const float& fTimeDelta);
+	void		Fixed_Update(const float& fTimeDelta);
 	void		LateUpdate_MainApp(const float& fTimeDelta);
 	void		Render_MainApp();
 

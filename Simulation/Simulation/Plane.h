@@ -12,7 +12,6 @@ private:
 
 public:
 	HRESULT			Ready_Mesh(unsigned long dwColor, float fWidth, float fHeight);
-	void					Render_Mesh() override;
 
 private:
 	float					m_fWidth, m_fHeight;

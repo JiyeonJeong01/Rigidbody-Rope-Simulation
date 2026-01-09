@@ -22,14 +22,16 @@ HRESULT Enemy::Ready_GameObject()
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Set_Position(2.f, 0.f, 1.f);
+
+	// m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
+
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
-	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
 
-	m_pRigidbody->Set_Mass(10.f);
-	m_pRigidbody->Set_Drag(0.5f);
-	m_pRigidbody->Set_AngularDrag(5.f);
-	m_pRigidbody->Set_GeometryType(SPHERE);
+	//m_pRigidbody->Set_Mass(10.f);
+	//m_pRigidbody->Set_Drag(0.5f);
+	//m_pRigidbody->Set_AngularDrag(5.f);
+	//m_pRigidbody->Set_GeometryType(SPHERE);
 
 	return S_OK;
 }

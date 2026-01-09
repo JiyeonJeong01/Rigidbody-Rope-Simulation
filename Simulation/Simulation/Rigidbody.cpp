@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Rigidbody.h"
+
+#include "DebugHelper.h"
 #include "Object.h"
 #include "Transform.h"
 #include "VIBuffer.h"
@@ -163,6 +165,8 @@ void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 	}
 
 	m_pTransform->Get_Info(AXIS_Z, &m_vLook);
+
+	DebugHelper::Print_Vec3(L"Rigidbody", m_pTransform->Get_Position());
 }
 
 Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
@@ -303,7 +307,6 @@ Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const
 {
 	Vec3 vComToPoint = vPoint - m_vCOM;
 	Vec3 vRot = *D3DXVec3Cross(&vRot, &m_vAngularVel, &vComToPoint);
-	vRot = -vRot; // ¿Þ¼Õ ÁÂÇ¥°è·Î º¯°æ 
 	return m_vLinearVel + vRot;
 }
 

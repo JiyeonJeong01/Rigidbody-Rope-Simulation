@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "MainApp.h"
 #include "GraphicDevice.h"
-#include "CollisionSystem.h"
+#include "PhysicsWorld.h"
 #include "InputSystem.h"
 
 #include "Player.h"
@@ -27,41 +27,47 @@ HRESULT MainApp::Ready_MainApp()
     if (FAILED(Ready_Scene(m_pGraphicDev)))
         return E_FAIL;
 
+    PhysicsWorld::GetInstance()->Ready_System(m_pGraphicDev);
     InputSystem::GetInstance()->Ready_System();
     Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
     Object* pPlayer = Player::Create(m_pGraphicDev);
-    Object* pEnemy = Enemy::Create(m_pGraphicDev);
+    //Object* pEnemy = Enemy::Create(m_pGraphicDev);
     Object* pGround1 = Ground::Create(m_pGraphicDev);
-    Wall* pWall1 = Wall::Create(m_pGraphicDev);
-    pWall1->Set_Position({ 5.f, 0.f, 6.f });
-    Wall* pWall2 = Wall::Create(m_pGraphicDev);
-    pWall2->Set_Position({ -5.f, 0.f, 6.f });
+    //Wall* pWall1 = Wall::Create(m_pGraphicDev);
+    //pWall1->Set_Position({ 5.f, 0.f, 6.f });
+    //Wall* pWall2 = Wall::Create(m_pGraphicDev);
+    //pWall2->Set_Position({ -5.f, 0.f, 6.f });
 
     m_ObjectList.push_back(pPlayer);
-    m_ObjectList.push_back(pEnemy);
+    //m_ObjectList.push_back(pEnemy);
     m_ObjectList.push_back(pGround1);
-    m_ObjectList.push_back(pWall1);
-    m_ObjectList.push_back(pWall2);
+    //m_ObjectList.push_back(pWall1);
+    //m_ObjectList.push_back(pWall2);
 
     return S_OK;
 }
 
 int MainApp::Update_MainApp(const float& fTimeDelta)
 {
-    CollisionSystem::GetInstance()->Update_System();
-    InputSystem::GetInstance()->Update_System();
-
     for (auto* pObj : m_ObjectList)
         pObj->Update_GameObject(fTimeDelta);
 
     return 0;
 }
 
+void MainApp::Fixed_Update(const float& fTimeDelta)
+{
+
+}
+
 void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 {
     for (auto* pObj : m_ObjectList)
         pObj->LateUpdate_GameObject(fTimeDelta);
+
+    PhysicsWorld::GetInstance()->Update_System();
+    InputSystem::GetInstance()->Update_System();
 }
 
 void MainApp::Render_MainApp()
@@ -125,7 +131,7 @@ void MainApp::Release()
         Safe_Release(pObj);
 
     // Singleton
-    CollisionSystem::DestroyInstance();
+    PhysicsWorld::DestroyInstance();
     InputSystem::DestroyInstance();
     GraphicDevice::DestroyInstance();
 

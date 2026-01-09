@@ -1,14 +1,17 @@
 #include "pch.h"
 #include "Player.h"
 
+#include "Camera.h"
+#include "InputSystem.h"
 #include "Raycast.h"
 #include "Sphere.h"
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "SphereCollider.h"
+#include "DebugHelper.h"
 
 Player::Player(LPDIRECT3DDEVICE9 pGraphicDevice)
-	: Object(pGraphicDevice)
+	: Object(pGraphicDevice), m_pCamera(nullptr)
 	, m_pTransform(nullptr), m_pRigidbody(nullptr), m_pMesh(nullptr)
 {
 }
@@ -31,6 +34,14 @@ HRESULT Player::Ready_GameObject()
 	m_pRigidbody->Set_GeometryType(SPHERE);
 	m_pRigidbody->Set_Gravity(true);
 
+	Vec3 vEye = { 0.f, 5.f, -10.f };
+	Vec3 vAt = { 0.f, 0.f, 0.f };
+	Vec3 vUp = { 0.f, 1.f, 0.f };
+
+	m_pCamera = Camera::Create(m_pGraphicDevice,
+		&vEye, &vAt, &vUp,
+		D3DXToRadian(60.f), ((float)WINCX / WINCY), 0.1f, 1000.f);
+
 	return S_OK;
 }
 
@@ -40,6 +51,8 @@ int Player::Update_GameObject(const float& fTimeDelta)
 
 	Object::Update_GameObject(fTimeDelta);
 
+	m_pCamera->Update_GameObject(fTimeDelta);
+
 	return 0;
 }
 
@@ -47,6 +60,11 @@ void Player::LateUpdate_GameObject(const float& fTimeDelta)
 {
 	Object::LateUpdate_GameObject(fTimeDelta);
 
+	Vec3 vPlayer = m_pTransform->Get_Position();
+	m_pCamera->Set_Position({ vPlayer.x, vPlayer.y + 3.f, vPlayer.z - 10.f });
+	m_pCamera->LateUpdate_GameObject(fTimeDelta);
+
+	DebugHelper::Print_Vec3(L"Player", vPlayer);
 }
 
 void Player::Render_GameObject()
@@ -75,24 +93,24 @@ void Player::On_CollisionExit(const Collision& tCollision)
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)
 {
-	const float fSpeed = 10.f;
+	const float fSpeed = 20.f;
 
 	// »óÇÏ
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	if (GetAsyncKeyState('W') & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed}, FORCE_MODE::FORCE);
 	}
-	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	else if (GetAsyncKeyState('S') & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
 	}
 
 	// ÁÂ¿ì
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	if (GetAsyncKeyState('A') & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
 	}
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	else if (GetAsyncKeyState('D') & 0x8000)
 	{
 		m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
 	}
@@ -120,15 +138,47 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 			printf("%d\n", iskdfjlsdkf++);
 	}
 
+#pragma region DEBUGGING CAM
+	// »óÇÏ
+	if (GetAsyncKeyState('W') & 0x8000)
+	{
+		m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed }, FORCE_MODE::FORCE);
+	}
+	else if (GetAsyncKeyState('S') & 0x8000)
+	{
+		m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
+	}
+	// ÁÂ¿ì
+	if (GetAsyncKeyState('A') & 0x8000)
+	{
+		m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
+	}
+	else if (GetAsyncKeyState('D') & 0x8000)
+	{
+		m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
+	}
 
-	//else if (GetAsyncKeyState('Y') & 0x8000)
-	//{
-	//	m_pTransform->Rotate(AXIS_Y, 5.f);
-	//}
-	//else if (GetAsyncKeyState('Z') & 0x8000)
-	//{
-	//	m_pTransform->Rotate(AXIS_Z, 5.f);
-	//}
+	static bool bLock = true;
+	if (GetAsyncKeyState(VK_OEM_5) & 0x8000)
+	{
+		bLock = !bLock;
+	}
+	long lMouseMove;
+	if (!bLock)
+	{
+		if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_X))
+		{
+			m_pCamera->Rotate(AXIS::AXIS_Y, D3DXToRadian(lMouseMove / 0.5f));
+		}
+		if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_Y))
+		{
+			m_pCamera->Rotate(AXIS::AXIS_X, D3DXToRadian(lMouseMove / 0.5f));
+		}
+	}
+#pragma endregion
+
+
+
 }
 
 Player* Player::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
@@ -146,6 +196,7 @@ Player* Player::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
 void Player::Release()
 {
 	m_pMesh->Release();
+	m_pCamera->Release();
 
 	Object::Release();
 }

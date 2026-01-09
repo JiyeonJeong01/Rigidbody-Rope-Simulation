@@ -111,6 +111,21 @@ void Transform::Set_Rotation(const Vec3& vAngle)
 	MathHelper::Euler_ToQuaternion(m_vEuler, m_vQuaternion);
 }
 
+Vec3 Transform::Get_RotationAxis(AXIS eAxis)
+{
+	D3DXQUATERNION qRot(m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
+	Matrix	matRot;
+	D3DXMatrixRotationQuaternion(&matRot, &qRot);
+
+	if(eAxis == AXIS_X) 
+		return Vec3(matRot._11, matRot._12, matRot._13);
+	else if (eAxis == AXIS_Y)
+		return Vec3(matRot._21, matRot._22, matRot._23);
+	else if (eAxis ==AXIS_Z)
+		return Vec3(matRot._31, matRot._32, matRot._33);
+	return Vec3();
+}
+
 Matrix Transform::Get_RotationMat()
 {
 	Matrix R;

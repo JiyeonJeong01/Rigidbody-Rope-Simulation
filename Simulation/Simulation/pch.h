@@ -5,6 +5,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <dinput.h>
 
 #include <vector>
 #include <list>
@@ -34,7 +35,7 @@
 #endif
 
 extern HWND g_hWnd;
-
+extern HINSTANCE g_hInst;
 using namespace std;
 
 #endif //PCH_H

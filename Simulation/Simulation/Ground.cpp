@@ -18,14 +18,14 @@ Ground::~Ground()
 
 HRESULT Ground::Ready_GameObject()
 {
-	m_pMesh = Plane::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 10.f, 10.f);
+	m_pMesh = Plane::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 20.f, 20.f);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_X, 90.f);
-	m_pTransform->Set_Position({ 0.f, -2.f, 0.f });
+	m_pTransform->Set_Position({ 0.f, -4.f, 0.f });
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
-	m_pCollider->Set_Dimension({ 10.f, 10.f });
+	m_pCollider->Set_Dimension({ 20.f, 20.f });
 
 	return S_OK;
 }
@@ -40,6 +40,8 @@ int Ground::Update_GameObject(const float& fTimeDelta)
 void Ground::LateUpdate_GameObject(const float& fTimeDelta)
 {
 	Object::LateUpdate_GameObject(fTimeDelta);
+
+	Vec3 vGround = m_pTransform->Get_Position();
 }
 
 void Ground::Render_GameObject()

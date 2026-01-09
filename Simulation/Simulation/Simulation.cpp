@@ -7,16 +7,19 @@
 
 #define MAX_LOADSTRING 100
 
-HINSTANCE hInst;                             
+HINSTANCE g_hInst;                             
 WCHAR szTitle[MAX_LOADSTRING];          
 WCHAR szWindowClass[MAX_LOADSTRING];         
 HWND    g_hWnd;
 FILE* debug;
 
 // 프레임 관리
-constexpr double FIXED_DT = 1.f / 60.f;
+constexpr double FPS60_DT = 1.f / 60.f;
+constexpr double FIXED_DT = 0.02f;
 double fElapsedDT = 0.f;
+double fFixedElapsedDT = 0.f;
 double prevTime = GetTime();
+double prevFixedTime = GetTime();
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -58,6 +61,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 
 	double fDeltaTime = 0.f;
+	double fFixedTime = 0.f;
 
 	while (true)
 	{
@@ -68,10 +72,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			if (!hAccelTable || !TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
-				_CrtCheckMemory();
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-				_CrtCheckMemory();
 			}
 		}
 		else
@@ -79,19 +81,28 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			double currentTime = GetTime();
 			double dt = double(currentTime - prevTime);
 			prevTime = currentTime;
+			prevFixedTime = currentTime;
 
 			if (dt > 0.25f) dt = 0.25f;
 
 			fElapsedDT += dt;
+			fFixedElapsedDT += dt;
 
-			while (fElapsedDT >= FIXED_DT)
+			while (fElapsedDT >= FPS60_DT)
 			{
-				pMainApp->Update_MainApp(FIXED_DT);
-				pMainApp->LateUpdate_MainApp(FIXED_DT);
+				pMainApp->Update_MainApp(FPS60_DT);
+				pMainApp->LateUpdate_MainApp(FPS60_DT);
 				pMainApp->Render_MainApp();
 
-				fElapsedDT -= FIXED_DT;
+				fElapsedDT -= FPS60_DT;
+
+				if (fFixedElapsedDT >= FIXED_DT)
+				{
+					pMainApp->Fixed_Update(FIXED_DT);
+					fFixedElapsedDT -= FIXED_DT;
+				}
 			}
+
 		}
 	}
 
@@ -123,7 +134,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-	hInst = hInstance;
+	g_hInst = hInstance;
 
 	RECT rc{ 0,0, 800, 600 };
 
@@ -178,7 +189,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
