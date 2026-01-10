@@ -6,6 +6,7 @@ class Transform;
 class Rigidbody;
 class SphereCollider;
 class Sphere;
+class SpringJoint;
 
 class Player : public Object
 {
@@ -33,6 +34,7 @@ private :
 	Rigidbody*									m_pRigidbody;
 	SphereCollider*							m_pCollider;
 	Sphere*										m_pMesh;
+	SpringJoint*								m_pSpringJoint;
 
 public :
 	static Player* Create(LPDIRECT3DDEVICE9 pGraphicDevice);

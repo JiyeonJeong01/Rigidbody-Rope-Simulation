@@ -9,6 +9,7 @@
 #include "Rigidbody.h"
 #include "SphereCollider.h"
 #include "DebugHelper.h"
+#include "SpringJoint.h"
 
 Player::Player(LPDIRECT3DDEVICE9 pGraphicDevice)
 	: Object(pGraphicDevice), m_pCamera(nullptr)
@@ -29,10 +30,12 @@ HRESULT Player::Ready_GameObject()
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	m_pRigidbody->Set_Mass(10.f);
-	m_pRigidbody->Set_Drag(0.5f);
-	m_pRigidbody->Set_AngularDrag(5.f);
+	m_pRigidbody->Set_Drag(0.1f);
+	m_pRigidbody->Set_AngularDrag(0.1f);
 	m_pRigidbody->Set_GeometryType(SPHERE);
 	m_pRigidbody->Set_Gravity(true);
+
+	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 
 	Vec3 vEye = { 0.f, 5.f, -10.f };
 	Vec3 vAt = { 0.f, 0.f, 0.f };
@@ -93,6 +96,24 @@ void Player::On_CollisionExit(const Collision& tCollision)
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)
 {
+	static bool bPrev = false;
+	bool bCur = false;
+	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
+	{
+		bCur = true;
+
+		if (!bPrev && bCur)
+		{
+			m_pSpringJoint->Set_Active(true);
+			Vec3 vPos = m_pTransform->Get_Position();
+			m_pSpringJoint->Set_Anchor({ vPos.x, vPos.y + 3.f, vPos.z + 2.f });
+			m_pSpringJoint->Set_Damper(2.f);
+			m_pSpringJoint->Set_Spring(5.f);
+		}
+		
+	}
+	bPrev = bCur;
+
 	const float fSpeed = 30.f;
 
 	// ªÛ«œ

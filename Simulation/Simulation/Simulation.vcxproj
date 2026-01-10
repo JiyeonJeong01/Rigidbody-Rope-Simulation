@@ -161,6 +161,7 @@
     <ClInclude Include="Solver.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="SpringJoint.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="SpringJoint.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VIBuffer.cpp" />
     <ClCompile Include="Wall.cpp" />

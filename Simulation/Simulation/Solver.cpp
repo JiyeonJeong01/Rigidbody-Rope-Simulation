@@ -38,6 +38,10 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	Collider* B = pInfo->B;
 	Rigidbody* aBody = A->Get_Rigidbody();
 	Rigidbody* bBody = B->Get_Rigidbody();
+
+	if (!aBody || !bBody) // TODO : STATIC Collider를 위한 임시 코드
+		return;
+
 	Vec3 vPoint = pInfo->vPoint;					// 충돌 지점 
 	Vec3 vNorm = pInfo->vPenetrateN_A;	// A가 B로 침범하는 방향
 

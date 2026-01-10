@@ -159,6 +159,9 @@
     <ClInclude Include="DebugHelper.h">
       <Filter>헤더 파일\Helper</Filter>
     </ClInclude>
+    <ClInclude Include="SpringJoint.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulation.cpp">
@@ -235,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="Solver.cpp">
       <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="SpringJoint.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
