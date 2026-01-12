@@ -19,6 +19,7 @@ public:
 private:
 	HRESULT		Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev);
 	HRESULT		Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev);
+	HRESULT		Ready_Environment();
 
 private:
 	GraphicDevice*				m_pGraphicDevice;

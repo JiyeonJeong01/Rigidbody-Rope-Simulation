@@ -1,5 +1,7 @@
 #pragma once
 
+#include <random>
+
 #include "d3dx9.h"
 
 namespace MathHelper
@@ -19,6 +21,18 @@ namespace MathHelper
 	static bool Float_InRange(const float& fV, const float& fMin, const float& fMax)
 	{
 		return fV >= fMin && fV <= fMax;
+	}
+
+	static std::mt19937 m_gen(std::random_device{}());
+	static float Random_Float(const float& fMin, const float& fMax)
+	{
+		std::uniform_real_distribution<float> dist(fMin, fMax);
+		return dist(m_gen);
+	}
+	static int Random_Int(const int& iMin, const int& iMax)
+	{
+		std::uniform_real_distribution<float> dist(iMin, iMax);
+		return dist(m_gen);
 	}
 
 }

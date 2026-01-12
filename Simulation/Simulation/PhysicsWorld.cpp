@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Collider.h"
 #include "CollisionDetector.h"
+#include "Rigidbody.h"
 #include "Solver.h"
 
 IMPLEMENT_SINGLETON(PhysicsWorld)
@@ -23,7 +24,7 @@ HRESULT PhysicsWorld::Ready_System(LPDIRECT3DDEVICE9 pGraphicDevice)
 	m_pGraphicDevice = pGraphicDevice;
 
 	m_pCollisionDetector = CollisionDetector::Create();
-	m_pSolver = Solver::Create();
+	m_pSolver = Solver::Create(pGraphicDevice);
 
 	return S_OK;
 }

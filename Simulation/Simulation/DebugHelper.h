@@ -19,5 +19,10 @@ namespace DebugHelper
 	{
 		std::wcout << std::fixed << std::setprecision(2) << str << L" : "<< f << std::endl;
 	}
+
+	static void Print_String(const wchar_t* str)
+	{
+		std::wcout  << str << std::endl;
+	}
 }
 

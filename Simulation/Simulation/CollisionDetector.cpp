@@ -36,7 +36,6 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 {
 	// TODO !! 레이어 마스크 처리 
 
-
 	const auto& vecCollider = PhysicsWorld::GetInstance()->Get_Colliders();
 
 	size_t iTotalColCnt = vecCollider.size();
@@ -74,7 +73,10 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 			{
 				bOnCollision = Detect_SpherePlaneCollition(&tContact, static_cast<SphereCollider*>(pCollider), static_cast<PlaneCollider*>(pCollidee));
 			}
-
+			else if (eCldr == PLANE && eClde == SPHERE)
+			{
+				bOnCollision = Detect_SpherePlaneCollition(&tContact, static_cast<SphereCollider*>(pCollidee), static_cast<PlaneCollider*>(pCollider));
+			}
 
 			if (bOnCollision)
 			{
@@ -125,15 +127,24 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	if (fAbsDist > fSphereRadius)
 		return false;
 
+	Vec3 vDir = pPlane->Calculate_ResolveDirFromPlane(vSpherePos);
+	Vec3 vPoint = vSpherePos - vDir * fSphereRadius;
+
+	if (!pPlane->Get_IsInfinite())
+	{
+		if (!pPlane->Is_OnPlane(vPoint))
+			return false;
+	}
+
 	pOut->A = pSphere;
 	pOut->B = pPlane;
 
 	// vResolveN_A : A를 B에게서 멀어지게 하는 법선 벡터 
-	pOut->vResolveN_A = pPlane->Calculate_ResolveDirFromPlane(vSpherePos);
+	pOut->vResolveN_A = vDir;
 	pOut->vPenetrateN_A = pPlane->Calculate_PenetrationDirToPlane(vSpherePos);
 	pOut->vN_PlaneA = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
 	pOut->vN_PlaneB = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
-	pOut->vPoint = vSpherePos - pOut->vResolveN_A * fSphereRadius;
+	pOut->vPoint = vPoint;
 	pOut->fDepth = fSphereRadius - fAbsDist;
 
 	return true;

@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#include "VectorHelper.h"
+#include "MathHelper.h"
+#include "DebugHelper.h"
+
 #ifndef DBG_NEW 
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ ) 
 #define new DBG_NEW 

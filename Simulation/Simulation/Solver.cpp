@@ -8,7 +8,8 @@
 #include "VectorHelper.h"
 
 
-Solver::Solver(): m_pStaticBody(nullptr)
+Solver::Solver()
+	: m_pGraphicDevice(nullptr), m_pStaticBody(nullptr)
 {
 }
 
@@ -18,8 +19,6 @@ Solver::~Solver()
 
 HRESULT Solver::Ready_System()
 {
-	m_pStaticBody;
-
 	return S_OK;
 }
 
@@ -38,12 +37,22 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	Collider* B = pInfo->B;
 	Rigidbody* aBody = A->Get_Rigidbody();
 	Rigidbody* bBody = B->Get_Rigidbody();
-
-	if (!aBody || !bBody) // TODO : STATIC Collider를 위한 임시 코드
-		return;
-
 	Vec3 vPoint = pInfo->vPoint;					// 충돌 지점 
 	Vec3 vNorm = pInfo->vPenetrateN_A;	// A가 B로 침범하는 방향
+
+	if (!aBody)
+	{
+		return;
+		// 충돌 지점에서의 속도 구하기
+		//aBody = Create_StaticRigidbody();
+	}
+
+	if (!bBody)
+	{
+		return;
+		//bBody = Create_StaticRigidbody();
+	}
+
 
 	// 충돌 지점에서의 속도 구하기
 	const Vec3 vVel_A = aBody->Get_PointVelocity(vPoint);
@@ -186,6 +195,25 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	//DebugHelper::Print_Vec3(L"Pos A", pInfo->A->Get_Transform()->Get_Position());
 }
 
+void Solver::Solve_Friction(CONTACT_INFO* pInfo)
+{
+	if (Is_Seperating(pInfo))
+		return;
+
+	Collider* A = pInfo->A;
+	Collider* B = pInfo->B;
+	Rigidbody* aBody = A->Get_Rigidbody();
+	Rigidbody* bBody = B->Get_Rigidbody();
+
+
+
+}
+
+void Solver::Impulse_StaticCollider(Object* pObejct, Collider* pCollider)
+{
+}
+
+
 float Solver::Get_InvMass(Collider* pCollider)
 {
 	if (pCollider->Get_ColType() == STATIC)
@@ -226,7 +254,7 @@ bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 	return vn < -eps;
 }
 
-Solver* Solver::Create()
+Solver* Solver::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
 {
 	Solver* pInstance = new Solver();
 	if (FAILED(pInstance->Ready_System()))

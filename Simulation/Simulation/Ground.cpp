@@ -16,17 +16,18 @@ Ground::~Ground()
 {
 }
 
-HRESULT Ground::Ready_GameObject()
+HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY)
 {
-	m_pMesh = Plane::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 20.f, 20.f);
-	m_pMesh->Set_FillMode(D3DFILL_SOLID);
+	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
+	m_pMesh->Set_FillMode(D3DFILL_WIREFRAME);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_X, 90.f);
 	m_pTransform->Set_Position({ 0.f, -4.f, 0.f });
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
-	m_pCollider->Set_Dimension({ 20.f, 20.f });
+	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
+	m_pCollider->Set_IsInfinite(false);
 
 	return S_OK;
 }
@@ -69,11 +70,11 @@ void Ground::On_CollisionExit(const Collision& tCollision)
 	//m_pMesh->Set_Hilight(false);
 }
 
-Ground* Ground::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
+Ground* Ground::Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY)
 {
 	Ground* pGround = new Ground(pGraphicDevice);
 
-	if (FAILED(pGround->Ready_GameObject()))
+	if (FAILED(pGround->Ready_GameObject(dwColor, fSizeX, fSizeY)))
 	{
 		Safe_Delete(pGround);
 	}

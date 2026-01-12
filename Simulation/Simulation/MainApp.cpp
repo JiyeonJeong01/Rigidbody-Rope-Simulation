@@ -27,23 +27,18 @@ HRESULT MainApp::Ready_MainApp()
     if (FAILED(Ready_Scene(m_pGraphicDev)))
         return E_FAIL;
 
+    Ready_Environment();
+
     PhysicsWorld::GetInstance()->Ready_System(m_pGraphicDev);
     InputSystem::GetInstance()->Ready_System();
     Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
     Object* pPlayer = Player::Create(m_pGraphicDev);
-    Object* pEnemy = Enemy::Create(m_pGraphicDev);
-    Object* pGround1 = Ground::Create(m_pGraphicDev);
-    //Wall* pWall1 = Wall::Create(m_pGraphicDev);
-    //pWall1->Set_Position({ 5.f, 0.f, 6.f });
-    //Wall* pWall2 = Wall::Create(m_pGraphicDev);
-    //pWall2->Set_Position({ -5.f, 0.f, 6.f });
-
+    pPlayer->Get_Transform()->Set_Position(0.f, 10.f, 0.f);
     m_ObjectList.push_back(pPlayer);
-    m_ObjectList.push_back(pEnemy);
-    m_ObjectList.push_back(pGround1);
-    //m_ObjectList.push_back(pWall1);
-    //m_ObjectList.push_back(pWall2);
+
+    //Object* pEnemy = Enemy::Create(m_pGraphicDev);
+    //m_ObjectList.push_back(pEnemy);
 
     return S_OK;
 }
@@ -108,6 +103,30 @@ HRESULT MainApp::Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev)
 
 HRESULT MainApp::Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev)
 {
+
+    return S_OK;
+}
+
+HRESULT MainApp::Ready_Environment()
+{
+    int iCntX = 10;
+    int iCntZ = 10;
+    float fSizeX = 20;
+    float fSizeZ = 20;
+    float fStartX = iCntX * 0.5f * fSizeX;
+    float fStartZ = iCntZ * 0.5f * fSizeZ;
+    fStartX *= -1.f;
+    fStartZ *= -1.f;
+
+    for (unsigned int i = 0; i < iCntX; ++i)
+    {
+	    for (unsigned int j = 0; j < iCntZ; ++j)
+	    {
+            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
+            pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, -5.f, fStartZ + j * fSizeZ);
+            m_ObjectList.push_back(pGround);
+	    }
+    }
 
     return S_OK;
 }

@@ -32,7 +32,7 @@ HRESULT Rigidbody::Ready_Component()
 
 	Find_Dimension();
 	Find_Inertia();
-	Find_ColliderRadius();
+	Find_COM();
 
 	/*
 	* TODO : 회전 어떻게 적용할 건지 고민!
@@ -45,6 +45,7 @@ HRESULT Rigidbody::Ready_Component()
 
 int Rigidbody::Update_Component(const float& fTimeDelta)
 {
+	DebugHelper::Print_Vec3(L"Rigidbody - Before", m_pTransform->Get_Position());
 	m_vCOM = m_pTransform->Get_Position();
 
 	if (m_fDrag > 0.f)
@@ -58,6 +59,7 @@ int Rigidbody::Update_Component(const float& fTimeDelta)
 
 	Integrate_Transform(fTimeDelta);
 
+	DebugHelper::Print_Vec3(L"Rigidbody - After", m_pTransform->Get_Position());
 	return 0;
 }
 
@@ -128,9 +130,9 @@ void Rigidbody::Find_Inertia()
 	}
 }
 
-void Rigidbody::Find_ColliderRadius()
+void Rigidbody::Find_COM()
 {
-	// TODO : 콜라이더 구현 이후 
+	
 }
 
 float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
@@ -233,7 +235,7 @@ void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos)
 	m_vAngularVel += vDeltaW;
 }
 
-void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
+void Rigidbody::Add_Force(Vec3 vForce, FORCE_MODE eForce)
 {
 	if (m_bStatic || m_bKinematic)
 		return;
@@ -244,7 +246,7 @@ void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
 	case FORCE_MODE::FORCE :
 		{
 			// 질량을 고려하여 지속적으로 힘을 가한다.
-			vImpulse *= fTimeDelta;
+			vForce *= fTimeDelta;
 		}
 		break;
 	case FORCE_MODE::IMPULSE :
@@ -254,10 +256,10 @@ void Rigidbody::Add_Force(Vec3 vImpulse, FORCE_MODE eForce)
 		break;
 	}
 
-	m_vLinearVel += vImpulse * m_fMassI; // 선 속도 += (impulse / 질량)
+	m_vLinearVel += vForce * m_fMassI; // 선 속도 += (impulse / 질량)
 }
 
-void Rigidbody::Add_Torque(Vec3 vImpulse, FORCE_MODE eForce)
+void Rigidbody::Add_Torque(Vec3 vForce, FORCE_MODE eForce)
 {
 	if (m_bStatic || m_bKinematic)
 		return;
@@ -267,7 +269,7 @@ void Rigidbody::Add_Torque(Vec3 vImpulse, FORCE_MODE eForce)
 	{
 	case FORCE_MODE::FORCE:
 	{
-		vImpulse *= fTimeDelta;
+		vForce *= fTimeDelta;
 	}
 	break;
 	case FORCE_MODE::IMPULSE:
@@ -280,7 +282,7 @@ void Rigidbody::Add_Torque(Vec3 vImpulse, FORCE_MODE eForce)
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
 	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR;
 
-	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vImpulse, &matInertiaInv);
+	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vForce, &matInertiaInv);
 
 	m_vAngularVel += vDeltaW;
 }
@@ -324,6 +326,16 @@ Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const
 	Vec3 vComToPoint = vPoint - m_vCOM;
 	Vec3 vRot = VectorHelper::CrossProduct(m_vAngularVel, vComToPoint);
 	return m_vLinearVel + vRot;
+}
+
+void Rigidbody::Set_Mass(const float& fMass)
+{
+	m_fMass = fMass;
+
+	if (fMass == 0.f)
+		m_fMassI = 0.f;
+	else
+		m_fMassI = 1.f / m_fMass;
 }
 
 Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)

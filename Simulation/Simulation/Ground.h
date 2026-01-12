@@ -13,7 +13,7 @@ private:
 	~Ground() override;
 
 public:
-	HRESULT			Ready_GameObject();
+	HRESULT			Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY);
 	int					Update_GameObject(const float& fTimeDelta);
 	void					LateUpdate_GameObject(const float& fTimeDelta);
 	void					Render_GameObject();
@@ -28,6 +28,6 @@ private:
 	Plane*					m_pMesh;
 
 public:
-	static Ground* Create(LPDIRECT3DDEVICE9 pGraphicDevice);
+	static Ground* Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY);
 	void Release() override;
 };

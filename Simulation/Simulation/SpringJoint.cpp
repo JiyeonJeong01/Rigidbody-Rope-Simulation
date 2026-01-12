@@ -9,7 +9,8 @@
 
 SpringJoint::SpringJoint(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	, m_pRigidbody(nullptr), m_bActive(false)
+	  , m_pRigidbody(nullptr), m_fSpring(0), m_fDamper(0), m_fRestLength(0), m_fMinLength(0), m_fMaxLength(0),
+	  m_bActive(false)
 {
 }
 
@@ -57,7 +58,7 @@ int SpringJoint::Update_Component(const float& fTimeDelta)
 
 	// ===== Rigidbody¿¡ Èû Àû¿ë =====
 	m_pRigidbody->Add_Force(vForce, FORCE_MODE::FORCE);
-	DebugHelper::Print_Vec3(L"Spring", vForce);
+	// DebugHelper::Print_Vec3(L"Spring", vForce);
 
 	return Component::Update_Component(fTimeDelta);
 }

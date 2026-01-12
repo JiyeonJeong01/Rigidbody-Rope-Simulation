@@ -19,7 +19,7 @@ public :
 
 	void Find_Dimension(); // m_vDimension과 m_vDimensionCenter를 구한다
 	void Find_Inertia();			//
-	void Find_ColliderRadius();
+	void Find_COM();
 	float Find_InvInertiaOfAxis(const Vec3& vAxis);
 
 	void Add_LinearImpulse(Vec3 vVel);		// m_fLinearVel += vVel
@@ -30,8 +30,8 @@ public :
 	Vec3 Acclerate_Gyro(const float& fTimeDelta);							// 회전 저항 행렬을 고려한 각 속도 구하기
 
 	void Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos); // m_fLinearVel, m_fAngularVel 반영
-	void Add_Force(Vec3 vImpulse, FORCE_MODE eForce);
-	void Add_Torque(Vec3 vImpulse, FORCE_MODE eForce);
+	void Add_Force(Vec3 vForce, FORCE_MODE eForce);
+	void Add_Torque(Vec3 vForce, FORCE_MODE eForce);
 
 private :
 	void Apply_Drag(const float& fTimeDelta);
@@ -56,7 +56,7 @@ public:
 	void Set_GeometryType(GEOMETRY_TYPE eGeometry) { m_eGeometryType = eGeometry; }
 	GEOMETRY_TYPE Get_GeometryType() const { return m_eGeometryType; }
 
-	void Set_Mass(const float& fMass) { m_fMass = fMass; m_fMassI = 1.f/m_fMass; }
+	void Set_Mass(const float& fMass);
 	float Get_Mass() const { return m_fMass; }
 	float Get_InvMass() const { return m_fMassI; }
 
@@ -75,6 +75,7 @@ public:
 	const Vec3& Get_COM() { return m_vCOM; }
 
 	const float& Get_Restitution() { return m_fRestitution;  }
+	void Set_Restitution(const float& fRestitution) { m_fRestitution = fRestitution;  }
 
 private:
 	// ============ 멤버 변수 ============
