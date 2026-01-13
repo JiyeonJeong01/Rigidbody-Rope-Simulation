@@ -42,13 +42,13 @@ public:
 	Vec3								Get_PointVelocity(const Vec3& vPoint) const;
 
 	void								Set_LinearVelocity(const Vec3& vVel)						{ m_vLinearVel = vVel; }
-	const Vec3&				Get_LinearVelocity(const Vec3& vVel) const				{ return m_vLinearVel; }
+	const Vec3&							Get_LinearVelocity(const Vec3& vVel) const				{ return m_vLinearVel; }
 
 	void								Set_AngularVelocity(const Vec3 vVel)						{ m_vAngularVel = vVel; }
-	const Vec3&				Get_AngularVelocity(const Vec3 vVel) const				{ return m_vAngularVel; }
+	const Vec3&							Get_AngularVelocity(const Vec3 vVel) const				{ return m_vAngularVel; }
 
 	void								Set_GeometryType(GEOMETRY_TYPE eGeometry)	{ m_eGeometryType = eGeometry; }
-	GEOMETRY_TYPE		Get_GeometryType() const										 { return m_eGeometryType; }
+	GEOMETRY_TYPE						Get_GeometryType() const										 { return m_eGeometryType; }
 
 	void								Set_Mass(const float& fMass);
 	float								Get_Mass() const														{ return m_fMass; }
@@ -64,15 +64,15 @@ public:
 	float								Get_Gravity() const														{ return m_bGravity; }
 
 	void								Set_Friction(const float&  fFriction)							{ m_fFriction = fFriction; }
-	const float&					 Get_Friction() const													{ return m_fFriction; }
+	const float&						 Get_Friction() const													{ return m_fFriction; }
 
-	const Vec3&				Get_COM()																	{ return m_vCOM; }
+	const Vec3&							Get_COM();
 
-	const float&					Get_Restitution()														{ return m_fRestitution;  }
+	const float&						Get_Restitution()														{ return m_fRestitution;  }
 	void								Set_Restitution(const float& fRestitution)				{ m_fRestitution = max(min(fRestitution, 1.f), 0.f);  }
 
 	void								Set_ColType(COLLIDER_TYPE eColType);
-	COLLIDER_TYPE			Get_ColType() const													{ return m_eColType; }
+	COLLIDER_TYPE						Get_ColType() const													{ return m_eColType; }
 
 private:
 	// ============ ¸â¹ö º¯¼ö ============

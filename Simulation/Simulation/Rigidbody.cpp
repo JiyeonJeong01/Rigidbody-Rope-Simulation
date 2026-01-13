@@ -34,12 +34,6 @@ HRESULT Rigidbody::Ready_Component()
 	Find_Inertia();
 	Find_COM();
 
-	/*
-	* TODO : 회전 어떻게 적용할 건지 고민!
-	* 현재 VRAM의 버텍스 버퍼를 한 번 생성한 뒤 수정하지 않는 구조인데, 회전을 어떻게 적용하는가에 따라
-	* 원본 버텍스를 별도로 저장해야 할 수 있다. 
-	*/
-
 	return S_OK;
 }
 
@@ -49,7 +43,9 @@ int Rigidbody::Update_Component(const float& fTimeDelta)
 
 	if (m_eColType != DYNAMIC)
 		return 0;
-	DebugHelper::Print_Vec3(L"Before rb", m_pTransform->Get_Position());
+
+	if (m_bGravity)
+		Apply_Gravity(fTimeDelta);
 
 	if (m_fDrag > 0.f)
 		Apply_Drag(fTimeDelta);
@@ -57,12 +53,8 @@ int Rigidbody::Update_Component(const float& fTimeDelta)
 	if (m_fAngularDrag > 0.f)
 		Apply_AngularDrag(fTimeDelta);
 
-	if (m_bGravity)
-		Apply_Gravity(fTimeDelta);
-
 	Integrate_Transform(fTimeDelta);
 
-	DebugHelper::Print_Vec3(L"After rb", m_pTransform->Get_Position());
 	return 0;
 }
 
@@ -150,11 +142,11 @@ float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
 
 	Matrix matR = m_pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR; // R * Inverse(I_Local) * Transpose(R) * v
+	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT; // R * Inverse(I_Local) * Transpose(R) * v
 
 	Vec3 vInvAxis = VectorHelper::TransformNormal(&vBaseAxis, &matInertiaInv);
 
-	return VectorHelper::DotProduct(vAxis, vInvAxis);
+	return VectorHelper::DotProduct(vBaseAxis, vInvAxis);
 }
 
 void Rigidbody::Add_LinearImpulse(Vec3 vVel)
@@ -189,8 +181,6 @@ void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 	}
 
 	m_pTransform->Get_Info(AXIS_Z, &m_vLook);
-
-	//DebugHelper::Print_Vec3(L"Rigidbody", m_pTransform->Get_Position());
 }
 
 Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
@@ -218,15 +208,12 @@ void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos)
 	if (m_eColType != DYNAMIC)
 		return;
 
-	DebugHelper::Print_Vec3(L"Before Impulse", m_vLinearVel);
+	// 선 속도 += (impulse / 질량)
+	m_vLinearVel += vImpulse * m_fMassI; 
 
-	// ===== 1. Linear Velocity =====
-	m_vLinearVel += vImpulse * m_fMassI; // 선 속도 += (impulse / 질량)
-
-	DebugHelper::Print_Vec3(L"After Impulse", m_vLinearVel);
-
-	// ===== 2. Angular Velocity =====
-	Vec3 vR = vPos - m_vCOM; //  r = position - centerOfMass : 질량 중심에서 힘이 작용한 위치까지의 벡터
+	// 각 속도 += r x F
+	//  r = position - centerOfMass : 질량 중심에서 힘이 작용한 위치까지의 벡터
+	Vec3 vR = vPos - m_vCOM; 
 
 	if (VectorHelper::Is_NearlyZero(vR))
 		return;
@@ -348,6 +335,12 @@ void Rigidbody::Set_Mass(const float& fMass)
 		m_fMassI = 0.f;
 	else
 		m_fMassI = 1.f / m_fMass;
+}
+
+const Vec3& Rigidbody::Get_COM()
+{
+	m_vCOM = Get_Transform()->Get_Position();
+	return m_vCOM;
 }
 
 void Rigidbody::Set_ColType(COLLIDER_TYPE eColType)

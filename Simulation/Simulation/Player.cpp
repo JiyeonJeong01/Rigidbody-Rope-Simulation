@@ -30,7 +30,7 @@ HRESULT Player::Ready_GameObject()
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	m_pRigidbody->Set_ColType(DYNAMIC);
-	m_pRigidbody->Set_Mass(10.f);
+	m_pRigidbody->Set_Mass(1.f);
 	m_pRigidbody->Set_Drag(0.1f);
 	m_pRigidbody->Set_AngularDrag(0.1f);
 	m_pRigidbody->Set_GeometryType(SPHERE);
@@ -38,8 +38,8 @@ HRESULT Player::Ready_GameObject()
 	m_pRigidbody->Set_Restitution(0.3f);
 
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
-	m_pSpringJoint->Set_Damper(2.f);
-	m_pSpringJoint->Set_Spring(25.f);
+	m_pSpringJoint->Set_Damper(5.f);
+	m_pSpringJoint->Set_Spring(50.f);
 
 	Vec3 vEye = { 0.f, 5.f, -10.f };
 	Vec3 vAt = { 0.f, 0.f, 0.f };
@@ -54,14 +54,17 @@ HRESULT Player::Ready_GameObject()
 
 int Player::Update_GameObject(const float& fTimeDelta)
 {
-	Handle_PlayerInput(fTimeDelta);
 
+	Handle_PlayerInput(fTimeDelta);
+	Vec3 vPlayer = m_pTransform->Get_Position();
+	//DebugHelper::Print_Vec3(L"Pos Before Update", vPlayer);
 	Object::Update_GameObject(fTimeDelta);
+	vPlayer = m_pTransform->Get_Position();
+	//DebugHelper::Print_Vec3(L"Pos After Update", vPlayer);
 
 	m_pCamera->Update_GameObject(fTimeDelta);
 
 
-	Vec3 vPlayer = m_pTransform->Get_Position();
 	//DebugHelper::Print_Vec3(L"Update - Player", vPlayer);
 
 	return 0;
@@ -81,7 +84,7 @@ void Player::Render_GameObject()
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 
-	DebugHelper::Print_Vec3(L"After system", vPlayer);
+	DebugHelper::Print_Vec3(L"Pos After Solve Loop", vPlayer);
 }
 
 void Player::On_CollisionEnter(const Collision& tCollision)
@@ -108,7 +111,7 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	{
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
-		m_pSpringJoint->Set_Anchor({ vPos.x -10.f, vPos.y + 10.f, vPos.z + 5.f });
+		m_pSpringJoint->Set_Anchor({ vPos.x -10.f, vPos.y + 20.f, vPos.z + 15.f });
 	}
 
 	if (InputSystem::GetInstance()->Get_KeyUp('Q'))
@@ -120,7 +123,7 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
-		m_pSpringJoint->Set_Anchor({ vPos.x +10.f, vPos.y + 10.f, vPos.z + 5.f });
+		m_pSpringJoint->Set_Anchor({ vPos.x +10.f, vPos.y + 20.f, vPos.z + 15.f });
 	}
 
 	if (InputSystem::GetInstance()->Get_KeyUp('E'))
@@ -128,7 +131,7 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 		m_pSpringJoint->Set_Active(false);
 	}
 
-	const float fSpeed = 30.f;
+	const float fSpeed = 50.f;
 
 	// ªÛ«œ
 	if (GetAsyncKeyState(VK_UP) & 0x8000)

@@ -27,7 +27,8 @@ HRESULT MainApp::Ready_MainApp()
     if (FAILED(Ready_Scene(m_pGraphicDev)))
         return E_FAIL;
 
-    Ready_Environment();
+    Ready_Ground();
+    //Ready_Wall();
 
     PhysicsWorld::GetInstance()->Ready_System(m_pGraphicDev);
     InputSystem::GetInstance()->Ready_System();
@@ -77,7 +78,7 @@ void MainApp::Render_MainApp()
 
     m_pGraphicDevice->Render_End();
 
-    DebugHelper::Print_String(L"=================================");
+    //DebugHelper::Print_String(L"=================================");
 
 }
 
@@ -113,12 +114,12 @@ HRESULT MainApp::Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev)
     return S_OK;
 }
 
-HRESULT MainApp::Ready_Environment()
+HRESULT MainApp::Ready_Ground()
 {
     int iCntX = 10;
     int iCntZ = 10;
-    float fSizeX = 20;
-    float fSizeZ = 20;
+    float fSizeX = 200;
+    float fSizeZ = 200;
     float fStartX = iCntX * 0.5f * fSizeX;
     float fStartZ = iCntZ * 0.5f * fSizeZ;
     fStartX *= -1.f;
@@ -132,6 +133,30 @@ HRESULT MainApp::Ready_Environment()
             pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, -5.f, fStartZ + j * fSizeZ);
             m_ObjectList.push_back(pGround);
 	    }
+    }
+
+    return S_OK;
+}
+
+HRESULT MainApp::Ready_Wall()
+{
+    int iCntX = 2;
+    int iCntZ = 2;
+    float fSizeX = 100;
+    float fSizeZ = 100;
+    float fStartX = iCntX * 0.5f * fSizeX;
+    float fStartZ = iCntZ * 0.5f * fSizeZ;
+    fStartX *= -1.f;
+    fStartZ *= -1.f;
+
+    for (unsigned int i = 0; i < iCntX; ++i)
+    {
+        for (unsigned int j = 0; j < iCntZ; ++j)
+        {
+            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
+            pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, 0.f, fStartZ + j * fSizeZ);
+            m_ObjectList.push_back(pGround);
+        }
     }
 
     return S_OK;

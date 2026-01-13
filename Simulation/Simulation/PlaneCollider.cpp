@@ -63,8 +63,11 @@ bool PlaneCollider::Is_OnPlane(const Vec3& vPoint)
 	Vec3 vDiff = Get_Transform()->Get_Position() - vPoint;
 	float fDist = D3DXVec3Length(&vDiff);
 
-	// TODO : 아 너무 힘들다 일단은 구로 변경해서 AABB 처리 했는데 RECT 로 바꿔야 함
-	return (fDist ) < m_vDimension.x * 0.5f;
+	Vec3 vCenter = Get_Transform()->Get_Position();
+	bool bInBound = MathHelper::Float_InRange(vPoint.x, vCenter.x - m_vDimension.x * 0.5f, vCenter.x + m_vDimension.x * 0.5f)
+					&& MathHelper::Float_InRange(vPoint.z, vCenter.z - m_vDimension.y * 0.5f, vCenter.z + m_vDimension.y * 0.5f);
+
+	return bInBound;
 }
 
 float PlaneCollider::Calculate_SignedDistToPlane(const Vec3& vPoint) const

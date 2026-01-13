@@ -42,7 +42,10 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 
 	//DebugHelper::Print_String(L"================");
 	//DebugHelper::Print_Vec3(L"vNorm", vNorm);
+	//DebugHelper::Print_Float(L"vNorm length", VectorHelper::Get_Length(vNorm));
 	//DebugHelper::Print_Vec3(L"vPoint", vPoint);
+
+	
 
 	// 충돌 지점에서의 속도 구하기
 	Vec3 vVel_A = aBody->Get_PointVelocity(vPoint);
@@ -68,6 +71,8 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	// 충돌 중이므로 언제나 fVel_Norm < 0
 	float fVel_Norm = VectorHelper::DotProduct(vNorm, vVel_Rel);
 
+	//DebugHelper::Print_Float(L"vn dot", fVel_Norm);
+
 	// 반발계수 e : 접근하던 속도의 e배만큼 반대 방향으로 튕겨 나오게 한다
 	const float fThreshold = 9.81f / 5.1f;
 	float fRestitution = (fabsf(fVel_Norm) < fThreshold) ? 0.f : aBody->Get_Restitution();
@@ -81,10 +86,27 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	float fMagSq_J_B = VectorHelper::DotProduct(vJAxis_B, vJAxis_B);
 	float fDenominator = aBody->Get_InvMass() + bBody->Get_InvMass() + fMagSq_J_A * fInvInertia_A + fMagSq_J_B * fInvInertia_B;
 
+	//DebugHelper::Print_Float(L"a inv mass : ", aBody->Get_InvMass());
+	//DebugHelper::Print_Float(L"b inv mass : ", bBody->Get_InvMass());
+	//DebugHelper::Print_Vec3(L"point", vPoint);
+	//DebugHelper::Print_Vec3(L"rA", vR_A);
+	//DebugHelper::Print_Vec3(L"rB", vR_B);
+	//DebugHelper::Print_Vec3(L"com A", aBody->Get_COM());
+	//DebugHelper::Print_Vec3(L"com B", bBody->Get_COM());
+	//DebugHelper::Print_Float(L"fMagSq_J_A : ", fMagSq_J_A);
+	//DebugHelper::Print_Float(L"fMagSq_J_B : ", fMagSq_J_B);
+	//DebugHelper::Print_Float(L"=> denom : ", fDenominator);
+
+
+
 	// 충돌에 대한 저항값 구하기 : 법선 상대 속도를 구해야 한다 
 	// impulse = numerator / denominator
 	// j = (원하는 속도 변화량) / (물체의 저항)
 	float fJ = fNumerator / fDenominator;
+
+	//DebugHelper::Print_Float(L"denom", fDenominator);
+	//DebugHelper::Print_Float(L"J", fJ);
+
 
 	if (fJ < 0.f)
 		fJ = 0.f;
@@ -132,7 +154,7 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 
 	if (!VectorHelper::Is_Zero(vImpulse))
 	{
-		DebugHelper::Print_Vec3(L"Impulse", vImpulse * -1.f);
+		//DebugHelper::Print_Vec3(L"Impulse", vImpulse * -1.f);
 
 		aBody->Add_ImpulseAtPoint(vImpulse * -1.f, vPoint);
 		//bBody->Add_ImpulseAtPoint(vImpulse, vPoint);
@@ -143,6 +165,15 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 		//aBody->Add_ImpulseAtPoint(vJFriction * -1.f, vPoint);
 		//bBody->Add_ImpulseAtPoint(vJFriction, vPoint);
 	}
+
+	Vec3 vLinVel = aBody->Get_LinearVelocity(aBody->Get_COM());
+	if (vLinVel.y < 1e-5f)
+	{
+		vLinVel.y = 0.f;
+		aBody->Set_LinearVelocity(vLinVel);
+	}
+
+
 }
 
 void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
@@ -150,14 +181,20 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	if (pInfo == nullptr || pInfo->A == nullptr || pInfo->B == nullptr)
 		return;
 
+
+
 	if (pInfo->fDepth <= 0.f)
-		return;
+	{
+		DebugHelper::Print_Float(L"fDepth < 0", pInfo->fDepth);
+
+				return;
+	}
 
 	float fInvA = Get_InvMass(pInfo->A);
 	float fInvB = Get_InvMass(pInfo->B);
 
 	float fTotalInv = fInvA + fInvB;
-	if (fTotalInv < 0.f)
+	if (fTotalInv <= 0.f)
 		return;
 
 	if (pInfo->B->Get_ColType() == STATIC)
@@ -170,7 +207,9 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	float fMoveB = pInfo->fDepth * (fInvB / fTotalInv);
 
 	if (fabsf(fMoveA) > 0.f)
+	{
 		pInfo->A->Get_Transform()->Translate(pInfo->vResolveN_A * fMoveA);
+	}
 
 	if (fabsf(fMoveB) > 0.f)
 		pInfo->B->Get_Transform()->Translate(pInfo->vN_PlaneA * fMoveB);

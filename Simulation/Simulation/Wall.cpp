@@ -18,14 +18,18 @@ Wall::~Wall()
 {
 }
 
-HRESULT Wall::Ready_GameObject()
+HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY)
 {
-	m_pMesh = Plane::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 0, 255), 10.f, 10.f);
+	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
+	m_pTransform->Rotate(AXIS_Y, 90.f);
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
 	m_pCollider->Set_Dimension({ 10.f, 10.f });
+
+	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
+	m_pRigidbody->Set_ColType(STATIC);
 
 	return S_OK;
 }
@@ -71,12 +75,11 @@ void Wall::Set_Position(const Vec3& vPosition)
 	Get_Transform()->Set_Position(vPosition);
 }
 
-
-Wall* Wall::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
+Wall* Wall::Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY)
 {
 	Wall* pWall = new Wall(pGraphicDevice);
 
-	if (FAILED(pWall->Ready_GameObject()))
+	if (FAILED(pWall->Ready_GameObject(dwColor, fSizeX, fSizeY)))
 	{
 		Safe_Delete(pWall);
 	}

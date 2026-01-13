@@ -172,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		HWND hConsole = GetConsoleWindow();
 		MoveWindow(hConsole, 0, 0, 600, 800, TRUE);
-		MoveWindow(hWnd, 600, 0, WINCX, WINCY, TRUE);
+		MoveWindow(hWnd, 800, 50, WINCX, WINCY, TRUE);
 	}
 	break;
 

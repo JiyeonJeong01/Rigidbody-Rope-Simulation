@@ -12,7 +12,7 @@ private:
 	~Wall() override;
 
 public:
-	HRESULT			Ready_GameObject();
+	HRESULT			Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY);
 	int					Update_GameObject(const float& fTimeDelta);
 	void					LateUpdate_GameObject(const float& fTimeDelta);
 	void					Render_GameObject();
@@ -24,12 +24,13 @@ public:
 	void					Set_Position(const Vec3& vPosition);
 
 private:
-	Transform* m_pTransform;
-	PlaneCollider* m_pCollider;
-	Plane* m_pMesh;
+	Transform*		m_pTransform;
+	PlaneCollider*	m_pCollider;
+	Plane*			m_pMesh;
+	Rigidbody*		m_pRigidbody;
 
 public:
-	static Wall* Create(LPDIRECT3DDEVICE9 pGraphicDevice);
+	static Wall* Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY);
 	void Release() override;
 };
 

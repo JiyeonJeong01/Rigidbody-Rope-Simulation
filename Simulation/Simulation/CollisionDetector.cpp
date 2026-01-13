@@ -117,18 +117,22 @@ bool CollisionDetector::Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollide
 
 bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pSphere, PlaneCollider* pPlane)
 {
-	Vec3 vSpherePos = pSphere->Get_Transform()->Get_Position() + pSphere->Get_Offset();
+	Vec3 vSphereCom = pSphere->Get_Rigidbody()->Get_COM();
 
 	// 평면 위에 투영된 원의 중심과 원의 중심 간의 거리 구하기
-	float fDistSphereToPlane = pPlane->Calculate_SignedDistToPlane(vSpherePos);
+	float fDistSphereToPlane = pPlane->Calculate_SignedDistToPlane(vSphereCom);
 	float fAbsDist = fabsf(fDistSphereToPlane);
 	float fSphereRadius = pSphere->Get_Radius() * pSphere->Get_Scale();
 
 	if (fAbsDist > fSphereRadius)
+	{
 		return false;
+	}
 
-	Vec3 vDir = pPlane->Calculate_ResolveDirFromPlane(vSpherePos);
-	Vec3 vPoint = vSpherePos - vDir * fSphereRadius;
+	// TODO : 여기 수정 
+	Vec3 vDir = pPlane->Calculate_ResolveDirFromPlane(vSphereCom);
+	Vec3 vPoint = vSphereCom;
+	vPoint.y = pPlane->Get_Rigidbody()->Get_COM().y;
 
 	if (!pPlane->Get_IsInfinite())
 	{
@@ -140,8 +144,8 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	pOut->B = pPlane;
 
 	// vResolveN_A : A를 B에게서 멀어지게 하는 법선 벡터 
-	pOut->vResolveN_A = vDir;
-	pOut->vPenetrateN_A = pPlane->Calculate_PenetrationDirToPlane(vSpherePos);
+	pOut->vResolveN_A = VectorHelper::Get_Normalized(vDir);
+	pOut->vPenetrateN_A = VectorHelper::Get_Normalized(pPlane->Calculate_PenetrationDirToPlane(vSphereCom));
 	pOut->vN_PlaneA = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
 	pOut->vN_PlaneB = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
 	pOut->vPoint = vPoint;
