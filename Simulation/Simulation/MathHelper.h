@@ -34,5 +34,10 @@ namespace MathHelper
 		std::uniform_real_distribution<float> dist(iMin, iMax);
 		return dist(m_gen);
 	}
+	template<typename T>
+	static T Max_Value()
+	{
+		return 	std::numeric_limits<T>::infinity();
+	}
 
 }

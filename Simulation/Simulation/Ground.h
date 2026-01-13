@@ -5,6 +5,7 @@
 class Transform;
 class PlaneCollider;
 class Plane;
+class Rigidbody;
 
 class Ground : public Object
 {
@@ -26,6 +27,7 @@ private:
 	Transform*			m_pTransform;
 	PlaneCollider*	m_pCollider;
 	Plane*					m_pMesh;
+	Rigidbody*			m_pRigidbody;
 
 public:
 	static Ground* Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY);

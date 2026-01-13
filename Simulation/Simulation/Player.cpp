@@ -29,12 +29,13 @@ HRESULT Player::Ready_GameObject()
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
+	m_pRigidbody->Set_ColType(DYNAMIC);
 	m_pRigidbody->Set_Mass(10.f);
 	m_pRigidbody->Set_Drag(0.1f);
 	m_pRigidbody->Set_AngularDrag(0.1f);
 	m_pRigidbody->Set_GeometryType(SPHERE);
 	m_pRigidbody->Set_Gravity(true);
-	m_pRigidbody->Set_Restitution(5.f);
+	m_pRigidbody->Set_Restitution(0.3f);
 
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 	m_pSpringJoint->Set_Damper(2.f);
@@ -61,7 +62,7 @@ int Player::Update_GameObject(const float& fTimeDelta)
 
 
 	Vec3 vPlayer = m_pTransform->Get_Position();
-	DebugHelper::Print_Vec3(L"Update - Player", vPlayer);
+	//DebugHelper::Print_Vec3(L"Update - Player", vPlayer);
 
 	return 0;
 }
@@ -80,8 +81,7 @@ void Player::Render_GameObject()
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 
-	DebugHelper::Print_Vec3(L"Render - Player", vPlayer);
-
+	DebugHelper::Print_Vec3(L"After system", vPlayer);
 }
 
 void Player::On_CollisionEnter(const Collision& tCollision)
@@ -106,8 +106,6 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 {
 	if (InputSystem::GetInstance()->Get_KeyDown('Q'))
 	{
-		DebugHelper::Print_String(L"========= Start =========");
-
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
 		m_pSpringJoint->Set_Anchor({ vPos.x -10.f, vPos.y + 10.f, vPos.z + 5.f });
@@ -115,12 +113,10 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 
 	if (InputSystem::GetInstance()->Get_KeyUp('Q'))
 	{
-		DebugHelper::Print_String(L"========= End =========");
 		m_pSpringJoint->Set_Active(false);
 	}
 	if (InputSystem::GetInstance()->Get_KeyDown('E'))
 	{
-		DebugHelper::Print_String(L"========= Start =========");
 
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
@@ -129,7 +125,6 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 
 	if (InputSystem::GetInstance()->Get_KeyUp('E'))
 	{
-		DebugHelper::Print_String(L"========= End =========");
 		m_pSpringJoint->Set_Active(false);
 	}
 
@@ -179,24 +174,24 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	}
 
 #pragma region DEBUGGING CAM
-	// »óÇÏ
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
-		m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed }, FORCE_MODE::FORCE);
-	}
-	else if (GetAsyncKeyState('S') & 0x8000)
-	{
-		m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
-	}
-	// ÁÂ¿ì
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
-		m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
-	}
-	else if (GetAsyncKeyState('D') & 0x8000)
-	{
-		m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
-	}
+	//// »óÇÏ
+	//if (GetAsyncKeyState('W') & 0x8000)
+	//{
+	//	m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed }, FORCE_MODE::FORCE);
+	//}
+	//else if (GetAsyncKeyState('S') & 0x8000)
+	//{
+	//	m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
+	//}
+	//// ÁÂ¿ì
+	//if (GetAsyncKeyState('A') & 0x8000)
+	//{
+	//	m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
+	//}
+	//else if (GetAsyncKeyState('D') & 0x8000)
+	//{
+	//	m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
+	//}
 
 	static bool bLock = true;
 	if (GetAsyncKeyState(VK_OEM_5) & 0x8000)

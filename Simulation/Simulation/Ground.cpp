@@ -22,12 +22,15 @@ HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSiz
 	m_pMesh->Set_FillMode(D3DFILL_WIREFRAME);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
-	m_pTransform->Rotate(AXIS_X, 90.f);
+	m_pTransform->Rotate(AXIS_X, 270.f);
 	m_pTransform->Set_Position({ 0.f, -4.f, 0.f });
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
 	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
 	m_pCollider->Set_IsInfinite(false);
+
+	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
+	m_pRigidbody->Set_ColType(STATIC);
 
 	return S_OK;
 }

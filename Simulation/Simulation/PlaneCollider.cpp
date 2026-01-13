@@ -87,8 +87,8 @@ Vec3 PlaneCollider::Calculate_ResolveDirFromPlane(const Vec3& vPoint) const
 	if (fabsf(fDist) < eps)
 		return m_vNorm; // 접촉면 위에 있으면 그냥 노멀 반환
 
-	//  겹침 해소 방향
-	return (fDist < 0.f) ? m_vNorm : -m_vNorm;
+	//  겹침 해소 방향 임시로 {0, 1, 0} 사용
+	return Vec3{ 0, 1, 0 };
 }
 
 Vec3 PlaneCollider::Project_OnPlane(const Vec3& vPoint) const

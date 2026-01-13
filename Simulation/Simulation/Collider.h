@@ -74,8 +74,8 @@ protected :
 
 	unordered_set<Collider*>		m_usetContactCols;
 
-	uint_fast16_t									m_iId;
-	list< uint_fast16_t>							m_CheckedCollidersList;
+	uint_fast16_t							m_iId;
+	list< uint_fast16_t>					m_CheckedCollidersList;
 
 	Rigidbody*								m_pRigidbody;
 

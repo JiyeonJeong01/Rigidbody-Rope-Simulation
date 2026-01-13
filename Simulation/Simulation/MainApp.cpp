@@ -67,6 +67,7 @@ void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 
 void MainApp::Render_MainApp()
 {
+
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f));
 
     for (auto* pObj : m_ObjectList)
@@ -75,6 +76,9 @@ void MainApp::Render_MainApp()
     Raycast::GetInstance()->Render_Ray();
 
     m_pGraphicDevice->Render_End();
+
+    DebugHelper::Print_String(L"=================================");
+
 }
 
 HRESULT MainApp::Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev)
@@ -97,6 +101,8 @@ HRESULT MainApp::Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev)
 
     m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &matProj);
     m_pGraphicDev->SetTransform(D3DTS_VIEW, &matView);
+
+    m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
     return S_OK;
 }

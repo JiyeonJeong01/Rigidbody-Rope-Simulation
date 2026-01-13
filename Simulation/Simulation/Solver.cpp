@@ -40,23 +40,13 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	Vec3 vPoint = pInfo->vPoint;					// 충돌 지점 
 	Vec3 vNorm = pInfo->vPenetrateN_A;	// A가 B로 침범하는 방향
 
-	if (!aBody)
-	{
-		return;
-		// 충돌 지점에서의 속도 구하기
-		//aBody = Create_StaticRigidbody();
-	}
-
-	if (!bBody)
-	{
-		return;
-		//bBody = Create_StaticRigidbody();
-	}
-
+	//DebugHelper::Print_String(L"================");
+	//DebugHelper::Print_Vec3(L"vNorm", vNorm);
+	//DebugHelper::Print_Vec3(L"vPoint", vPoint);
 
 	// 충돌 지점에서의 속도 구하기
-	const Vec3 vVel_A = aBody->Get_PointVelocity(vPoint);
-	const Vec3 vVel_B = bBody->Get_PointVelocity(vPoint);
+	Vec3 vVel_A = aBody->Get_PointVelocity(vPoint);
+	Vec3 vVel_B = bBody->Get_PointVelocity(vPoint);
 
 	// B가 A에 대해 움직이는 상대속도
 	Vec3 vVel_Rel = vVel_B - vVel_A; 
@@ -65,7 +55,8 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	Vec3 vR_A = vPoint - aBody->Get_COM();
 	Vec3 vR_B = vPoint - bBody->Get_COM();
 
-	// COM과 노말 외적해서 임펄스 회전 축 구하기
+	// r과 노멀벡터 외적해서 임펄스 회전 축 구하기
+	// 노멀 벡터는 충돌을 해결하기 위한 임펄스가 적용할 방향이 된다
 	Vec3 vJAxis_A = VectorHelper::CrossProduct(vR_A, vNorm);
 	Vec3 vJAxis_B = VectorHelper::CrossProduct(vR_B, vNorm);
 
@@ -73,29 +64,27 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 	const float fInvInertia_A = aBody->Find_InvInertiaOfAxis(vJAxis_A);
 	const float fInvInertia_B = bBody->Find_InvInertiaOfAxis(vJAxis_B);
 
-	// 법선 벡터에 대한 상대 속도 구하기 : 상대속도를 법선 방향으로 투영한 스칼라 값
+	// 법선 벡터에 대한 상대 속도 구하기 : 충돌이 얼마나 강한지 판단한다
+	// 충돌 중이므로 언제나 fVel_Norm < 0
 	float fVel_Norm = VectorHelper::DotProduct(vNorm, vVel_Rel);
 
-	// 법선 방향으로의 상대 속도 구하기
 	// 반발계수 e : 접근하던 속도의 e배만큼 반대 방향으로 튕겨 나오게 한다
-	const float fThreshold = 9.81f / 2.25f;
+	const float fThreshold = 9.81f / 5.1f;
 	float fRestitution = (fabsf(fVel_Norm) < fThreshold) ? 0.f : aBody->Get_Restitution();
+
+	// 충돌 후 법선 상대 속도를 특정 값으로 만들기 위해 필요한 변화량
+	// fVel_Norm : 법선 방향으로 얼마나 빠르게 파고들고 있는지 
 	float fNumerator = -(fRestitution + 1) * fVel_Norm;
 
-	// 충돌에 대한 저항값 구하기
-	// 임펄스 1이 속도를 얼마나 바꾸는지, 같은 임펄스를 줬을 때 얼마나 저항하는지
-	// 이 충돌에서 임펄스 1을 줬을 때, 선형 + 회전까지 포함해서 노멀 상대속도가 얼마나 변하는가
+	// 충돌에서 임펄스 1에 대한 총 속도 변화 민감도
 	float fMagSq_J_A = VectorHelper::DotProduct(vJAxis_A, vJAxis_A);
 	float fMagSq_J_B = VectorHelper::DotProduct(vJAxis_B, vJAxis_B);
 	float fDenominator = aBody->Get_InvMass() + bBody->Get_InvMass() + fMagSq_J_A * fInvInertia_A + fMagSq_J_B * fInvInertia_B;
 
+	// 충돌에 대한 저항값 구하기 : 법선 상대 속도를 구해야 한다 
 	// impulse = numerator / denominator
+	// j = (원하는 속도 변화량) / (물체의 저항)
 	float fJ = fNumerator / fDenominator;
-
-	//DebugHelper::Print_Float(L"Norm Velocity", fVel_Norm);
-	//DebugHelper::Print_Float(L"Numerator", fNumerator);
-	//DebugHelper::Print_Float(L"Denominator", fDenominator);
-	DebugHelper::Print_Float(L"Impulse", fJ);
 
 	if (fJ < 0.f)
 		fJ = 0.f;
@@ -131,7 +120,8 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 		float vt = VectorHelper::DotProduct(vVel_Rel, vVel_Tangent); 
 		float fImpulseT = -vt / fDenominatorT;
 
-		float fMaxFriction = fJ * bBody->Get_Friction();
+		float mu = sqrtf(aBody->Get_Friction() * bBody->Get_Friction());
+		float fMaxFriction = fJ * mu;
 		if (fImpulseT > fMaxFriction)
 			fImpulseT = fMaxFriction;
 		if (fImpulseT < -fMaxFriction) 
@@ -142,19 +132,16 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 
 	if (!VectorHelper::Is_Zero(vImpulse))
 	{
-		vImpulse *= 0.2f;
+		DebugHelper::Print_Vec3(L"Impulse", vImpulse * -1.f);
+
 		aBody->Add_ImpulseAtPoint(vImpulse * -1.f, vPoint);
-		bBody->Add_ImpulseAtPoint(vImpulse, vPoint);
+		//bBody->Add_ImpulseAtPoint(vImpulse, vPoint);
 	}
 
 	if (!VectorHelper::Is_Zero(vJFriction))
 	{
-		vJFriction *= 0.2f;
-		aBody->Add_ImpulseAtPoint(vJFriction * -1.f, vPoint);
-		bBody->Add_ImpulseAtPoint(vJFriction, vPoint);
-
-		DebugHelper::Print_Vec3(L"Friction_A", vJFriction * -1.f);
-		DebugHelper::Print_Vec3(L"Friction_A", vJFriction);
+		//aBody->Add_ImpulseAtPoint(vJFriction * -1.f, vPoint);
+		//bBody->Add_ImpulseAtPoint(vJFriction, vPoint);
 	}
 }
 
@@ -182,17 +169,13 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	float fMoveA = pInfo->fDepth * (fInvA / fTotalInv);
 	float fMoveB = pInfo->fDepth * (fInvB / fTotalInv);
 
-	//DebugHelper::Print_Vec3(L"Norm", pInfo->vN);
-	//DebugHelper::Print_Float(L"MoveA", fMoveA);
-	//DebugHelper::Print_Float(L"MoveB", fMoveB);
+	if (fabsf(fMoveA) > 0.f)
+		pInfo->A->Get_Transform()->Translate(pInfo->vResolveN_A * fMoveA);
 
-	if (fMoveA > 0.f)
-		pInfo->A->Get_Transform()->Translate(pInfo->vN_PlaneB * fMoveA);
-
-	if (fMoveB > 0.f)
+	if (fabsf(fMoveB) > 0.f)
 		pInfo->B->Get_Transform()->Translate(pInfo->vN_PlaneA * fMoveB);
 
-	//DebugHelper::Print_Vec3(L"Pos A", pInfo->A->Get_Transform()->Get_Position());
+	DebugHelper::Print_Vec3(L"Solved Pos", pInfo->A->Get_Transform()->Get_Position());
 }
 
 void Solver::Solve_Friction(CONTACT_INFO* pInfo)
@@ -216,7 +199,7 @@ void Solver::Impulse_StaticCollider(Object* pObejct, Collider* pCollider)
 
 float Solver::Get_InvMass(Collider* pCollider)
 {
-	if (pCollider->Get_ColType() == STATIC)
+	if (pCollider->Get_Rigidbody()->Get_ColType() == STATIC)
 		return 0.f;
 
 	Rigidbody* rb = pCollider->Get_Rigidbody();

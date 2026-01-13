@@ -71,10 +71,6 @@ Rigidbody* Collider::Get_Rigidbody()
 		{
 			m_eColType = STATIC;
 		}
-		if (m_pRigidbody)
-		{
-			m_eColType = DYNAMIC;
-		}
 	}
 
 	return m_pRigidbody;

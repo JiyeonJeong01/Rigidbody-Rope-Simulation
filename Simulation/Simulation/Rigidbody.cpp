@@ -10,7 +10,7 @@
 Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
 	, m_fMass(1.f), m_fMassI(1.f), m_fDrag(0.f), m_fAngularDrag(0.f),m_fRestitution(0.f)
-	, m_iRotFreezeMask(0), m_bStatic(false), m_bKinematic(false), m_bGravity(false)
+	, m_iRotFreezeMask(0), m_bGravity(false)
 	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
 	ZeroMemory(m_vCOM, sizeof(Vec3));
@@ -45,8 +45,11 @@ HRESULT Rigidbody::Ready_Component()
 
 int Rigidbody::Update_Component(const float& fTimeDelta)
 {
-	DebugHelper::Print_Vec3(L"Rigidbody - Before", m_pTransform->Get_Position());
 	m_vCOM = m_pTransform->Get_Position();
+
+	if (m_eColType != DYNAMIC)
+		return 0;
+	DebugHelper::Print_Vec3(L"Before rb", m_pTransform->Get_Position());
 
 	if (m_fDrag > 0.f)
 		Apply_Drag(fTimeDelta);
@@ -59,7 +62,7 @@ int Rigidbody::Update_Component(const float& fTimeDelta)
 
 	Integrate_Transform(fTimeDelta);
 
-	DebugHelper::Print_Vec3(L"Rigidbody - After", m_pTransform->Get_Position());
+	DebugHelper::Print_Vec3(L"After rb", m_pTransform->Get_Position());
 	return 0;
 }
 
@@ -140,6 +143,9 @@ float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
 	if (VectorHelper::Is_Zero(vAxis))
 		return 0.f; 
 
+	if (m_eColType == STATIC)
+		return 0.f;
+
 	Vec3 vBaseAxis = VectorHelper::Get_Normalized(vAxis);
 
 	Matrix matR = m_pTransform->Get_RotationMat();
@@ -153,7 +159,7 @@ float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
 
 void Rigidbody::Add_LinearImpulse(Vec3 vVel)
 {
-	if (m_bStatic | m_bKinematic)
+	if (m_eColType != DYNAMIC)
 		return;
 
 	m_vLinearVel += vVel;
@@ -209,11 +215,15 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 
 void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos)
 {
-	if (m_bStatic || m_bKinematic)
+	if (m_eColType != DYNAMIC)
 		return;
+
+	DebugHelper::Print_Vec3(L"Before Impulse", m_vLinearVel);
 
 	// ===== 1. Linear Velocity =====
 	m_vLinearVel += vImpulse * m_fMassI; // 선 속도 += (impulse / 질량)
+
+	DebugHelper::Print_Vec3(L"After Impulse", m_vLinearVel);
 
 	// ===== 2. Angular Velocity =====
 	Vec3 vR = vPos - m_vCOM; //  r = position - centerOfMass : 질량 중심에서 힘이 작용한 위치까지의 벡터
@@ -231,13 +241,13 @@ void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos)
 
 	// ===== 4. 각속도 변화량, vDeltaW 구하기 =====
 	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vAngularMomentum, &matInertiaInv);
-
+	vDeltaW.x = 0.f;
 	m_vAngularVel += vDeltaW;
 }
 
 void Rigidbody::Add_Force(Vec3 vForce, FORCE_MODE eForce)
 {
-	if (m_bStatic || m_bKinematic)
+	if (m_eColType != DYNAMIC)
 		return;
 
 	const float fTimeDelta = 0.016f;
@@ -261,8 +271,10 @@ void Rigidbody::Add_Force(Vec3 vForce, FORCE_MODE eForce)
 
 void Rigidbody::Add_Torque(Vec3 vForce, FORCE_MODE eForce)
 {
-	if (m_bStatic || m_bKinematic)
+	if (m_eColType != DYNAMIC)
 		return;
+
+	vForce.x = 0.f;
 
 	const float fTimeDelta = 0.016f;
 	switch (eForce)
@@ -289,6 +301,9 @@ void Rigidbody::Add_Torque(Vec3 vForce, FORCE_MODE eForce)
 
 void Rigidbody::Apply_Drag(const float& fTimeDelta)
 {
+	if (m_eColType != DYNAMIC)
+		return;
+
 	m_vLinearVel -= m_vLinearVel * m_fDrag * fTimeDelta;
 
 	if (D3DXVec3LengthSq(&m_vLinearVel) < fEpsilon * fEpsilon)
@@ -297,6 +312,9 @@ void Rigidbody::Apply_Drag(const float& fTimeDelta)
 
 void Rigidbody::Apply_AngularDrag(const float& fTimeDelta)
 {
+	if (m_eColType != DYNAMIC)
+		return;
+
 	m_vAngularVel -= m_vAngularVel * m_fAngularDrag * fTimeDelta;
 
 	if (D3DXVec3LengthSq(&m_vAngularVel) < fEpsilon * fEpsilon)
@@ -305,24 +323,18 @@ void Rigidbody::Apply_AngularDrag(const float& fTimeDelta)
 
 void Rigidbody::Apply_Gravity(const float& fTimeDelta)
 {
+	if (m_eColType != DYNAMIC)
+		return;
+
 	Vec3 vGravity{ 0.f, -9.81f, 0.f };
 	m_vLinearVel += vGravity * fTimeDelta;
-
-	//float fTmpY = m_pTransform->Get_Position().y + m_vLinearVel.y * fTimeDelta;
-
-	//if (fTmpY < -0.01f)
-	//{
-	//	m_vLinearVel.y = 0.f;
-
-	//	Vec3 vPos = m_pTransform->Get_Position();
-	//	vPos.y = 0.f;
-	//	m_pTransform->Set_Position(vPos);
-	//}
-	//printf("%.2f\n", m_pTransform->Get_Position().y);
 }
 
 Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const
 {
+	if (m_eColType != DYNAMIC)
+		return VectorHelper::Zero();
+
 	Vec3 vComToPoint = vPoint - m_vCOM;
 	Vec3 vRot = VectorHelper::CrossProduct(m_vAngularVel, vComToPoint);
 	return m_vLinearVel + vRot;
@@ -336,6 +348,19 @@ void Rigidbody::Set_Mass(const float& fMass)
 		m_fMassI = 0.f;
 	else
 		m_fMassI = 1.f / m_fMass;
+}
+
+void Rigidbody::Set_ColType(COLLIDER_TYPE eColType)
+{
+	m_eColType = eColType;
+	if (eColType == STATIC)
+	{
+		m_fMassI = 0.f;
+		m_fMass = MathHelper::Max_Value< float >();
+		m_vCOM = m_pTransform->Get_Position();
+		m_fRestitution = 0.f;
+	}
+
 }
 
 Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)

@@ -171,8 +171,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		_tfreopen_s(&debug, _T("CONOUT$"), _T("w"), stderr);
 
 		HWND hConsole = GetConsoleWindow();
-		MoveWindow(hConsole, 0, 0, 400, 600, TRUE);
-		MoveWindow(hWnd, 400, 0, WINCX, WINCY, TRUE);
+		MoveWindow(hConsole, 0, 0, 600, 800, TRUE);
+		MoveWindow(hWnd, 600, 0, WINCX, WINCY, TRUE);
 	}
 	break;
 
