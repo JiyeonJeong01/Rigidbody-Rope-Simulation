@@ -10,8 +10,8 @@ public:	// 持失切, 社瑚切
 	virtual ~MainApp();
 
 public:
-	HRESULT Ready_MainApp();
-	int		Update_MainApp(const float& fTimeDelta);
+	HRESULT		Ready_MainApp();
+	int			Update_MainApp(const float& fTimeDelta);
 	void		Fixed_Update(const float& fTimeDelta);
 	void		LateUpdate_MainApp(const float& fTimeDelta);
 	void		Render_MainApp();

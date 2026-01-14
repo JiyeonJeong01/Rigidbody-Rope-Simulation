@@ -11,20 +11,21 @@ private:
 
 public:
 	HRESULT		Ready_Component() override;
-	int				Update_Component(const float& fTimeDelta) override;
-	void				LateUpdate_Component(const float& fTimeDelta) override;
+	int			Update_Component(const float& fTimeDelta) override;
+	void		LateUpdate_Component(const float& fTimeDelta) override;
 
-	bool				Find_Rigidbody();
+	bool		Find_Rigidbody();
 
-	void				Set_Active(const float& fActive) { m_bActive = fActive; }
-	void				Set_Anchor(const Vec3& vAnchor) { m_vAnchor = vAnchor; }
-	void				Set_Spring(const float& fSpring) { m_fSpring = fSpring; }
-	void				Set_Damper(const float& fDamper) { m_fDamper = fDamper; }
+	void		Set_Active(const float& fActive) { m_bActive = fActive; }
+	void		Set_Anchor(const Vec3& vAnchor) { m_vAnchor = vAnchor; }
+	void		Set_Spring(const float& fSpring) { m_fSpring = fSpring; }
+	void		Set_Damper(const float& fDamper) { m_fDamper = fDamper; }
+	void		Set_RestLength(float fLen) { m_fRestLength = fLen; }
 
 private:
 	Rigidbody*	m_pRigidbody;
 
-	Vec3				m_vAnchor;
+	Vec3		m_vAnchor;
 
 	float       m_fSpring;           // k
 	float       m_fDamper;           // c
@@ -33,7 +34,7 @@ private:
 	float       m_fMinLength;
 	float       m_fMaxLength;
 
-	bool			m_bActive;
+	bool		m_bActive;
 
 
 public:

@@ -15,26 +15,26 @@ private :
 	~Player() override;
 
 public :
-	HRESULT			Ready_GameObject();
+	HRESULT				Ready_GameObject();
 	int					Update_GameObject(const float& fTimeDelta);
-	void					LateUpdate_GameObject(const float& fTimeDelta);
-	void					Render_GameObject();
+	void				LateUpdate_GameObject(const float& fTimeDelta);
+	void				Render_GameObject();
 
-	void					On_CollisionEnter(const Collision& tCollision) override;
-	void					On_CollisionStay(const Collision& tCollision) override;
-	void					On_CollisionExit(const Collision& tCollision) override;
-
-private :
-	void					Handle_PlayerInput(const float& fTimeDelta);
+	void				On_CollisionEnter(const COLLISION& tCollision) override;
+	void				On_CollisionStay(const COLLISION& tCollision) override;
+	void				On_CollisionExit(const COLLISION& tCollision) override;
 
 private :
-	Camera*										m_pCamera;
+	void				Handle_PlayerInput(const float& fTimeDelta);
 
-	Transform*									m_pTransform;
-	Rigidbody*									m_pRigidbody;
-	SphereCollider*							m_pCollider;
-	Sphere*										m_pMesh;
-	SpringJoint*								m_pSpringJoint;
+private :
+	Camera*				m_pCamera;
+
+	Transform*			m_pTransform;
+	Rigidbody*			m_pRigidbody;
+	SphereCollider*		m_pCollider;
+	Sphere*				m_pMesh;
+	SpringJoint*		m_pSpringJoint;
 
 public :
 	static Player* Create(LPDIRECT3DDEVICE9 pGraphicDevice);

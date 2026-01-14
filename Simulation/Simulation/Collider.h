@@ -7,16 +7,16 @@ typedef struct tagCollision
 {
 	friend class Collider;
 	friend class Rigidbody;
-	Object* pCounterObject;			// 충돌 당한 오브젝트
-	Collider* pCounterCollider;		// 충돌 당한 오브젝트의 콜라이더
-	Rigidbody* pCounterRigidbody;
+	Object*			pCounterObject;			// 충돌 당한 오브젝트
+	Collider*		pCounterCollider;		// 충돌 당한 오브젝트의 콜라이더
+	Rigidbody*		pCounterRigidbody;
 
-	Vec3					vN;
-	Vec3					vPoint;
-	Vec3					vImpulse;
-	Vec3					vRelativeVel;
-	float					fDepth;
-} Collision;
+	Vec3			vN;
+	Vec3			vPoint;
+	Vec3			vImpulse;
+	Vec3			vRelativeVel;
+	float			fDepth;
+}COLLISION;
 
 class Collider :  public Component
 {
@@ -27,57 +27,39 @@ protected:
 public :
 	virtual GEOMETRY_TYPE		Get_GeometryType()							PURE;
 
-	bool											Is_Contacted(Collider* pCollider);
-	void											Add_ContactCollider(Collider* pCollider);
-	void											Remove_ContactCollider(Collider* pCollider);
-	int											Get_ContactCount() const					{ return (int)m_usetContactCols.size(); }
-
-	void											Add_CheckedCollider(uint_fast16_t iId);
-	void											Clear_CheckedCollider()					{ m_CheckedCollidersList.clear(); }
-	bool											Is_CheckedCollider(uint_fast16_t iId);
-
-	uint_fast16_t							Get_ColliderID() const					{ return m_iId;}	
-	void											Set_ColliderID(uint_fast16_t iId)	{ m_iId = iId; }
-
-protected:
-	Rigidbody*								Find_Rigidbody();
+	uint_fast16_t				Get_ColliderID() const						{ return m_iId;}	
+	void						Set_ColliderID(uint_fast16_t iId)			{ m_iId = iId; }
+	HRESULT						Resolve_Dependency() override;
 
 public :
 	// Getter/Setter
-	unordered_set<Collider*>&	Get_ContactCollider()						{ return m_usetContactCols; }
 
-	bool											Get_OnCol() const								{ return m_bOnCol; }
-	void											Set_OnCol(const bool& bOnCol)		{ m_bOnCol = bOnCol; }
+	bool						Get_OnCol() const							{ return m_bOnCol; }
+	void						Set_OnCol(const bool& bOnCol)				{ m_bOnCol = bOnCol; }
 
-	const Collision&						Get_Collision() const							{ return m_tCollision; }
-	void											Set_CollisionInfo(const Collision& tCol) { m_tCollision = tCol; }
+	const COLLISION&			Get_Collision() const						{ return m_tCollision; }
+	void						Set_CollisionInfo(const COLLISION& tCol)	{ m_tCollision = tCol; }
 
-	COL_STATE								Get_ColState() const							{ return m_eColState; }
-	void											Set_ColState(COL_STATE eColState) { m_eColState = eColState; }
+	const Vec3&					Get_Offset() const							{ return m_vOffset; }
+	void						Set_Offset(const Vec3& vOffset)				{ m_vOffset = vOffset;}
 
-	const Vec3&							Get_Offset() const								{ return m_vOffset; }
-	void											Set_Offset(const Vec3& vOffset)		{ m_vOffset = vOffset;}
+	float						Get_Scale() const							{ return m_fScale; }
+	void						Set_Scale(const float& fScale)				{ m_fScale = fScale; }
 
-	float											Get_Scale() const								{ return m_fScale; }
-	void											Set_Scale(const float& fScale)			{ m_fScale = fScale; }
-
-	COLLIDER_TYPE						Get_ColType() const							{ return m_eColType; }
-	Rigidbody*								Get_Rigidbody();
+	COLLIDER_TYPE				Get_ColType() const							{ return m_eColType; }
+	Rigidbody*					Get_Rigidbody();
 
 protected :
-	Collision									m_tCollision;
-	COL_STATE								m_eColState;
-	COLLIDER_TYPE						m_eColType;
-	bool											m_bOnCol;
-	Vec3											m_vOffset;
-	float											m_fScale = 1.f;
+	Rigidbody*						m_pRigidbody;
+	COLLISION						m_tCollision;
 
-	unordered_set<Collider*>		m_usetContactCols;
+	COL_STATE						m_eColState;
+	COLLIDER_TYPE					m_eColType;
+	bool							m_bOnCol;
+	Vec3							m_vOffset;
+	float							m_fScale = 1.f;
 
-	uint_fast16_t							m_iId;
-	list< uint_fast16_t>					m_CheckedCollidersList;
-
-	Rigidbody*								m_pRigidbody;
+	uint_fast16_t					m_iId;
 
 public:
 	void Release() override;

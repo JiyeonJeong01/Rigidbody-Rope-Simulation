@@ -54,7 +54,7 @@ int MainApp::Update_MainApp(const float& fTimeDelta)
 
 void MainApp::Fixed_Update(const float& fTimeDelta)
 {
-
+    PhysicsWorld::GetInstance()->Update_System(fTimeDelta);
 }
 
 void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
@@ -62,7 +62,6 @@ void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
     for (auto* pObj : m_ObjectList)
         pObj->LateUpdate_GameObject(fTimeDelta);
 
-    PhysicsWorld::GetInstance()->Update_System();
     InputSystem::GetInstance()->Update_System();
 }
 
@@ -125,9 +124,9 @@ HRESULT MainApp::Ready_Ground()
     fStartX *= -1.f;
     fStartZ *= -1.f;
 
-    for (unsigned int i = 0; i < iCntX; ++i)
+    for (int i = 0; i < iCntX; ++i)
     {
-	    for (unsigned int j = 0; j < iCntZ; ++j)
+	    for (int j = 0; j < iCntZ; ++j)
 	    {
             Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
             pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, -5.f, fStartZ + j * fSizeZ);
@@ -149,9 +148,9 @@ HRESULT MainApp::Ready_Wall()
     fStartX *= -1.f;
     fStartZ *= -1.f;
 
-    for (unsigned int i = 0; i < iCntX; ++i)
+    for (int i = 0; i < iCntX; ++i)
     {
-        for (unsigned int j = 0; j < iCntZ; ++j)
+        for (int j = 0; j < iCntZ; ++j)
         {
             Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
             pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, 0.f, fStartZ + j * fSizeZ);

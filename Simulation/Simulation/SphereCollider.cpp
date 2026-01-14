@@ -31,11 +31,6 @@ void SphereCollider::LateUpdate_Component(const float& fTimeDelta)
 	Collider::LateUpdate_Component(fTimeDelta);
 }
 
-Vec3 SphereCollider::Calculate_COMToPoint(const Vec3& vPoint) const
-{
-	return vPoint - m_pRigidbody->Get_COM();
-}
-
 SphereCollider* SphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 {
 	SphereCollider* pCol = new SphereCollider(pGraphicDev, pOwner);

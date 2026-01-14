@@ -1,17 +1,49 @@
 #pragma once
 #include "pch.h"
 class Collider;
+class Transform;
+
+typedef struct tagBody
+{
+    bool    bActive = true;
+    COLLIDER_TYPE eType = DYNAMIC;
+
+    float   fMass = 1.f;
+    float   fInvMass = 1.f; // invMass
+
+    float   fDrag = 0.f;
+    float   fAngularDrag = 0.f;
+
+    float   fRestitution = 0.f;
+    float   fFriction = 0.f;
+
+	bool	bGravity = true;
+
+	Vec3	vDimension, vDimensionCenter;
+
+    Matrix  matInertiaTensor;
+    Matrix  matInvInertiaTensor;
+
+    Vec3    vCOM = { 0,0,0 };
+    Vec3    vLinearVel = { 0,0,0 };
+    Vec3    vAngularVel = { 0,0,0 };
+
+    Vec3    vForceAccum = { 0,0,0 };
+    Vec3    vTorqueAccum = { 0,0,0 };
+
+	Transform* pTransform;
+}BODY;
 
 typedef struct tagContactInfo
 {
-	Collider*			A;
-	Collider*			B;
-	Vec3					vResolveN_A;		// A가 겹침을 해결하는 방향
-	Vec3					vPenetrateN_A;	// A가 침범하는 방향
-	Vec3					vN_PlaneA;
-	Vec3					vN_PlaneB;
-	Vec3					vPoint;
-	float					fDepth;
+	Collider*	A;
+	Collider*	B;
+	Vec3		vResolveN_A;		// A가 겹침을 해결하는 방향
+	Vec3		vPenetrateN_A;	// A가 침범하는 방향
+	Vec3		vN_PlaneA;
+	Vec3		vN_PlaneB;
+	Vec3		vPoint;
+	float		fDepth;
 }CONTACT_INFO;
 
 typedef struct tagPairKey

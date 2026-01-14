@@ -54,6 +54,17 @@ Component* Object::Find_Component(wstring wsKey)
 	return nullptr;
 }
 
+HRESULT Object::Resolve_Dependencies()
+{
+	for (auto& comp : m_mapComponents)
+	{
+		if (FAILED(comp.second->Resolve_Dependency()))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 void Object::Release()
 {
 	for_each(m_mapComponents.begin(), m_mapComponents.end(),

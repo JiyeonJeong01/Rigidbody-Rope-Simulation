@@ -31,9 +31,11 @@ int SpringJoint::Update_Component(const float& fTimeDelta)
 	if (m_pRigidbody == nullptr && !Find_Rigidbody())
 		return 0;
 
-	// ===== 현재 상태 =====
+	// 현재 상태
 	const Vec3 vPos = Get_Transform()->Get_Position();
-	const Vec3 vVel = m_pRigidbody->Get_LinearVelocity(m_pRigidbody->Get_COM());
+
+	BODY* b = PhysicsWorld::GetInstance()->Try_GetBody(m_pRigidbody->Get_BodyID());
+	const Vec3 vVel = b->vLinearVel;
 
 	Vec3 vDir = vPos - m_vAnchor;
 	float fDist = VectorHelper::Get_Length(vDir);
@@ -43,23 +45,23 @@ int SpringJoint::Update_Component(const float& fTimeDelta)
 
 	Vec3 vN = vDir / fDist;   // 로프 방향 단위 벡터
 
-	// ===== 로프는 늘어났을 때만 작동 =====
+	// 로프는 늘어났을 때만 작동
 	float fX = fDist - m_fRestLength;
 	if (fX <= 0.f)
 		return 0;
 
-	// ===== 로프 방향 속도 =====
+	// 로프 방향 속도
 	float fV = VectorHelper::DotProduct(vVel, vN);
 
-	// ===== Spring + Damper =====
+	// Spring + Damper
 	// F = -k x - c v
 	float fForceMag = (-m_fSpring * fX) - (m_fDamper * fV);
 	Vec3 vForce = fForceMag * vN;
 
-	// ===== Rigidbody에 힘 적용 =====
+	// Rigidbody에 힘 적용
 	m_pRigidbody->Add_Force(vForce, FORCE_MODE::FORCE);
-	// DebugHelper::Print_Vec3(L"Spring", vForce);
 
+	// DebugHelper::Print_Vec3(L"Sprinf Add Force", vForce);
 	return Component::Update_Component(fTimeDelta);
 }
 

@@ -3,57 +3,56 @@
 
 #include "DebugHelper.h"
 #include "Object.h"
+#include "PhysicsWorld.h"
 #include "Transform.h"
 #include "VIBuffer.h"
 #include "VectorHelper.h"
 
 Rigidbody::Rigidbody(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	, m_fMass(1.f), m_fMassI(1.f), m_fDrag(0.f), m_fAngularDrag(0.f),m_fRestitution(0.f)
-	, m_iRotFreezeMask(0), m_bGravity(false)
 	, m_eGeometryType(), m_pTransform(nullptr), m_pVIBuffer(nullptr)
 {
-	ZeroMemory(m_vCOM, sizeof(Vec3));
-	ZeroMemory(m_vDimension, sizeof(Vec3));
-	ZeroMemory(m_vDimensionCenter, sizeof(Vec3));
-	ZeroMemory(m_vLinearVel, sizeof(Vec3));
-	ZeroMemory(m_vLook, sizeof(Vec3));
-	ZeroMemory(m_vAngularVel, sizeof(Vec3));
 }
 
 Rigidbody::~Rigidbody()
 {
 }
 
-HRESULT Rigidbody::Ready_Component()
+HRESULT Rigidbody::Ready_Component(BODY* b)
 {
 	m_pTransform = static_cast<Transform*>(m_pOwner->Find_Component(L"Transform"));
 	m_pVIBuffer = static_cast<VIBuffer*>(m_pOwner->Find_Component(L"Buffer"));
 
-	Find_Dimension();
-	Find_Inertia();
-	Find_COM();
+	if (!m_pTransform || !m_pVIBuffer)
+		return E_FAIL;
+
+	Find_Dimension(b);
+	Find_Inertia(b);
+	Find_COM(b);
+	b->pTransform = m_pTransform;
+
+	// TODO : 콜라이더와 동기화하는 코드도 필요해보인다. 
 
 	return S_OK;
 }
 
 int Rigidbody::Update_Component(const float& fTimeDelta)
 {
-	m_vCOM = m_pTransform->Get_Position();
+	// vCOM = m_pTransform->Get_Position();
 
-	if (m_eColType != DYNAMIC)
-		return 0;
+	//if (m_eColType != DYNAMIC)
+	//	return 0;
 
-	if (m_bGravity)
-		Apply_Gravity(fTimeDelta);
+	//if (bGravity)
+	//	Apply_Gravity(fTimeDelta);
 
-	if (m_fDrag > 0.f)
-		Apply_Drag(fTimeDelta);
+	//if (fDrag > 0.f)
+	//	Apply_Drag(fTimeDelta);
 
-	if (m_fAngularDrag > 0.f)
-		Apply_AngularDrag(fTimeDelta);
+	//if (fAngularDrag > 0.f)
+	//	Apply_AngularDrag(fTimeDelta);
 
-	Integrate_Transform(fTimeDelta);
+	// Integrate_Transform(fTimeDelta);
 
 	return 0;
 }
@@ -62,7 +61,12 @@ void Rigidbody::LateUpdate_Component(const float& fTimeDelta)
 {
 }
 
-void Rigidbody::Find_Dimension()
+void Rigidbody::Step()
+{
+
+}
+
+void Rigidbody::Find_Dimension(BODY* b)
 {
 	UINT iVtxCnt = 0;
 	iVtxCnt = m_pVIBuffer->Get_VIBufferInfo().dwVtxCnt;
@@ -88,46 +92,60 @@ void Rigidbody::Find_Dimension()
 		fMaxZ = max(fMaxZ, pos.z);
 	}
 
-	m_vDimension = Vec3(fMaxX - fMinX, fMaxY - fMinY, fMaxZ - fMinZ);
-	m_vDimensionCenter = Vec3(fMaxX + fMinX, fMaxY + fMinY, fMaxZ + fMinZ) * 0.5f;
+	b->vDimension = Vec3(fMaxX - fMinX, fMaxY - fMinY, fMaxZ - fMinZ);
+	b->vDimensionCenter = Vec3(fMaxX + fMinX, fMaxY + fMinY, fMaxZ + fMinZ) * 0.5f;
+
+	m_pVIBuffer->Get_VertexBuffer()->Unlock();
 }
 
-void Rigidbody::Find_Inertia()
+void Rigidbody::Find_Inertia(BODY* b)
 {
+	if (b->eType == STATIC)
+	{
+		b->fInvMass = 0.f;
+		b->vLinearVel = VectorHelper::Zero();
+		b->vAngularVel = VectorHelper::Zero();
+
+		D3DXMatrixIdentity(&b->matInertiaTensor);
+		ZeroMemory(&b->matInvInertiaTensor, sizeof(Matrix));
+		return;
+	}
+
 	// Rigidbody 모양에 따른 Inertia Tensor 계산하기 
-	D3DXMatrixIdentity(&m_matInertiaTensor);
+	D3DXMatrixIdentity(&b->matInertiaTensor);
 
 	switch (m_eGeometryType)
 	{
 	case SPHERE:
 		{
-		float fInertia = (2.f / 5.f) * m_fMass * powf(m_vDimension.x * 0.5f, 2.f);
+		Vec3 vDim = b->vDimension;
+		float fInertia = (2.f / 5.f) * b->fMass * powf(vDim.x * 0.5f, 2.f);
 
-		m_matInertiaTensor.m[0][0] = fInertia;
-		m_matInertiaTensor.m[1][1] = fInertia;
-		m_matInertiaTensor.m[2][2] = fInertia;
+		b->matInertiaTensor.m[0][0] = fInertia;
+		b->matInertiaTensor.m[1][1] = fInertia;
+		b->matInertiaTensor.m[2][2] = fInertia;
 
-		D3DXMatrixInverse(&m_matInertiaTensorInv, 0, &m_matInertiaTensor);
 		}
 		break;
 	case CUBE:
 		{
-		float k = (1.f / 12.f) * m_fMass;
+		float k = (1.f / 12.f) * b->fMass;
 
-		m_matInertiaTensor.m[0][0] = k * (m_vDimension.y * m_vDimension.y + m_vDimension.z * m_vDimension.z);
-		m_matInertiaTensor.m[1][1] = k * (m_vDimension.x * m_vDimension.x + m_vDimension.z * m_vDimension.z);
-		m_matInertiaTensor.m[2][2] = k * (m_vDimension.x * m_vDimension.x + m_vDimension.y * m_vDimension.y);
+		Vec3 vDim = b->vDimension;
+		b->matInertiaTensor.m[0][0] = k * (vDim.y * vDim.y + vDim.z * vDim.z);
+		b->matInertiaTensor.m[1][1] = k * (vDim.x * vDim.x + vDim.z * vDim.z);
+		b->matInertiaTensor.m[2][2] = k * (vDim.x * vDim.x + vDim.y * vDim.y);
 
-		D3DXMatrixInverse(&m_matInertiaTensorInv, 0, &m_matInertiaTensor);
 		}
 		break;
-
 	}
+
+	D3DXMatrixInverse(&b->matInvInertiaTensor, 0, &b->matInertiaTensor);
 }
 
-void Rigidbody::Find_COM()
+void Rigidbody::Find_COM(BODY* b)
 {
-	
+	b->vCOM = m_pTransform->Get_Position();
 }
 
 float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
@@ -135,52 +153,53 @@ float Rigidbody::Find_InvInertiaOfAxis(const Vec3& vAxis)
 	if (VectorHelper::Is_Zero(vAxis))
 		return 0.f; 
 
-	if (m_eColType == STATIC)
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
 		return 0.f;
 
 	Vec3 vBaseAxis = VectorHelper::Get_Normalized(vAxis);
 
 	Matrix matR = m_pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matR * m_matInertiaTensorInv * matRT; // R * Inverse(I_Local) * Transpose(R) * v
+	Matrix matInertiaInv = matR * b->matInvInertiaTensor * matRT; // R * Inverse(I_Local) * Transpose(R) * v
 
 	Vec3 vInvAxis = VectorHelper::TransformNormal(&vBaseAxis, &matInertiaInv);
 
 	return VectorHelper::DotProduct(vBaseAxis, vInvAxis);
 }
 
-void Rigidbody::Add_LinearImpulse(Vec3 vVel)
-{
-	if (m_eColType != DYNAMIC)
-		return;
-
-	m_vLinearVel += vVel;
-}
-
 void Rigidbody::Translate(const Vec3 vDeltaPos)
 {
-	m_vCOM += vDeltaPos;
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType == STATIC)
+		return;
+
+	b->vCOM += vDeltaPos;
 	m_pTransform->Translate(vDeltaPos);
 }
 
 void Rigidbody::Integrate_Transform(const float& fTimeDelta)
 {
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
+		return;
+
 	// 선 속도 적용
-	Vec3 vMoveDelta = m_vLinearVel * fTimeDelta;
+	Vec3 vMoveDelta = b->vLinearVel * fTimeDelta;
 	m_pTransform->Translate(vMoveDelta);
 
 	// 각 속도 적용
-	if (!VectorHelper::Is_Zero(m_vAngularVel))
+	if (!VectorHelper::Is_Zero(b->vAngularVel))
 	{
 		// TODO : 보정 로직 추가하기 
-		// m_vAngularVel = Acclerate_Gyro(fTimeDelta);
-		Vec3 vRotAxis = VectorHelper::Get_Normalized(m_vAngularVel);
-		float fRotMagnitude = D3DXVec3Length(&m_vAngularVel) * fTimeDelta;
+		// vAngularVel = Acclerate_Gyro(fTimeDelta);
+		Vec3 vRotAxis = VectorHelper::Get_Normalized(b->vAngularVel);
+		float fRotMagnitude = D3DXVec3Length(&b->vAngularVel) * fTimeDelta;
 
 		m_pTransform->Rotate(vRotAxis, fRotMagnitude);
 	}
 
-	m_pTransform->Get_Info(AXIS_Z, &m_vLook);
+	// m_pTransform->Get_Info(AXIS_Z, &b->m_vLook);
 }
 
 Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
@@ -188,14 +207,14 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 	//Matrix matRot = m_pTransform->Get_RotationMat();
 	//Matrix matRotInv = *D3DXMatrixInverse(&matRotInv, 0, &matRot);
 
-	//Vec3 vWB = *D3DXVec3TransformNormal(&vWB, &m_vAngularVel, &matRotInv);
+	//Vec3 vWB = *D3DXVec3TransformNormal(&vWB, &vAngularVel, &matRotInv);
 	//Vec3 vW2B = vWB;
 
 	//int nItr = 1;
 
 	//for (int i = 0; i < nItr; ++i)
 	//{
-	//	Vec3 vTemp = *D3DXVec3TransformNormal(&vTemp, &vW2B, &m_matInertiaTensor);
+	//	Vec3 vTemp = *D3DXVec3TransformNormal(&vTemp, &vW2B, &matInertiaTensor);
 	//	D3DXVec3Cross(&vTemp, &vt)
 
 	//}
@@ -203,167 +222,121 @@ Vec3 Rigidbody::Acclerate_Gyro(const float& fTimeDelta)
 	return Vec3();
 }
 
-void Rigidbody::Add_ImpulseAtPoint(Vec3 vImpulse, Vec3 vPos)
+void Rigidbody::Add_ImpulseAtPoint(const Vec3& impulse, const Vec3& point)
 {
-	if (m_eColType != DYNAMIC)
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
 		return;
 
-	// 선 속도 += (impulse / 질량)
-	m_vLinearVel += vImpulse * m_fMassI; 
+	// Linear impulse
+	b->vLinearVel += impulse * b->fInvMass;
 
-	// 각 속도 += r x F
-	//  r = position - centerOfMass : 질량 중심에서 힘이 작용한 위치까지의 벡터
-	Vec3 vR = vPos - m_vCOM; 
-
-	if (VectorHelper::Is_NearlyZero(vR))
+	// Angular impulse
+	Vec3 r = point - b->vCOM;
+	if (VectorHelper::Is_NearlyZero(r))
 		return;
 
-	// 각 운동량 L = r × impulse
-	Vec3 vAngularMomentum =  VectorHelper::CrossProduct(vR, vImpulse);
+	Vec3 angularImpulse = VectorHelper::CrossProduct(r, impulse);
 
-	// ===== 3. Inertia Tensor =====
-	Matrix matR = m_pTransform->Get_RotationMat();
-	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR ; // R * Inverse(I_Local) * Transpose(R) * v
+	Matrix R = m_pTransform->Get_RotationMat();
+	Matrix RT = *D3DXMatrixTranspose(&RT, &R);
+	Matrix IinvWorld = R * b->matInvInertiaTensor * RT;
 
-	// ===== 4. 각속도 변화량, vDeltaW 구하기 =====
-	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vAngularMomentum, &matInertiaInv);
-	vDeltaW.x = 0.f;
-	m_vAngularVel += vDeltaW;
+	Vec3 deltaW = *D3DXVec3TransformNormal(&deltaW, &angularImpulse, &IinvWorld);
+
+	b->vAngularVel += deltaW;
+}
+
+
+void Rigidbody::Add_LinearImpulse(Vec3 vImpulse)
+{
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
+		return;
+
+	b->vLinearVel += vImpulse * b->fInvMass;
 }
 
 void Rigidbody::Add_Force(Vec3 vForce, FORCE_MODE eForce)
 {
-	if (m_eColType != DYNAMIC)
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
 		return;
 
-	const float fTimeDelta = 0.016f;
-	switch (eForce)
-	{
-	case FORCE_MODE::FORCE :
-		{
-			// 질량을 고려하여 지속적으로 힘을 가한다.
-			vForce *= fTimeDelta;
-		}
-		break;
-	case FORCE_MODE::IMPULSE :
-		{
-			// 질량을 고려하여 순간적인 힘을 가한다.
-		}
-		break;
-	}
-
-	m_vLinearVel += vForce * m_fMassI; // 선 속도 += (impulse / 질량)
+	b->vForceAccum += vForce;
 }
 
-void Rigidbody::Add_Torque(Vec3 vForce, FORCE_MODE eForce)
+void Rigidbody::Add_Torque(Vec3 vTorque, FORCE_MODE eForce)
 {
-	if (m_eColType != DYNAMIC)
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
 		return;
 
-	vForce.x = 0.f;
-
-	const float fTimeDelta = 0.016f;
-	switch (eForce)
-	{
-	case FORCE_MODE::FORCE:
-	{
-		vForce *= fTimeDelta;
-	}
-	break;
-	case FORCE_MODE::IMPULSE:
-	{
-	}
-	break;
-	}
-
-	Matrix matR = m_pTransform->Get_RotationMat();
-	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
-	Matrix matInertiaInv = matRT * m_matInertiaTensorInv * matR;
-
-	Vec3 vDeltaW = *D3DXVec3TransformNormal(&vDeltaW, &vForce, &matInertiaInv);
-
-	m_vAngularVel += vDeltaW;
+	b->vTorqueAccum += vTorque;
 }
 
-void Rigidbody::Apply_Drag(const float& fTimeDelta)
+//void Rigidbody::Apply_Drag(const float& fTimeDelta)
+//{
+//	if (m_eColType != DYNAMIC)
+//		return;
+//
+//	vLinearVel -= vLinearVel * fDrag * fTimeDelta;
+//
+//	if (D3DXVec3LengthSq(&vLinearVel) < fEpsilon * fEpsilon)
+//		vLinearVel = VectorHelper::Zero();
+//}
+//
+//void Rigidbody::Apply_AngularDrag(const float& fTimeDelta)
+//{
+//	if (m_eColType != DYNAMIC)
+//		return;
+//
+//	vAngularVel -= vAngularVel * fAngularDrag * fTimeDelta;
+//
+//	if (D3DXVec3LengthSq(&vAngularVel) < fEpsilon * fEpsilon)
+//		vAngularVel = VectorHelper::Zero();
+//}
+//
+//void Rigidbody::Apply_Gravity(const float& fTimeDelta)
+//{
+//	if (m_eColType != DYNAMIC)
+//		return;
+//
+//	Vec3 vGravity{ 0.f, -9.81f, 0.f };
+//	vLinearVel += vGravity * fTimeDelta;
+//}
+
+Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint)
 {
-	if (m_eColType != DYNAMIC)
-		return;
-
-	m_vLinearVel -= m_vLinearVel * m_fDrag * fTimeDelta;
-
-	if (D3DXVec3LengthSq(&m_vLinearVel) < fEpsilon * fEpsilon)
-		m_vLinearVel = VectorHelper::Zero();
-}
-
-void Rigidbody::Apply_AngularDrag(const float& fTimeDelta)
-{
-	if (m_eColType != DYNAMIC)
-		return;
-
-	m_vAngularVel -= m_vAngularVel * m_fAngularDrag * fTimeDelta;
-
-	if (D3DXVec3LengthSq(&m_vAngularVel) < fEpsilon * fEpsilon)
-		m_vAngularVel = VectorHelper::Zero();
-}
-
-void Rigidbody::Apply_Gravity(const float& fTimeDelta)
-{
-	if (m_eColType != DYNAMIC)
-		return;
-
-	Vec3 vGravity{ 0.f, -9.81f, 0.f };
-	m_vLinearVel += vGravity * fTimeDelta;
-}
-
-Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint) const
-{
-	if (m_eColType != DYNAMIC)
+	if (m_eColType == STATIC)
 		return VectorHelper::Zero();
 
-	Vec3 vComToPoint = vPoint - m_vCOM;
-	Vec3 vRot = VectorHelper::CrossProduct(m_vAngularVel, vComToPoint);
-	return m_vLinearVel + vRot;
+	const BODY* b = Try_GetMyBody();
+
+	Vec3 vComToPoint = vPoint - b->vCOM;
+	Vec3 vRot = VectorHelper::CrossProduct(b->vAngularVel, vComToPoint);
+	return b->vLinearVel + vRot;
 }
 
-void Rigidbody::Set_Mass(const float& fMass)
+Vec3 Rigidbody::Get_COM()
 {
-	m_fMass = fMass;
-
-	if (fMass == 0.f)
-		m_fMassI = 0.f;
-	else
-		m_fMassI = 1.f / m_fMass;
+	BODY* b = Try_GetMyBody();
+	b->vCOM = m_pTransform->Get_Position();
+	return b->vCOM;
 }
 
-const Vec3& Rigidbody::Get_COM()
-{
-	m_vCOM = Get_Transform()->Get_Position();
-	return m_vCOM;
-}
-
-void Rigidbody::Set_ColType(COLLIDER_TYPE eColType)
-{
-	m_eColType = eColType;
-	if (eColType == STATIC)
-	{
-		m_fMassI = 0.f;
-		m_fMass = MathHelper::Max_Value< float >();
-		m_vCOM = m_pTransform->Get_Position();
-		m_fRestitution = 0.f;
-	}
-
-}
-
-Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
+Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, BODY tBody)
 {
 	Rigidbody* pBody = new Rigidbody(pGraphicDev, pOwner);
-	if (FAILED(pBody->Ready_Component()))
+	if (FAILED(pBody->Ready_Component(&tBody)))
 	{
 		Safe_Delete(pBody);
 	}
+
+	pBody->Set_BodyID(PhysicsWorld::GetInstance()->Create_Body(std::move(tBody)));
+
 	pOwner->Add_Component(L"Rigidbody", pBody);
+
 	return pBody;
 }
 

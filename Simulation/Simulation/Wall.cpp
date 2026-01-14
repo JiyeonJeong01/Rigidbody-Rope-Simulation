@@ -28,8 +28,11 @@ HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
 	m_pCollider->Set_Dimension({ 10.f, 10.f });
 
-	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
-	m_pRigidbody->Set_ColType(STATIC);
+	BODY body;
+	body.eType = STATIC;
+	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
+
+	__super::Resolve_Dependencies();
 
 	return S_OK;
 }
@@ -52,19 +55,19 @@ void Wall::Render_GameObject()
 	m_pMesh->Render_Mesh();
 }
 
-void Wall::On_CollisionEnter(const Collision& tCollision)
+void Wall::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
 }
 
-void Wall::On_CollisionStay(const Collision& tCollision)
+void Wall::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
 	m_pMesh->Set_Hilight(true);
 }
 
-void Wall::On_CollisionExit(const Collision& tCollision)
+void Wall::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
 	m_pMesh->Set_Hilight(false);

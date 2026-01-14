@@ -53,8 +53,6 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 			if (pCollidee == nullptr || pCollidee->Get_Object() == nullptr || pCollidee->Get_Transform() == nullptr)
 				continue;
 
-			pCollidee->Add_CheckedCollider(pCollider->Get_ColliderID());
-
 			GEOMETRY_TYPE eCldr = pCollider->Get_GeometryType();
 			GEOMETRY_TYPE eClde = pCollidee->Get_GeometryType();
 
@@ -105,11 +103,14 @@ bool CollisionDetector::Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollide
 	pOut->A = pCollider;
 	pOut->B = pCollidee;
 
-	pOut->vResolveN_A = VectorHelper::Get_Normalized(pCollider->Get_Rigidbody()->Get_COM() - pCollidee->Get_Rigidbody()->Get_COM());
+	Vec3 vCldrCom = PhysicsWorld::GetInstance()->Try_GetBody(pCollider->Get_Rigidbody()->Get_BodyID())->vCOM;
+	Vec3 vCldeCom = PhysicsWorld::GetInstance()->Try_GetBody(pCollidee->Get_Rigidbody()->Get_BodyID())->vCOM;
+
+	pOut->vResolveN_A = VectorHelper::Get_Normalized(vCldrCom - vCldeCom);
 	pOut->vPenetrateN_A = pOut->vResolveN_A * -1.f;
 	pOut->vPoint = vCldrPos - pOut->vResolveN_A * fCldrRadius;
-	pOut->vN_PlaneA = pCollider->Calculate_COMToPoint(pOut->vPoint);
-	pOut->vN_PlaneB = pCollidee->Calculate_COMToPoint(pOut->vPoint);
+	pOut->vN_PlaneA = pOut->vPoint - vCldrCom;
+	pOut->vN_PlaneB = pOut->vPoint - vCldeCom;
 	pOut->fDepth = fRadiusSum - fDist;
 
 	return true;
@@ -117,7 +118,10 @@ bool CollisionDetector::Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollide
 
 bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pSphere, PlaneCollider* pPlane)
 {
-	Vec3 vSphereCom = pSphere->Get_Rigidbody()->Get_COM();
+	BODY* bS = PhysicsWorld::GetInstance()->Try_GetBody(pSphere->Get_Rigidbody()->Get_BodyID());
+	BODY* bP = PhysicsWorld::GetInstance()->Try_GetBody(pPlane->Get_Rigidbody()->Get_BodyID());
+
+	Vec3 vSphereCom = bS->vCOM;
 
 	// 평면 위에 투영된 원의 중심과 원의 중심 간의 거리 구하기
 	float fDistSphereToPlane = pPlane->Calculate_SignedDistToPlane(vSphereCom);
@@ -132,7 +136,7 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	// TODO : 여기 수정 
 	Vec3 vDir = pPlane->Calculate_ResolveDirFromPlane(vSphereCom);
 	Vec3 vPoint = vSphereCom;
-	vPoint.y = pPlane->Get_Rigidbody()->Get_COM().y;
+	vPoint.y = bP->vCOM.y;
 
 	if (!pPlane->Get_IsInfinite())
 	{

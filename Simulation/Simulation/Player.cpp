@@ -26,16 +26,16 @@ HRESULT Player::Ready_GameObject()
 	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
-	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this);
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
-	m_pRigidbody->Set_ColType(DYNAMIC);
-	m_pRigidbody->Set_Mass(1.f);
-	m_pRigidbody->Set_Drag(0.1f);
-	m_pRigidbody->Set_AngularDrag(0.1f);
+	BODY body;
+	body.fAngularDrag = 0.1f;
+	body.fDrag = 0.1f;
+	body.fRestitution = 0.3f;
+	body.fMass = 5.f;
+	body.fInvMass = 1.f / body.fMass;
+	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 	m_pRigidbody->Set_GeometryType(SPHERE);
-	m_pRigidbody->Set_Gravity(true);
-	m_pRigidbody->Set_Restitution(0.3f);
 
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 	m_pSpringJoint->Set_Damper(5.f);
@@ -48,6 +48,8 @@ HRESULT Player::Ready_GameObject()
 	m_pCamera = Camera::Create(m_pGraphicDevice,
 		&vEye, &vAt, &vUp,
 		D3DXToRadian(60.f), ((float)WINCX / WINCY), 0.1f, 1000.f);
+
+	__super::Resolve_Dependencies();
 
 	return S_OK;
 }
@@ -84,22 +86,22 @@ void Player::Render_GameObject()
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 
-	DebugHelper::Print_Vec3(L"Pos After Solve Loop", vPlayer);
+	// DebugHelper::Print_Vec3(L"Pos After Solve Loop", vPlayer);
 }
 
-void Player::On_CollisionEnter(const Collision& tCollision)
+void Player::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
 }
 
-void Player::On_CollisionStay(const Collision& tCollision)
+void Player::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
 	m_pMesh->Set_Hilight(true);
 }
 
-void Player::On_CollisionExit(const Collision& tCollision)
+void Player::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
 	m_pMesh->Set_Hilight(false);
@@ -111,7 +113,9 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	{
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
-		m_pSpringJoint->Set_Anchor({ vPos.x -10.f, vPos.y + 20.f, vPos.z + 15.f });
+		Vec3 vAnchor = { vPos.x - 10.f, vPos.y + 20.f, vPos.z + 15.f };
+		//m_pSpringJoint->Set_RestLength(VectorHelper::Get_Length(vPos - vAnchor));
+		m_pSpringJoint->Set_Anchor(vAnchor);
 	}
 
 	if (InputSystem::GetInstance()->Get_KeyUp('Q'))
@@ -120,10 +124,11 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	}
 	if (InputSystem::GetInstance()->Get_KeyDown('E'))
 	{
-
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
-		m_pSpringJoint->Set_Anchor({ vPos.x +10.f, vPos.y + 20.f, vPos.z + 15.f });
+		Vec3 vAnchor = {vPos.x + 10.f, vPos.y + 20.f, vPos.z + 15.f };
+		// m_pSpringJoint->Set_RestLength(VectorHelper::Get_Length(vPos - vAnchor));
+		m_pSpringJoint->Set_Anchor(vAnchor);
 	}
 
 	if (InputSystem::GetInstance()->Get_KeyUp('E'))

@@ -5,10 +5,12 @@
 #include "CollisionDetector.h"
 #include "Rigidbody.h"
 #include "Solver.h"
+#include "Transform.h"
 
 IMPLEMENT_SINGLETON(PhysicsWorld)
 
-unsigned int PhysicsWorld::s_iCurCnt = 0;
+unsigned int PhysicsWorld::s_iCurColCnt = 0;
+unsigned int PhysicsWorld::s_iCurCBodyCnt = 0;
 
 PhysicsWorld::PhysicsWorld()
 {
@@ -29,19 +31,28 @@ HRESULT PhysicsWorld::Ready_System(LPDIRECT3DDEVICE9 pGraphicDevice)
 	return S_OK;
 }
 
-int PhysicsWorld::Update_System()
+int PhysicsWorld::Update_System(float fTimeDelta)
 {
 	m_CurPair.clear();
     m_ContactInfosList.clear();
 
+    // Apply Forces
+    Accumulate_Forces();
+    Integrate_Forces(fTimeDelta);
+
 	// Generate 
 	m_pCollisionDetector->Generate_ContactInfo();
 
-	// 
-	for (auto& contact : m_ContactInfosList)
-	{
-		m_pSolver->Solve_Contacts(&contact);
-	}
+	// Solve
+    for (int i = 0; i < 1; ++i)
+		for (auto& contact : m_ContactInfosList)
+			m_pSolver->Solve_Contacts(&contact);
+	
+    // Damping
+    Apply_Damping(fTimeDelta);
+
+    // inte
+    Integrate_Velocities(fTimeDelta);
 
     Invoke_CollisionEvent();
 	return 0;
@@ -60,7 +71,7 @@ void PhysicsWorld::Add_ContactPair(PAIR_KEY key)
 void PhysicsWorld::Add_Collider(Collider* pCollider)
 {
 	m_vecCollider.push_back(pCollider);
-    pCollider->Set_ColliderID(s_iCurCnt++);
+    pCollider->Set_ColliderID(s_iCurColCnt++);
 }
 
 void PhysicsWorld::Remove_Collider(Collider* pCollider)
@@ -74,9 +85,55 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 	m_vecCollider.erase(it, m_vecCollider.end());
 }
 
+uint_fast32_t PhysicsWorld::Create_Body(BODY body)
+{
+    if (body.eType != DYNAMIC)
+    {
+        body.fInvMass = 0.f;
+        D3DXMatrixIdentity(&body.matInvInertiaTensor);
+        body.matInvInertiaTensor._11 = body.matInvInertiaTensor._22 = body.matInvInertiaTensor._33 = 0.f;
+    }
+
+    if (!m_freeIds.empty())
+    {
+        uint32_t id = m_freeIds.back();
+        m_freeIds.pop_back();
+        m_vecBodies[id] = body;
+        return id;
+    }
+
+    m_vecBodies.push_back(std::move(body));
+    return static_cast<uint32_t>(m_vecBodies.size() - 1);
+}
+
+void PhysicsWorld::Remove_Body(uint_fast32_t iID)
+{
+    if (BODY* b = Try_GetBody(iID))
+    {
+        b->bActive = false;
+        b->vForceAccum = { 0,0,0 };
+        b->vTorqueAccum = { 0,0,0 };
+        b->vLinearVel = { 0,0,0 };
+        b->vAngularVel = { 0,0,0 };
+    }
+    m_freeIds.push_back(iID);
+}
+
+BODY* PhysicsWorld::Try_GetBody(uint_fast32_t iID)
+{
+    if (iID >= m_vecBodies.size())
+        return nullptr;
+
+    BODY& b = m_vecBodies[iID];
+    if (!b.bActive)
+        return nullptr;
+
+    return &b;
+}
+
 void PhysicsWorld::Invoke_CollisionEvent()
 {
-    // Enter / Stay : 이번 프레임에 충돌한 pair들만 순회
+    // Enter / Stay
     for (const PAIR_KEY& k : m_CurPair)
     {
         Collider* pA = Find_ColliderByID(k.aKey);
@@ -84,8 +141,8 @@ void PhysicsWorld::Invoke_CollisionEvent()
         if (!pA || !pB) continue;
 
         // TODO : 필요한 정보가 뭘지 다 짜고 보가ㅣ 
-        Collision tA{};
-        Collision tB{};
+        COLLISION tA{};
+        COLLISION tB{};
 
         if (m_prevPair.find(k) == m_prevPair.end())
         {
@@ -101,7 +158,7 @@ void PhysicsWorld::Invoke_CollisionEvent()
         }
     }
 
-    // Exit : 지난 프레임에는 있었는데 이번 프레임엔 없는 pair들
+    // Exit
     for (const PAIR_KEY& k : m_prevPair)
     {
         if (m_CurPair.find(k) != m_CurPair.end())
@@ -111,14 +168,14 @@ void PhysicsWorld::Invoke_CollisionEvent()
         Collider* pB = Find_ColliderByID(k.bKey);
         if (!pA || !pB) continue;
 
-        Collision tA{};
-        Collision tB{};
+        COLLISION tA{};
+        COLLISION tB{};
 
         pA->Get_Object()->On_CollisionExit(tA);
         pB->Get_Object()->On_CollisionExit(tB);
     }
 
-    // 프레임 마무리: 이번 pair를 다음 프레임 prev로
+    // swap 
     m_prevPair.swap(m_CurPair);
     m_CurPair.clear();
 }
@@ -133,13 +190,109 @@ Collider* PhysicsWorld::Find_ColliderByID(uint32_t id)
     return nullptr;
 }
 
+void PhysicsWorld::Accumulate_Forces()
+{
+    for (BODY& b : m_vecBodies)
+    {
+        if (!b.bActive || b.eType != DYNAMIC)
+            continue;
+
+        if (b.bGravity)
+        {
+            float mass = (b.fInvMass > 0.f) ? (1.f / b.fInvMass) : b.fMass;
+            b.vForceAccum += m_vGravity * mass;
+        }
+    }
+}
+
+void PhysicsWorld::Integrate_Forces(float fTimeDelta)
+{
+    for (BODY& b : m_vecBodies)
+    {
+        if (!b.bActive || b.eType != DYNAMIC)
+            continue;
+
+        // Linear
+        if (!VectorHelper::Is_Zero(b.vForceAccum))
+        {
+            b.vLinearVel += b.vForceAccum * b.fInvMass * fTimeDelta;
+        }
+
+        // Angular
+        if (!VectorHelper::Is_Zero(b.vTorqueAccum))
+        {
+            // IinvWorld = R * IinvLocal * R^T
+            Matrix R = b.pTransform->Get_RotationMat();
+            Matrix RT = *D3DXMatrixTranspose(&RT, &R);
+            Matrix IinvWorld = R * b.matInvInertiaTensor * RT;
+
+            Vec3 deltaW = *D3DXVec3TransformNormal(&deltaW, &b.vTorqueAccum, &IinvWorld);
+
+            b.vAngularVel += deltaW * fTimeDelta;
+        }
+
+        // Clear 
+        b.vForceAccum = VectorHelper::Zero();
+        b.vTorqueAccum = VectorHelper::Zero();
+    }
+}
+
+void PhysicsWorld::Apply_Damping(float fTimeDelta)
+{
+
+    for (BODY& b : m_vecBodies)
+    {
+        if (!b.bActive || b.eType != DYNAMIC)
+            continue;
+
+        // Linear damping
+        if (b.fDrag > 0.f)
+        {
+            b.vLinearVel -= b.vLinearVel * b.fDrag * fTimeDelta;
+
+            if (D3DXVec3LengthSq(&b.vLinearVel) < fDampEps * fDampEps)
+                b.vLinearVel = VectorHelper::Zero();
+        }
+
+        // Angular damping
+        if (b.fAngularDrag > 0.f)
+        {
+            b.vAngularVel -= b.vAngularVel * b.fAngularDrag * fTimeDelta;
+
+            if (D3DXVec3LengthSq(&b.vAngularVel) < fDampEps * fDampEps)
+                b.vAngularVel = VectorHelper::Zero();
+        }
+    }
+}
+
+void PhysicsWorld::Integrate_Velocities(float fTimeDelta)
+{
+    for (BODY& b : m_vecBodies)
+    {
+        if (!b.bActive || b.eType != DYNAMIC)
+            continue;
+
+        // Linear integration
+        Vec3 deltaPos = b.vLinearVel * fTimeDelta;
+        b.vCOM += deltaPos;
+
+        if (b.pTransform)
+            b.pTransform->Translate(deltaPos);
+
+        // Angular integration
+        if (!VectorHelper::Is_Zero(b.vAngularVel) && b.pTransform)
+        {
+            Vec3 axis = VectorHelper::Get_Normalized(b.vAngularVel);
+            float angle = D3DXVec3Length(&b.vAngularVel) * fTimeDelta;
+
+            b.pTransform->Rotate(axis, angle);
+        }
+    }
+}
+
+
 void PhysicsWorld::Release()
 {
 	Safe_Release(m_pCollisionDetector);
 	Safe_Release(m_pSolver);
 }
-
-// TODO : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 구조 바꾸기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// Fixed_Update로 돌려야 하는 건지? 그럼 Update에서의 transform 조정 에 대한 충돌은 어떻게 해결할 건지? 
-// https://chatgpt.com/c/69608a53-b5b0-8322-8032-bf02dcce763c
-// https://chatgpt.com/c/6960a496-6088-8329-8287-a792784b023a

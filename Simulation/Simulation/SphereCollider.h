@@ -8,10 +8,9 @@ private :
 
 public:
 	HRESULT						Ready_Component() override;
-	int								Update_Component(const float& fTimeDelta) override;
-	void								LateUpdate_Component(const float& fTimeDelta) override;
+	int							Update_Component(const float& fTimeDelta) override;
+	void						LateUpdate_Component(const float& fTimeDelta) override;
 
-	Vec3								Calculate_COMToPoint(const Vec3& vPoint) const;
 public :
 	GEOMETRY_TYPE		Get_GeometryType() override		{ return SPHERE; }
 
