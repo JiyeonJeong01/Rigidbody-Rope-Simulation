@@ -134,24 +134,17 @@ void Solver::Solve_Impulse(CONTACT_INFO* pInfo)
 
 	if (!VectorHelper::Is_Zero(vImpulse))
 	{
-		//DebugHelper::Print_Vec3(L"Impulse", vImpulse * -1.f);
-
 		Add_ImpulseAtPoint(tA, bA, vImpulse * -1.f, vPoint);
 		Add_ImpulseAtPoint(tB, bB, vImpulse, vPoint);
 	}
 
-	if (!VectorHelper::Is_Zero(vJFriction))
+	if (!VectorHelper::Is_NearlyZero(vJFriction))
 	{
-		//aBody->Add_ImpulseAtPoint(vJFriction * -1.f, vPoint);
-		//bBody->Add_ImpulseAtPoint(vJFriction, vPoint);
-	}
+		Add_ImpulseAtPoint(tA, bA, vJFriction * -1.f, vPoint);
+		Add_ImpulseAtPoint(tB, bB, vJFriction, vPoint);
 
-	//Vec3 vLinVel = aBody->Get_LinearVelocity(aBody->Get_COM());
-	//if (vLinVel.y < 1e-5f)
-	//{
-	//	vLinVel.y = 0.f;
-	//	aBody->Set_LinearVelocity(vLinVel);
-	//}
+		DebugHelper::Print_Vec3(L"vJFriction", vJFriction);
+	}
 }
 
 void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
@@ -160,18 +153,21 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 		return;
 
 	if (pInfo->fDepth <= 0.f)
-	{
 		return;
-	}
 
 	Collider* A = pInfo->A;
 	Collider* B = pInfo->B;
 
 	BODY* bA = PhysicsWorld::GetInstance()->Try_GetBody(A->Get_Rigidbody()->Get_BodyID());
 	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(B->Get_Rigidbody()->Get_BodyID());
+	if (!bA || !bB)
+		return;
 
 	float fInvA = bA->fInvMass;
 	float fInvB = bB->fInvMass;
+
+	if (bA->eType == STATIC) fInvA = 0.f;
+	if (bB->eType == STATIC) fInvB = 0.f;
 
 	float fTotalInv = fInvA + fInvB;
 	if (fTotalInv <= 0.f)
@@ -192,9 +188,9 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	}
 
 	if (fabsf(fMoveB) > 0.f)
-		pInfo->B->Get_Transform()->Translate(pInfo->vN_PlaneA * fMoveB);
-
-	DebugHelper::Print_Vec3(L"Solved Pos", pInfo->A->Get_Transform()->Get_Position());
+	{
+		pInfo->B->Get_Transform()->Translate(pInfo->vResolveN_A * -1.f * fMoveB);
+	}
 }
 
 void Solver::Add_ImpulseAtPoint(Transform* pTransform, BODY* b, const Vec3& impulse, const Vec3& point)
@@ -225,13 +221,17 @@ bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 {
 	// vResolveN_A : "A를 B에게서 멀어지게 하는 방향" (A separation direction)
 	// vRel = vB - vA : A 기준에서 본 B의 상대속도
+
+	BODY* bA = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->A->Get_Rigidbody()->Get_BodyID());
+	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->B->Get_Rigidbody()->Get_BodyID());
+
 	Vec3 vA, vB;
-	if (pInfo->A->Get_ColType() == STATIC)
+	if (bA->eType == STATIC)
 		vA = VectorHelper::Zero();
 	else
 		vA = pInfo->A->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
 
-	if (pInfo->B->Get_ColType() == STATIC)
+	if (bB->eType == STATIC)
 		vB = VectorHelper::Zero();
 	else 
 		vB = pInfo->B->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);

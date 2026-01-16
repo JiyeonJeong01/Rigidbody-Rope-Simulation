@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Collider.h"
 #include "CollisionDetector.h"
+#include "PlaneCollider.h"
 #include "Rigidbody.h"
 #include "Solver.h"
 #include "Transform.h"
@@ -39,20 +40,20 @@ int PhysicsWorld::Update_System(float fTimeDelta)
     // Apply Forces
     Accumulate_Forces();
     Integrate_Forces(fTimeDelta);
-
-	// Generate 
-	m_pCollisionDetector->Generate_ContactInfo();
-
-	// Solve
-    for (int i = 0; i < 1; ++i)
-		for (auto& contact : m_ContactInfosList)
-			m_pSolver->Solve_Contacts(&contact);
 	
     // Damping
     Apply_Damping(fTimeDelta);
 
     // inte
     Integrate_Velocities(fTimeDelta);
+
+    // Generate 
+    m_pCollisionDetector->Generate_ContactInfo();
+
+    // Solve
+    for (int i = 0; i < 1; ++i)
+        for (auto& contact : m_ContactInfosList)
+            m_pSolver->Solve_Contacts(&contact);
 
     Invoke_CollisionEvent();
 	return 0;
@@ -149,6 +150,11 @@ void PhysicsWorld::Invoke_CollisionEvent()
             // Enter
             pA->Get_Object()->On_CollisionEnter(tA);
             pB->Get_Object()->On_CollisionEnter(tB);
+
+            pA->Set_OnCol(true);
+            pB->Set_OnCol(true);
+
+            DebugHelper::Print_String(L"Enter");
         }
         else
         {
@@ -173,6 +179,10 @@ void PhysicsWorld::Invoke_CollisionEvent()
 
         pA->Get_Object()->On_CollisionExit(tA);
         pB->Get_Object()->On_CollisionExit(tB);
+
+        pA->Set_OnCol(false);
+        pB->Set_OnCol(false);
+        DebugHelper::Print_String(L"EXIT");
     }
 
     // swap 

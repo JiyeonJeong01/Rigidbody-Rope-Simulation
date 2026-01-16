@@ -12,25 +12,25 @@ private:
     ~Camera() override;
 
 public:
-    HRESULT		                  Ready_GameObject() override;
-    int		                            Update_GameObject(const float& fTimeDelta) override;
-    void		                            LateUpdate_GameObject(const float& fTimeDelta) override;
+    HRESULT		    Ready_GameObject() override;
+    int		        Update_GameObject(const float& fTimeDelta) override;
+    void		    LateUpdate_GameObject(const float& fTimeDelta) override;
 
-    void                           Translate(const Vec3& vDir, const float& fSpeed);
-    void                           Rotate(AXIS eAxis, const float& fAngle);
+    void            Translate(const Vec3& vDir, const float& fSpeed);
+    void            Rotate(AXIS eAxis, const float& fAngle);
 
-    void                            Set_Position(const Vec3& vPos);
-    const Vec3&                   Get_Pos() const;
+    void            Set_Position(const Vec3& vPos);
+    const Vec3&     Get_Pos() const;
 
 private :
-    void                            Compute_ViewMatrix();
+    void            Compute_ViewMatrix();
 
 protected:
     Matrix		    m_matView, m_matProj;
-    Vec3		        m_vEye, m_vAt, m_vUp;
-    float		        m_fFov, m_fAspect, m_fNear, m_fFar;
+    Vec3		    m_vEye, m_vAt, m_vUp;
+    float		    m_fFov, m_fAspect, m_fNear, m_fFar;
 
-	Transform* m_pTransformCom;
+	Transform*      m_pTransformCom;
 
 public:
     static Camera* Create(LPDIRECT3DDEVICE9 pGraphicDev,

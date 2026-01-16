@@ -38,6 +38,12 @@ HRESULT Rigidbody::Ready_Component(BODY* b)
 
 int Rigidbody::Update_Component(const float& fTimeDelta)
 {
+	BODY* b = Try_GetMyBody();
+	if (!b || b->eType != DYNAMIC)
+		return 0.f;
+
+	b->vCOM = m_pTransform->Get_Position();
+
 	// vCOM = m_pTransform->Get_Position();
 
 	//if (m_eColType != DYNAMIC)
@@ -320,6 +326,7 @@ Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint)
 
 Vec3 Rigidbody::Get_COM()
 {
+	// TODO : ================ 하 진짜 짱나네 이거 스케일이랑 오프셋도 고려 해
 	BODY* b = Try_GetMyBody();
 	b->vCOM = m_pTransform->Get_Position();
 	return b->vCOM;

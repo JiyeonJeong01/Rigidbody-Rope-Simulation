@@ -162,6 +162,9 @@
     <ClInclude Include="SpringJoint.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="Anchor.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulation.cpp">
@@ -241,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="SpringJoint.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Anchor.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

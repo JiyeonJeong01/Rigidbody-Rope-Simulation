@@ -23,9 +23,17 @@ private:
 	HRESULT		Ready_Wall();
 
 private:
-	GraphicDevice*				m_pGraphicDevice;
-	LPDIRECT3DDEVICE9		m_pGraphicDev;
-	list<Object*>					m_ObjectList;
+	GraphicDevice*		m_pGraphicDevice;
+	LPDIRECT3DDEVICE9	m_pGraphicDev;
+	list<Object*>		m_ObjectList;
+
+	int					iFPS{};
+	int					iFPSCounter{};
+	long long			llElapsedTime = 0;
+	TCHAR				szFPS[64];
+
+	Object*				m_pPlayer{};
+	Vec3				m_vPlayerPos{};
 
 public: 
 	static MainApp* Create();

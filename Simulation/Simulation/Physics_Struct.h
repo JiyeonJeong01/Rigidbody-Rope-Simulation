@@ -15,7 +15,7 @@ typedef struct tagBody
     float   fAngularDrag = 0.f;
 
     float   fRestitution = 0.f;
-    float   fFriction = 0.f;
+    float   fFriction = 1.f;
 
 	bool	bGravity = true;
 

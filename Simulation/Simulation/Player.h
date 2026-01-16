@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 
+class Anchor;
 class Camera;
 class Transform;
 class Rigidbody;
@@ -35,6 +36,10 @@ private :
 	SphereCollider*		m_pCollider;
 	Sphere*				m_pMesh;
 	SpringJoint*		m_pSpringJoint;
+
+	bool				m_bSwing{};
+	Vec3				m_vAnchor;
+	Anchor* m_pAnchor{};
 
 public :
 	static Player* Create(LPDIRECT3DDEVICE9 pGraphicDevice);

@@ -26,8 +26,9 @@ HRESULT Enemy::Ready_GameObject()
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	BODY body;
-	body.fAngularDrag = 5.f;
-	body.fDrag = 0.5f;
+	body.eType = STATIC;
+	//body.fAngularDrag = 5.f;
+	//body.fDrag = 0.5f;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 	m_pRigidbody->Set_GeometryType(SPHERE);
 

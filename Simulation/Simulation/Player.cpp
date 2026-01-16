@@ -9,6 +9,7 @@
 #include "Rigidbody.h"
 #include "SphereCollider.h"
 #include "DebugHelper.h"
+#include "Anchor.h"
 #include "SpringJoint.h"
 
 Player::Player(LPDIRECT3DDEVICE9 pGraphicDevice)
@@ -29,10 +30,11 @@ HRESULT Player::Ready_GameObject()
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	BODY body;
-	body.fAngularDrag = 0.1f;
-	body.fDrag = 0.1f;
-	body.fRestitution = 0.3f;
-	body.fMass = 5.f;
+	body.fAngularDrag = 0.5f;
+	body.fDrag = 0.5f;
+	body.fRestitution = 0.f;
+	body.fFriction = 3.f;
+	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 	m_pRigidbody->Set_GeometryType(SPHERE);
@@ -40,6 +42,8 @@ HRESULT Player::Ready_GameObject()
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 	m_pSpringJoint->Set_Damper(5.f);
 	m_pSpringJoint->Set_Spring(50.f);
+
+	m_pAnchor = Anchor::Create(m_pGraphicDevice);
 
 	Vec3 vEye = { 0.f, 5.f, -10.f };
 	Vec3 vAt = { 0.f, 0.f, 0.f };
@@ -59,15 +63,13 @@ int Player::Update_GameObject(const float& fTimeDelta)
 
 	Handle_PlayerInput(fTimeDelta);
 	Vec3 vPlayer = m_pTransform->Get_Position();
-	//DebugHelper::Print_Vec3(L"Pos Before Update", vPlayer);
 	Object::Update_GameObject(fTimeDelta);
 	vPlayer = m_pTransform->Get_Position();
-	//DebugHelper::Print_Vec3(L"Pos After Update", vPlayer);
 
 	m_pCamera->Update_GameObject(fTimeDelta);
 
-
-	//DebugHelper::Print_Vec3(L"Update - Player", vPlayer);
+	if (m_bSwing)
+		m_pAnchor->Update_GameObject(fTimeDelta);
 
 	return 0;
 }
@@ -75,18 +77,25 @@ int Player::Update_GameObject(const float& fTimeDelta)
 void Player::LateUpdate_GameObject(const float& fTimeDelta)
 {
 	Object::LateUpdate_GameObject(fTimeDelta);
+
+	if (m_bSwing)
+		m_pAnchor->LateUpdate_GameObject(fTimeDelta);
 }
 
 void Player::Render_GameObject()
 {
 	Vec3 vPlayer = m_pTransform->Get_Position();
-	m_pCamera->Set_Position({ vPlayer.x, vPlayer.y + 2.f, vPlayer.z - 12.f });
+	m_pCamera->Set_Position({ vPlayer.x, vPlayer.y + 2.f, vPlayer.z - 15.f });
 	m_pCamera->LateUpdate_GameObject(0.016f);
 
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 
-	// DebugHelper::Print_Vec3(L"Pos After Solve Loop", vPlayer);
+	if (m_bSwing)
+	{
+		m_pAnchor->Render_GameObject();
+	}
+
 }
 
 void Player::On_CollisionEnter(const COLLISION& tCollision)
@@ -113,30 +122,37 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	{
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
-		Vec3 vAnchor = { vPos.x - 10.f, vPos.y + 20.f, vPos.z + 15.f };
+		m_vAnchor = { vPos.x - 10.f, vPos.y + 10.f, vPos.z + 30.f };
+		m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
+		m_bSwing = true;
 		//m_pSpringJoint->Set_RestLength(VectorHelper::Get_Length(vPos - vAnchor));
-		m_pSpringJoint->Set_Anchor(vAnchor);
+		m_pSpringJoint->Set_Anchor(m_vAnchor);
 	}
 
 	if (InputSystem::GetInstance()->Get_KeyUp('Q'))
 	{
 		m_pSpringJoint->Set_Active(false);
+		m_bSwing = false;
 	}
+
 	if (InputSystem::GetInstance()->Get_KeyDown('E'))
 	{
 		m_pSpringJoint->Set_Active(true);
 		Vec3 vPos = m_pTransform->Get_Position();
-		Vec3 vAnchor = {vPos.x + 10.f, vPos.y + 20.f, vPos.z + 15.f };
+		m_vAnchor = {vPos.x + 10.f, vPos.y + 20.f, vPos.z + 15.f };
+		m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
+		m_bSwing = true;
 		// m_pSpringJoint->Set_RestLength(VectorHelper::Get_Length(vPos - vAnchor));
-		m_pSpringJoint->Set_Anchor(vAnchor);
+		m_pSpringJoint->Set_Anchor(m_vAnchor);
 	}
 
 	if (InputSystem::GetInstance()->Get_KeyUp('E'))
 	{
 		m_pSpringJoint->Set_Active(false);
+		m_bSwing = false;
 	}
 
-	const float fSpeed = 50.f;
+	const float fSpeed = 80.f;
 
 	// »óÇÏ
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
@@ -161,7 +177,7 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	// TEST
 	if (InputSystem::GetInstance()->Get_KeyDown(VK_SPACE))
 	{
-		m_pRigidbody->Add_Force({ 0.f, fSpeed, 0.f }, FORCE_MODE::IMPULSE);
+		m_pRigidbody->Add_LinearImpulse({ 0.f, fSpeed, 0.f });
 	}
 	if (GetAsyncKeyState('X') & 0x8000)
 	{
@@ -202,7 +218,7 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	//}
 
 	static bool bLock = true;
-	if (GetAsyncKeyState(VK_OEM_5) & 0x8000)
+	if (InputSystem::GetInstance()->Get_KeyDown('M'))
 	{
 		bLock = !bLock;
 	}

@@ -13,6 +13,9 @@
 
 #include "MathHelper.h"
 
+bool CollisionDetector::s_bTEST = false;
+
+
 CollisionDetector::CollisionDetector()
 {
 }
@@ -123,36 +126,49 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 
 	Vec3 vSphereCom = bS->vCOM;
 
-	// 평면 위에 투영된 원의 중심과 원의 중심 간의 거리 구하기
+	// signed distance from sphere COM to plane
 	float fDistSphereToPlane = pPlane->Calculate_SignedDistToPlane(vSphereCom);
 	float fAbsDist = fabsf(fDistSphereToPlane);
+
 	float fSphereRadius = pSphere->Get_Radius() * pSphere->Get_Scale();
 
-	if (fAbsDist > fSphereRadius)
+	float fDiff = fAbsDist - fSphereRadius;
+	const float fEpsilon = 0.0005f;
+
+	if (vSphereCom.y < -4.f)
+	{
+		static int a = 10;
+	}
+
+	if (pSphere->Get_OnCol() && (fDiff > fEpsilon))
 	{
 		return false;
 	}
 
-	// TODO : 여기 수정 
-	Vec3 vDir = pPlane->Calculate_ResolveDirFromPlane(vSphereCom);
-	Vec3 vPoint = vSphereCom;
-	vPoint.y = bP->vCOM.y;
+	if (fDiff > fEpsilon)
+		return false;
+
+	Vec3 vPlaneN = VectorHelper::Get_Normalized(pPlane->Get_NormVector());
+	Vec3 nSep = (fDistSphereToPlane >= 0.f) ? vPlaneN : -vPlaneN;
+
+	Vec3 vPlanePoint = vSphereCom - vPlaneN * fDistSphereToPlane;
 
 	if (!pPlane->Get_IsInfinite())
 	{
-		if (!pPlane->Is_OnPlane(vPoint))
+		if (!pPlane->Is_OnPlane(vPlanePoint))
 			return false;
 	}
 
 	pOut->A = pSphere;
 	pOut->B = pPlane;
 
-	// vResolveN_A : A를 B에게서 멀어지게 하는 법선 벡터 
-	pOut->vResolveN_A = VectorHelper::Get_Normalized(vDir);
-	pOut->vPenetrateN_A = VectorHelper::Get_Normalized(pPlane->Calculate_PenetrationDirToPlane(vSphereCom));
-	pOut->vN_PlaneA = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
-	pOut->vN_PlaneB = fDistSphereToPlane >= 0 ? pPlane->Get_NormVector() : pPlane->Get_NormVector() * -1.f;		// 일단은 평면이 오브젝트를 밀어내는 방향으로 정의
-	pOut->vPoint = vPoint;
+	// vResolveN_A = "A를 B에게서 떼어내는 방향(separation normal)"
+	pOut->vResolveN_A = nSep;
+	pOut->vPenetrateN_A = -nSep;
+	pOut->vN_PlaneA = -nSep;
+	pOut->vN_PlaneB = nSep;
+
+	pOut->vPoint = vPlanePoint;
 	pOut->fDepth = fSphereRadius - fAbsDist;
 
 	return true;

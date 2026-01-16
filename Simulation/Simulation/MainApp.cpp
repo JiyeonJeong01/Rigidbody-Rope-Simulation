@@ -34,9 +34,9 @@ HRESULT MainApp::Ready_MainApp()
     InputSystem::GetInstance()->Ready_System();
     Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
-    Object* pPlayer = Player::Create(m_pGraphicDev);
-    pPlayer->Get_Transform()->Set_Position(0.f, 10.f, 0.f);
-    m_ObjectList.push_back(pPlayer);
+    m_pPlayer = Player::Create(m_pGraphicDev);
+    m_pPlayer->Get_Transform()->Set_Position(0.f, 10.f, 0.f);
+    m_ObjectList.push_back(m_pPlayer);
 
     //Object* pEnemy = Enemy::Create(m_pGraphicDev);
     //m_ObjectList.push_back(pEnemy);
@@ -67,7 +67,6 @@ void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 
 void MainApp::Render_MainApp()
 {
-
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f));
 
     for (auto* pObj : m_ObjectList)
@@ -77,7 +76,19 @@ void MainApp::Render_MainApp()
 
     m_pGraphicDevice->Render_End();
 
-    //DebugHelper::Print_String(L"=================================");
+    // FPS, 플레이어 위치 상단 바에 출력하기 
+    ++iFPSCounter;
+    if ((unsigned)(llElapsedTime + 1000) < GetTickCount64())
+    {
+        iFPS = iFPSCounter;
+        iFPSCounter = 0;
+        llElapsedTime = GetTickCount64();
+        m_vPlayerPos = m_pPlayer->Get_Transform()->Get_Position();
+    }
+
+    swprintf_s(szFPS, L"FPS : %d, Player : %.2f, %.2f, %.2f", iFPS, m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z);
+
+    SetWindowText(g_hWnd, szFPS);
 
 }
 
@@ -115,12 +126,12 @@ HRESULT MainApp::Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev)
 
 HRESULT MainApp::Ready_Ground()
 {
-    int iCntX = 10;
-    int iCntZ = 10;
-    float fSizeX = 200;
-    float fSizeZ = 200;
-    float fStartX = iCntX * 0.5f * fSizeX;
-    float fStartZ = iCntZ * 0.5f * fSizeZ;
+    int iCntX = 1;
+    int iCntZ = 1;
+    float fSizeX = 50;
+    float fSizeZ = 50;
+    float fStartX = 0.f;//iCntX * 0.5f * fSizeX;
+    float fStartZ = 0.f;//iCntZ * 0.5f * fSizeZ;
     fStartX *= -1.f;
     fStartZ *= -1.f;
 
