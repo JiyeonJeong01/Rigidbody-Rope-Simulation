@@ -88,12 +88,12 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 
 uint_fast32_t PhysicsWorld::Create_Body(BODY body)
 {
-    if (body.eType != DYNAMIC)
-    {
-        body.fInvMass = 0.f;
-        D3DXMatrixIdentity(&body.matInvInertiaTensor);
-        body.matInvInertiaTensor._11 = body.matInvInertiaTensor._22 = body.matInvInertiaTensor._33 = 0.f;
-    }
+    if (body.eType == STATIC)
+        body.Set_StaticBody();
+    else if (body.eType == KINEMATIC)
+        body.Set_KinematicBody();
+    else if (body.eType == DYNAMIC)
+        body.Set_DynamicBody();
 
     if (!m_freeIds.empty())
     {
@@ -153,8 +153,6 @@ void PhysicsWorld::Invoke_CollisionEvent()
 
             pA->Set_OnCol(true);
             pB->Set_OnCol(true);
-
-            DebugHelper::Print_String(L"Enter");
         }
         else
         {
@@ -182,7 +180,6 @@ void PhysicsWorld::Invoke_CollisionEvent()
 
         pA->Set_OnCol(false);
         pB->Set_OnCol(false);
-        DebugHelper::Print_String(L"EXIT");
     }
 
     // swap 
@@ -198,6 +195,11 @@ Collider* PhysicsWorld::Find_ColliderByID(uint32_t id)
             return pCol;
     }
     return nullptr;
+}
+
+bool PhysicsWorld::Detect_Ray(tagRay* pRay)
+{
+    return m_pCollisionDetector->Detect_Ray(pRay);
 }
 
 void PhysicsWorld::Accumulate_Forces()
@@ -232,11 +234,14 @@ void PhysicsWorld::Integrate_Forces(float fTimeDelta)
         if (!VectorHelper::Is_Zero(b.vTorqueAccum))
         {
             // IinvWorld = R * IinvLocal * R^T
-            Matrix R = b.pTransform->Get_RotationMat();
-            Matrix RT = *D3DXMatrixTranspose(&RT, &R);
-            Matrix IinvWorld = R * b.matInvInertiaTensor * RT;
+            Matrix matR = b.pTransform->Get_RotationMat();
+            Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
 
-            Vec3 deltaW = *D3DXVec3TransformNormal(&deltaW, &b.vTorqueAccum, &IinvWorld);
+            // DX row-vector 규약 기준 관성 역텐서 변환
+            // World(Inv_Inertia) = trans(R) * Local(Inv_Inerta) * R
+            Matrix matInvInerta = matRT * b.matInvInertiaTensor * matR;
+
+            Vec3 deltaW = *D3DXVec3TransformNormal(&deltaW, &b.vTorqueAccum, &matInvInerta);
 
             b.vAngularVel += deltaW * fTimeDelta;
         }

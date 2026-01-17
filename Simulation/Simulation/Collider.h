@@ -37,29 +37,21 @@ public :
 	bool						Get_OnCol() const							{ return m_bOnCol; }
 	void						Set_OnCol(const bool& bOnCol)				{ m_bOnCol = bOnCol; }
 
-	const COLLISION&			Get_Collision() const						{ return m_tCollision; }
-	void						Set_CollisionInfo(const COLLISION& tCol)	{ m_tCollision = tCol; }
-
 	const Vec3&					Get_Offset() const							{ return m_vOffset; }
 	void						Set_Offset(const Vec3& vOffset)				{ m_vOffset = vOffset;}
 
 	float						Get_Scale() const							{ return m_fScale; }
 	void						Set_Scale(const float& fScale)				{ m_fScale = fScale; }
 
-	COLLIDER_TYPE				Get_ColType() const							{ return m_eColType; }
 	Rigidbody*					Get_Rigidbody();
 
 protected :
-	Rigidbody*						m_pRigidbody;
-	COLLISION						m_tCollision;
-
-	COL_STATE						m_eColState;
-	COLLIDER_TYPE					m_eColType;
-	bool							m_bOnCol;
-	Vec3							m_vOffset;
-	float							m_fScale = 1.f;
-
-	uint_fast16_t					m_iId;
+	uint_fast16_t				m_iId;
+	Rigidbody*					m_pRigidbody;
+	BODY_TYPE					m_eBodyType;
+	Vec3						m_vOffset;
+	float						m_fScale;
+	bool						m_bOnCol;
 
 public:
 	void Release() override;

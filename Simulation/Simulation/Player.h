@@ -19,6 +19,7 @@ public :
 	HRESULT				Ready_GameObject();
 	int					Update_GameObject(const float& fTimeDelta);
 	void				LateUpdate_GameObject(const float& fTimeDelta);
+	void				Fixed_Update(const float& fTimeDElta);
 	void				Render_GameObject();
 
 	void				On_CollisionEnter(const COLLISION& tCollision) override;
@@ -27,6 +28,7 @@ public :
 
 private :
 	void				Handle_PlayerInput(const float& fTimeDelta);
+	void				Render_Swing();
 
 private :
 	Camera*				m_pCamera;

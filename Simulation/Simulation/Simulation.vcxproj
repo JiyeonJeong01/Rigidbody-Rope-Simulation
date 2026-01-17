@@ -139,6 +139,7 @@
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GraphicDevice.h" />
     <ClInclude Include="Ground.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="CollisionDetector.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="GraphicDevice.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="InputSystem.cpp" />

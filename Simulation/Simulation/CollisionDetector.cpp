@@ -37,8 +37,6 @@ void CollisionDetector::Generate_ContactInfo()
 
 void CollisionDetector::NarrowPhase_ObjectToObject()
 {
-	// TODO !! 레이어 마스크 처리 
-
 	const auto& vecCollider = PhysicsWorld::GetInstance()->Get_Colliders();
 
 	size_t iTotalColCnt = vecCollider.size();
@@ -62,6 +60,7 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 			bool bOnCollision(false);
 			CONTACT_INFO tContact;
 
+			// TODO : 구조 바꿔야 한다 -> 함수 테이블이나 디스패쳐 등으로... 
 			if (eCldr == CUBE && eClde == CUBE)
 			{
 
@@ -122,28 +121,18 @@ bool CollisionDetector::Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollide
 bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pSphere, PlaneCollider* pPlane)
 {
 	BODY* bS = PhysicsWorld::GetInstance()->Try_GetBody(pSphere->Get_Rigidbody()->Get_BodyID());
-	BODY* bP = PhysicsWorld::GetInstance()->Try_GetBody(pPlane->Get_Rigidbody()->Get_BodyID());
+
+	if (!bS) return false;
 
 	Vec3 vSphereCom = bS->vCOM;
 
-	// signed distance from sphere COM to plane
 	float fDistSphereToPlane = pPlane->Calculate_SignedDistToPlane(vSphereCom);
 	float fAbsDist = fabsf(fDistSphereToPlane);
 
 	float fSphereRadius = pSphere->Get_Radius() * pSphere->Get_Scale();
 
 	float fDiff = fAbsDist - fSphereRadius;
-	const float fEpsilon = 0.0005f;
-
-	if (vSphereCom.y < -4.f)
-	{
-		static int a = 10;
-	}
-
-	if (pSphere->Get_OnCol() && (fDiff > fEpsilon))
-	{
-		return false;
-	}
+	const float fEpsilon = 1e-5f;
 
 	if (fDiff > fEpsilon)
 		return false;
@@ -155,14 +144,14 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 
 	if (!pPlane->Get_IsInfinite())
 	{
-		if (!pPlane->Is_OnPlane(vPlanePoint))
+		if (!pPlane->Is_Contacting(vPlanePoint))
 			return false;
 	}
 
 	pOut->A = pSphere;
 	pOut->B = pPlane;
 
-	// vResolveN_A = "A를 B에게서 떼어내는 방향(separation normal)"
+	// vResolveN_A = A를 B에게서 떼어내는 방향(separation normal)
 	pOut->vResolveN_A = nSep;
 	pOut->vPenetrateN_A = -nSep;
 	pOut->vN_PlaneA = -nSep;
@@ -191,26 +180,40 @@ bool CollisionDetector::Detect_Ray(tagRay* pRay)
 	return false;
 }
 
-bool CollisionDetector::Detect_RayPlaneCollision(struct tagRay* pRay, PlaneCollider* pPlane)
+bool CollisionDetector::Detect_RayPlaneCollision(tagRay* pRay, PlaneCollider* pPlane)
 {
-	Vec3 vRayOrigin = pRay->vOrigin;
-	Vec3 vRayDirection = pRay->vDiretion;
+	pPlane->Get_Object()->On_CollisionExit(COLLISION{});
 
-	Vec3 vPlaneNorm = pPlane->Get_NormVector();
-	float fD = pPlane->Get_D();
+	const Vec3 vOrigin = pRay->vOrigin;
+	const Vec3 vDir = pRay->vDiretion;
+	const Vec3 vNorm = pPlane->Get_NormVector();
+	const float fPlaneD = pPlane->Get_D(); // n·x + d = 0
 
-	if (D3DXVec3Dot(&vPlaneNorm, &vRayDirection) == 0)
+	const float fDenom = D3DXVec3Dot(&vNorm, &vDir);
+	if (fabsf(fDenom) < 1e-6f)
+		return false; // 평행
+
+	const float t = -(D3DXVec3Dot(&vNorm, &vOrigin) + fPlaneD) / fDenom;
+
+	// vOriging 뒤 쪽
+	if (t < 0.f)
 		return false;
 
-	float t = D3DXVec3Dot(&vPlaneNorm, &vRayOrigin) * -1.f / D3DXVec3Dot(&vPlaneNorm, &vRayDirection);
-
-	if (t < 0)
+	if (t > pRay->fMaxDist)
 		return false;
 
-	const Vec3 vHitPoint = vRayOrigin + vRayDirection * t;
+	const Vec3 vHit = vOrigin + vDir * t;
 
-	return pPlane->Is_OnPlane(vHitPoint);
+	if (!pPlane->Is_Contacting(vHit))
+		return false;
+
+	if (pRay->pHit)
+		pRay->pHit->vPoint = vHit;
+			pPlane->Get_Object()->On_CollisionEnter(COLLISION{});
+
+	return true;
 }
+
 
 CollisionDetector* CollisionDetector::Create()
 {

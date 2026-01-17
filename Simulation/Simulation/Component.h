@@ -13,6 +13,7 @@ public :
 	virtual HRESULT			Ready_Component();
 	virtual int				Update_Component(const float& fTimeDelta);
 	virtual void			LateUpdate_Component(const float& fTimeDelta);
+	virtual void			Fixed_Update(const float& fTimeDelta);
 	virtual void			Render_Component();
 	virtual HRESULT 		Resolve_Dependency() { return S_OK; }
 

@@ -53,7 +53,7 @@ private:
 	Vec4		m_vQuaternion;
 	Vec3		m_vPosition;
 
-	Vec3			m_vRotation[AXIS_END];
+	Vec3		m_vRotation[AXIS_END];
 	Matrix		m_matWorld;
 
 public:

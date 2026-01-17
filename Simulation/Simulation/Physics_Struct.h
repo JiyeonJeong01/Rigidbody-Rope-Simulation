@@ -6,7 +6,7 @@ class Transform;
 typedef struct tagBody
 {
     bool    bActive = true;
-    COLLIDER_TYPE eType = DYNAMIC;
+    BODY_TYPE eType = DYNAMIC;
 
     float   fMass = 1.f;
     float   fInvMass = 1.f; // invMass
@@ -32,6 +32,40 @@ typedef struct tagBody
     Vec3    vTorqueAccum = { 0,0,0 };
 
 	Transform* pTransform;
+
+    void Set_StaticBody()
+    {
+        eType = STATIC;
+
+        fInvMass = 0.f;
+        ZeroMemory(&matInvInertiaTensor, sizeof(matInvInertiaTensor));
+
+        bGravity = false;
+    }
+
+    void Set_KinematicBody()
+    {
+        eType = KINEMATIC;
+
+        fInvMass = 0.f;
+        ZeroMemory(&matInvInertiaTensor, sizeof(matInvInertiaTensor));
+
+        vForceAccum = {};
+        vTorqueAccum = {};
+
+        bGravity = false;
+    }
+
+    void Set_DynamicBody()
+    {
+        eType = DYNAMIC;
+
+        fMass = (fMass <= 0.f ? 1.f : fMass);
+        fInvMass = 1.f / fMass;
+
+        bGravity = true;
+    }
+    
 }BODY;
 
 typedef struct tagContactInfo
@@ -78,3 +112,8 @@ typedef struct PairKeyHash
 		return (static_cast<size_t>(k.aKey) << 32) ^ k.bKey;
 	}
 }PAIR_KEY_HASH;
+
+typedef struct tagSpringJoingInfo
+{
+	
+}SPRING_JOINT_INFO;

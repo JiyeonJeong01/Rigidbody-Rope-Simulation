@@ -33,6 +33,14 @@ void Object::LateUpdate_GameObject(const float& fTimeDelta)
 	}
 }
 
+void Object::Fixed_Update(const float& fTimeDelta)
+{
+	for (auto& component : m_mapComponents)
+	{
+		component.second->Fixed_Update(fTimeDelta);
+	}
+}
+
 void Object::Render_GameObject()
 {
 	for (auto& component : m_mapComponents)

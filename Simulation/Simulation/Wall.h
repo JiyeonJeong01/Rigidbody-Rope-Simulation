@@ -13,15 +13,15 @@ private:
 
 public:
 	HRESULT			Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY);
-	int					Update_GameObject(const float& fTimeDelta);
-	void					LateUpdate_GameObject(const float& fTimeDelta);
-	void					Render_GameObject();
+	int				Update_GameObject(const float& fTimeDelta);
+	void			LateUpdate_GameObject(const float& fTimeDelta);
+	void			Render_GameObject();
 
-	void					On_CollisionEnter(const COLLISION& tCollision) override;
-	void					On_CollisionStay(const COLLISION& tCollision) override;
-	void					On_CollisionExit(const COLLISION& tCollision) override;
+	void			On_CollisionEnter(const COLLISION& tCollision) override;
+	void			On_CollisionStay(const COLLISION& tCollision) override;
+	void			On_CollisionExit(const COLLISION& tCollision) override;
 
-	void					Set_Position(const Vec3& vPosition);
+	void			Set_Position(const Vec3& vPosition);
 
 private:
 	Transform*		m_pTransform;

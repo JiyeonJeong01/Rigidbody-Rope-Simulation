@@ -24,18 +24,18 @@ protected:
 
 public:
 	HRESULT		Ready_Component();
-	void				Render_Buffer();
+	void		Render_Buffer();
 
 	LPDIRECT3DVERTEXBUFFER9		Get_VertexBuffer() { return m_pVB; }
-	LPDIRECT3DINDEXBUFFER9			Get_IndexBuffer() { return m_pIB; }
+	LPDIRECT3DINDEXBUFFER9		Get_IndexBuffer() { return m_pIB; }
 
-	const VIBUFFER_INFO&					Get_VIBufferInfo() { return m_tInfo; }
+	const VIBUFFER_INFO&		Get_VIBufferInfo() { return m_tInfo; }
 
 protected:
-	VIBUFFER_INFO								m_tInfo;
+	VIBUFFER_INFO				m_tInfo;
 
 	LPDIRECT3DVERTEXBUFFER9		m_pVB;
-	LPDIRECT3DINDEXBUFFER9			m_pIB;
+	LPDIRECT3DINDEXBUFFER9		m_pIB;
 
 public :
 	static VIBuffer* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, VIBUFFER_INFO tInfo);

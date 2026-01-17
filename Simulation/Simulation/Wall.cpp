@@ -21,12 +21,15 @@ Wall::~Wall()
 HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY)
 {
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
+	m_pMesh->Set_FillMode(D3DFILL_SOLID);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_Y, 90.f);
+	m_pTransform->Rotate(AXIS_Z, 50.f);
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
-	m_pCollider->Set_Dimension({ 10.f, 10.f });
+	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
+	m_pCollider->Set_IsInfinite(false);
 
 	BODY body;
 	body.eType = STATIC;
@@ -58,6 +61,7 @@ void Wall::Render_GameObject()
 void Wall::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
+	m_pMesh->Set_Hilight(true);
 }
 
 void Wall::On_CollisionStay(const COLLISION& tCollision)

@@ -33,11 +33,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//_CrtSetBreakAlloc(367);
-	//_CrtSetBreakAlloc(368);
-	//_CrtSetBreakAlloc(369);
-	//_CrtSetBreakAlloc(370);
-
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -171,8 +166,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		_tfreopen_s(&debug, _T("CONOUT$"), _T("w"), stderr);
 
 		HWND hConsole = GetConsoleWindow();
-		MoveWindow(hConsole, 0, 0, 600, 800, TRUE);
-		MoveWindow(hWnd, 800, 50, WINCX, WINCY, TRUE);
+		MoveWindow(hConsole, 0, 50, 600, 800, TRUE);
+		MoveWindow(hWnd, 600, 50, WINCX, WINCY, TRUE);
 	}
 	break;
 

@@ -5,7 +5,7 @@ class Transform;
 
 class Camera : public Object
 {
-private:
+protected:
     Camera(LPDIRECT3DDEVICE9 pGraphicDev,
                     const Vec3* pEye, const Vec3* pAt, const Vec3* pUp,
                     float fFov, float fAspect, float fNear, float fFar);
@@ -22,7 +22,7 @@ public:
     void            Set_Position(const Vec3& vPos);
     const Vec3&     Get_Pos() const;
 
-private :
+protected:
     void            Compute_ViewMatrix();
 
 protected:

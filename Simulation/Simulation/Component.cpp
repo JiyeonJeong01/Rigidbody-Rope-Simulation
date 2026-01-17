@@ -25,6 +25,10 @@ void Component::LateUpdate_Component(const float& fTimeDelta)
 {
 }
 
+void Component::Fixed_Update(const float& fTimeDelta)
+{
+}
+
 void Component::Render_Component()
 {
 }

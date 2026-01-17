@@ -11,13 +11,12 @@ private :
 	~Sphere() override;
 
 public :
-	HRESULT			Ready_Mesh(unsigned long dwColor, float fRadius, int iSlice);
+	HRESULT		Ready_Mesh(unsigned long dwColor, float fRadius, int iSlice);
 
 private :
-	float									m_fRadius;
+	float		m_fRadius;
 
 public :
-	static Sphere* Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner,
-											unsigned long dwColor, float fRadius, int iSlice);
+	static Sphere* Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner, unsigned long dwColor, float fRadius, int iSlice);
 };
 

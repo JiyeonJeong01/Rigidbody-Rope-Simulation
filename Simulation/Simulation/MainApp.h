@@ -30,7 +30,7 @@ private:
 	int					iFPS{};
 	int					iFPSCounter{};
 	long long			llElapsedTime = 0;
-	TCHAR				szFPS[64];
+	TCHAR				szFPS[128];
 
 	Object*				m_pPlayer{};
 	Vec3				m_vPlayerPos{};

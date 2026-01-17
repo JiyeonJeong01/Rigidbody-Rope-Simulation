@@ -95,8 +95,6 @@ void Transform::Rotate(const Vec3& vAxis, const float& fDegree)
 	D3DXQuaternionNormalize(&qCur, &qCur);
 
 	m_vQuaternion = Vec4(qCur.x, qCur.y, qCur.z, qCur.w);
-
-	// TODO : Quaternion to Euler °¡ ºüÁü
 }
 
 void Transform::Set_Rotation(float fX, float fY, float fZ)
@@ -119,9 +117,9 @@ Vec3 Transform::Get_RotationAxis(AXIS eAxis)
 
 	if(eAxis == AXIS_X) 
 		return Vec3(matRot._11, matRot._12, matRot._13);
-	else if (eAxis == AXIS_Y)
+	if (eAxis == AXIS_Y)
 		return Vec3(matRot._21, matRot._22, matRot._23);
-	else if (eAxis ==AXIS_Z)
+	if (eAxis ==AXIS_Z)
 		return Vec3(matRot._31, matRot._32, matRot._33);
 	return Vec3();
 }

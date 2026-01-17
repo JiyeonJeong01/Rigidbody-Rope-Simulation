@@ -31,6 +31,12 @@ void SphereCollider::LateUpdate_Component(const float& fTimeDelta)
 	Collider::LateUpdate_Component(fTimeDelta);
 }
 
+HRESULT SphereCollider::Resolve_Dependency()
+{
+	if (FAILED(Collider::Resolve_Dependency()))
+		return E_FAIL;
+}
+
 SphereCollider* SphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 {
 	SphereCollider* pCol = new SphereCollider(pGraphicDev, pOwner);

@@ -10,7 +10,6 @@ PlaneCollider::PlaneCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	, m_bInfinite(true)
 {
 	m_vDimension = {1.f, 1.f};
-	m_eColType = STATIC;
 }
 
 PlaneCollider::~PlaneCollider()
@@ -19,18 +18,14 @@ PlaneCollider::~PlaneCollider()
 
 HRESULT PlaneCollider::Ready_Component()
 {
-	Find_EquationOfPlane();
+	Calc_EquationOfPlane();
 
 	return S_OK;
 }
 
 int PlaneCollider::Update_Component(const float& fTimeDelta)
 {
-	//if (m_eColType == DYNAMIC || m_eColType == KINEMATIC)
-	//{
-	//	Find_EquationOfPlane();
-	//}
-	Find_EquationOfPlane();
+	Calc_EquationOfPlane();
 	return Collider::Update_Component(fTimeDelta);
 }
 
@@ -39,7 +34,16 @@ void PlaneCollider::LateUpdate_Component(const float& fTimeDelta)
 	Collider::LateUpdate_Component(fTimeDelta);
 }
 
-void PlaneCollider::Find_EquationOfPlane()
+HRESULT PlaneCollider::Resolve_Dependency()
+{
+	if (FAILED(Collider::Resolve_Dependency()))
+		return E_FAIL;
+
+	if (m_eBodyType == STATIC)
+		Calc_EquationOfPlane();
+}
+
+void PlaneCollider::Calc_EquationOfPlane()
 {
 	Transform* pTransform = m_pOwner->Get_Transform();
 	if (!pTransform) return;
@@ -47,7 +51,7 @@ void PlaneCollider::Find_EquationOfPlane()
 	// 평면 위 점
 	m_vPoint = pTransform->Get_Position();
 
-	// 법선 (월드 기준)
+	// 법선 벡터
 	m_vNorm = pTransform->Get_RotationAxis(AXIS_Z);
 	D3DXVec3Normalize(&m_vNorm, &m_vNorm);
 
@@ -55,65 +59,56 @@ void PlaneCollider::Find_EquationOfPlane()
 	m_fD = -D3DXVec3Dot(&m_vNorm, &m_vPoint);
 }
 
-bool PlaneCollider::Is_OnPlane(const Vec3& vPoint)
+bool PlaneCollider::Is_Contacting(const Vec3& vPoint)
 {
+	const Vec3 vCenter = Get_Transform()->Get_Position();
+
+	// 월드 공간에서의 노멀 벡터
+	Vec3 n = m_vNorm;
+	n = VectorHelper::Get_Normalized(n);
+
+	const Vec3 vR = vPoint - vCenter;
+
+	const float fPlaneEps = 1e-2f;
+	const float fDist = VectorHelper::DotProduct(n, vR);
+
+	// fDist == 0, 평면 위에 존재한다
+	if (fabsf(fDist) > fPlaneEps)
+		return false;
+
+	// 무한 평면이라면 vPoint가 범위 안에 있는지 확인하지 않고 return 한다.
 	if (m_bInfinite)
-		return fabsf(Calculate_SignedDistToPlane(vPoint)) < 1e-2f;
-	
-	Vec3 vDiff = Get_Transform()->Get_Position() - vPoint;
-	float fDist = D3DXVec3Length(&vDiff);
+		return true;
 
-	Vec3 vCenter = Get_Transform()->Get_Position();
-	bool bInBound = MathHelper::Float_InRange(vPoint.x, vCenter.x - m_vDimension.x * 0.5f, vCenter.x + m_vDimension.x * 0.5f)
-					&& MathHelper::Float_InRange(vPoint.z, vCenter.z - m_vDimension.y * 0.5f, vCenter.z + m_vDimension.y * 0.5f);
+	// 평면의 회전을 고려하여 u, v, n이 서로 직교하는 로컬 좌표계 만들기 
+	// 평행하는 벡터 제외하기 : NaN 방지
+	Vec3 vRef = Vec3(0, 1, 0);
+	if (fabsf(VectorHelper::DotProduct(vRef, n)) > 0.99f)	// 거의 평행하는 축
+		vRef = Vec3(1, 0, 0);
 
-	return bInBound;
+	Vec3 vU = VectorHelper::Get_Normalized(VectorHelper::CrossProduct(vRef, n));
+	Vec3 vV = VectorHelper::Get_Normalized(VectorHelper::CrossProduct(n, vU));
+
+	const float fHalfW = m_vDimension.x * 0.5f;
+	const float fHalfH = m_vDimension.y * 0.5f;
+
+	// 평면의 로컬 좌표계에서 vPoint가 범위 내에 있는지 확인한다.
+	const float fU = VectorHelper::DotProduct(vU, vR);
+	const float fV = VectorHelper::DotProduct(vV, vR);
+
+	const float edgeEps = 1e-3f;
+	const bool inU = fabsf(fU) <= (fHalfW + edgeEps);
+	const bool inV = fabsf(fV) <= (fHalfH + edgeEps);
+
+	return inU && inV;
 }
 
 float PlaneCollider::Calculate_SignedDistToPlane(const Vec3& vPoint) const
 {
 	// dot(n, (p - p0)) = dot(n, p) + d
-	return D3DXVec3Dot(&m_vNorm, &vPoint) + m_fD;
-}
-
-Vec3 PlaneCollider::Calculate_PenetrationDirToPlane(const Vec3& vPoint) const
-{
-	Vec3 vDiff = -m_vNorm * Calculate_SignedDistToPlane(vPoint);
-	return VectorHelper::Get_Normalized(vDiff);
-}
-
-Vec3 PlaneCollider::Calculate_ResolveDirFromPlane(const Vec3& vPoint) const
-{
-	float fDist = Calculate_SignedDistToPlane(vPoint); // +면 norm쪽, -면 반대쪽
-
-	const float eps = 1e-6f;
-	if (fabsf(fDist) < eps)
-		return m_vNorm; // 접촉면 위에 있으면 그냥 노멀 반환
-
-	//  겹침 해소 방향 임시로 {0, 1, 0} 사용
-	return Vec3{ 0, 1, 0 };
-}
-
-Vec3 PlaneCollider::Project_OnPlane(const Vec3& vPoint) const
-{
-	return Vec3();
-}
-
-const RECT_F& PlaneCollider::Get_Bound()
-{
-	if (m_eColType != STATIC)
-	{
-		Vec3 vPos = Get_Transform()->Get_Position();
-		Vec2 vHalfDim = m_vDimension * 0.5f;
-		m_tBound = {
-			vPos.x -= vHalfDim.x,
-			vPos.y += vHalfDim.y,
-			vPos.x += vHalfDim.x,
-			vPos.y -= vHalfDim.y,
-		};
-	}
-
-	return m_tBound;
+	// 공간의 점과 평면 간의 최소 거리
+	float fDist = D3DXVec3Dot(&m_vNorm, &vPoint) + m_fD;
+	return fDist;
 }
 
 void PlaneCollider::Set_Dimension(const Vec2& vDim)

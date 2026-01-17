@@ -14,13 +14,13 @@ private:
 
 public:
 	HRESULT			Ready_GameObject();
-	int					Update_GameObject(const float& fTimeDelta);
-	void					LateUpdate_GameObject(const float& fTimeDelta);
-	void					Render_GameObject();
+	int				Update_GameObject(const float& fTimeDelta);
+	void			LateUpdate_GameObject(const float& fTimeDelta);
+	void			Render_GameObject();
 
-	void					On_CollisionEnter(const COLLISION& tCollision) override;
-	void					On_CollisionStay(const COLLISION& tCollision) override;
-	void					On_CollisionExit(const COLLISION& tCollision) override;
+	void			On_CollisionEnter(const COLLISION& tCollision) override;
+	void			On_CollisionStay(const COLLISION& tCollision) override;
+	void			On_CollisionExit(const COLLISION& tCollision) override;
 
 private:
 	Transform*		m_pTransform;

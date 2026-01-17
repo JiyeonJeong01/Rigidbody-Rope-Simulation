@@ -33,6 +33,3 @@ private :
 	// TEST
 	static bool s_bTEST;
 };
-
-// Dispatcher·Î º¯°æ
-// https://chatgpt.com/c/695ba8e3-6f10-8321-9663-39ed91612f2f

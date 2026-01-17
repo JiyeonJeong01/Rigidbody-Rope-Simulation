@@ -27,8 +27,8 @@ HRESULT Enemy::Ready_GameObject()
 
 	BODY body;
 	body.eType = STATIC;
-	//body.fAngularDrag = 5.f;
-	//body.fDrag = 0.5f;
+	body.fAngularDrag = 5.f;
+	body.fDrag = 0.5f;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 	m_pRigidbody->Set_GeometryType(SPHERE);
 

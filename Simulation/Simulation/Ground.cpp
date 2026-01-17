@@ -23,7 +23,6 @@ HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSiz
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_X, 270.f);
-	m_pTransform->Set_Position({ 0.f, -4.f, 0.f });
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
 	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
@@ -32,7 +31,6 @@ HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSiz
 	BODY body;
 	body.eType = STATIC;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
-
 
 	__super::Resolve_Dependencies();
 
@@ -67,14 +65,11 @@ void Ground::On_CollisionEnter(const COLLISION& tCollision)
 void Ground::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
-
-	//m_pMesh->Set_Hilight(true);
 }
 
 void Ground::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	//m_pMesh->Set_Hilight(false);
 }
 
 Ground* Ground::Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY)

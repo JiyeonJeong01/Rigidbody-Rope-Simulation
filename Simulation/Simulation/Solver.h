@@ -15,7 +15,7 @@ public :
 	void		Solve_Contacts(CONTACT_INFO* pInfo);
 
 private :
-	void		Solve_Impulse(CONTACT_INFO* pInfo);
+	void		Solve_ImpulseAndFriction(CONTACT_INFO* pInfo);
 	void		Solve_Penetration(CONTACT_INFO* pInfo);
 
 	bool		Is_Seperating(CONTACT_INFO* pInfo);

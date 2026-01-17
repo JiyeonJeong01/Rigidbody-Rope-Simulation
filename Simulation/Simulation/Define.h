@@ -1,8 +1,8 @@
 #pragma once
 
 // 화면 해상도
-#define	WINCX		800
-#define	WINCY		600
+#define	WINCX		1080
+#define	WINCY		720
 
 #define MODE_WIN 1
 
@@ -15,7 +15,7 @@ typedef		D3DXVECTOR4					Vec4;
 typedef		D3DXMATRIX						Matrix;
 
 enum COL_STATE { ENTER, STAY, SEPERATE, EXIT, C_END };
-enum COLLIDER_TYPE { STATIC, DYNAMIC, KINEMATIC, CT_END };
+enum BODY_TYPE { STATIC, DYNAMIC, KINEMATIC, CT_END };
 enum AXIS { AXIS_X, AXIS_Y, AXIS_Z, AXIS_END };
 enum FILL_MODE { SOLID, WIRE, RM_END };
 enum GEOMETRY_TYPE { SPHERE, CUBE, PLANE, G_END };

@@ -10,6 +10,8 @@ typedef struct tagRaycastHit
 
 typedef struct tagRay
 {
+	RAYCAST_HIT* pHit;
+
 	Vec3 vOrigin;
 	Vec3 vDiretion;
 	float fMaxDist;
@@ -27,12 +29,7 @@ private :
 
 public :
 	HRESULT		Ready_Raycast(LPDIRECT3DDEVICE9 pGraphicDevice);
-
-public :
-	static bool Intersect_Ray(RAYCAST_HIT* tOut, const RAY& tRay);
-	static bool Intersect_Ray(Vec3 vOrigin, Vec3 vDirection);
-	static bool Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin, Vec3 vDirection);
-	static bool Intersect_Ray(RAYCAST_HIT* tOut, const POINT& tScreen);
+	static bool Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin);
 
 	void Render_Ray();
 
@@ -42,8 +39,8 @@ private:
 private:
 	static LPDIRECT3DDEVICE9		m_pGraphicDevice;
 
-	LPD3DXLINE								m_pLine;
-	list<RAY>										m_debugRayList;
+	LPD3DXLINE						m_pLine;
+	list<RAY>						m_debugRayList;
 
 public :
 	void Release();

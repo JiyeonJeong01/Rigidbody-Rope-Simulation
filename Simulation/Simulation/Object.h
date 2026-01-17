@@ -14,10 +14,12 @@ public:
 	virtual HRESULT			Ready_GameObject();
 	virtual int				Update_GameObject(const float& fTimeDelta);
 	virtual void			LateUpdate_GameObject(const float& fTimeDelta);
+	virtual void			Fixed_Update(const float& fTimeDelta);
+
 	virtual void			Render_GameObject();
 
 	Transform*				Get_Transform() const								{ return m_pTransform; }
-	void					Set_Transform(Transform* pTransform)	{ m_pTransform = pTransform;}
+	void					Set_Transform(Transform* pTransform)				{ m_pTransform = pTransform;}
 
 	void					Add_Component(wstring wsKey, Component* pComponent) { m_mapComponents.insert({ wsKey, pComponent }); }
 	Component*				Find_Component(wstring wsKey);

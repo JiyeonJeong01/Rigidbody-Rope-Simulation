@@ -9,8 +9,7 @@
 
 SpringJoint::SpringJoint(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	  , m_pRigidbody(nullptr), m_fSpring(0), m_fDamper(0), m_fRestLength(0), m_fMinLength(0), m_fMaxLength(0),
-	  m_bActive(false)
+	  , m_pRigidbody(nullptr), m_fSpring(0), m_fDamper(0), m_fRestLength(0), m_fMinLength(0), m_fMaxLength(0), m_bActive(false)
 {
 }
 
@@ -25,30 +24,38 @@ HRESULT SpringJoint::Ready_Component()
 
 int SpringJoint::Update_Component(const float& fTimeDelta)
 {
-	if (!m_bActive)
-		return 0;
+	return Component::Update_Component(fTimeDelta);
+}
 
-	if (m_pRigidbody == nullptr && !Find_Rigidbody())
-		return 0;
+void SpringJoint::LateUpdate_Component(const float& fTimeDelta)
+{
+	Component::LateUpdate_Component(fTimeDelta);
+}
 
-	// 현재 상태
-	const Vec3 vPos = Get_Transform()->Get_Position();
+void SpringJoint::Fixed_Update(const float& fTimeDelta)
+{
+	Component::Fixed_Update(fTimeDelta);
+	if (!m_bActive || (m_pRigidbody == nullptr && !Find_Rigidbody()))
+		return ;
 
 	BODY* b = PhysicsWorld::GetInstance()->Try_GetBody(m_pRigidbody->Get_BodyID());
+	if (!b) return ;
+
+	const Vec3 vPos = Get_Transform()->Get_Position();
+
 	const Vec3 vVel = b->vLinearVel;
+	const Vec3 vDir = vPos - m_vAnchor;
+	const float fDist = VectorHelper::Get_Length(vDir);
 
-	Vec3 vDir = vPos - m_vAnchor;
-	float fDist = VectorHelper::Get_Length(vDir);
+	if (fDist <= 1e-3f)
+		return ;
 
-	if (fDist <= 0.001f)
-		return 0;
-
-	Vec3 vN = vDir / fDist;   // 로프 방향 단위 벡터
+	Vec3 vN = VectorHelper::Get_Normalized(vDir);
 
 	// 로프는 늘어났을 때만 작동
 	float fX = fDist - m_fRestLength;
 	if (fX <= 0.f)
-		return 0;
+		return ;
 
 	// 로프 방향 속도
 	float fV = VectorHelper::DotProduct(vVel, vN);
@@ -59,16 +66,11 @@ int SpringJoint::Update_Component(const float& fTimeDelta)
 	Vec3 vForce = fForceMag * vN;
 
 	// Rigidbody에 힘 적용
-	m_pRigidbody->Add_Force(vForce, FORCE_MODE::FORCE);
+	m_pRigidbody->Add_Force(vForce);
 
-	// DebugHelper::Print_Vec3(L"Sprinf Add Force", vForce);
-	return Component::Update_Component(fTimeDelta);
 }
 
-void SpringJoint::LateUpdate_Component(const float& fTimeDelta)
-{
-	Component::LateUpdate_Component(fTimeDelta);
-}
+
 
 bool SpringJoint::Find_Rigidbody()
 {

@@ -15,19 +15,19 @@ private:
 
 public:
 	HRESULT			Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY);
-	int					Update_GameObject(const float& fTimeDelta);
-	void					LateUpdate_GameObject(const float& fTimeDelta);
-	void					Render_GameObject();
+	int				Update_GameObject(const float& fTimeDelta);
+	void			LateUpdate_GameObject(const float& fTimeDelta);
+	void			Render_GameObject();
 
-	void					On_CollisionEnter(const COLLISION& tCollision) override;
-	void					On_CollisionStay(const COLLISION& tCollision) override;
-	void					On_CollisionExit(const COLLISION& tCollision) override;
+	void			On_CollisionEnter(const COLLISION& tCollision) override;
+	void			On_CollisionStay(const COLLISION& tCollision) override;
+	void			On_CollisionExit(const COLLISION& tCollision) override;
 
 private:
-	Transform*			m_pTransform;
+	Transform*		m_pTransform;
 	PlaneCollider*	m_pCollider;
-	Plane*					m_pMesh;
-	Rigidbody*			m_pRigidbody;
+	Plane*			m_pMesh;
+	Rigidbody*		m_pRigidbody;
 
 public:
 	static Ground* Create(LPDIRECT3DDEVICE9 pGraphicDevice, unsigned long dwColor, float fSizeX, float fSizeY);

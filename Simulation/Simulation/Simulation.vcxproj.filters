@@ -165,6 +165,9 @@
     <ClInclude Include="Anchor.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="FollowCamera.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulation.cpp">
@@ -246,6 +249,9 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="Anchor.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="FollowCamera.cpp">
       <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>

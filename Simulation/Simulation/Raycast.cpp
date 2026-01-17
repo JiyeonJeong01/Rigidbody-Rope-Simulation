@@ -16,76 +16,91 @@ HRESULT Raycast::Ready_Raycast(LPDIRECT3DDEVICE9 pGraphicDevice)
 	return S_OK;
 }
 
-bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, const RAY& tRay)
+bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin)
 {
-	return false;
-}
+	if (tOut == nullptr)
+		return false;
 
-bool Raycast::Intersect_Ray(Vec3 vOrigin, Vec3 vDirection)
-{
-	return false;
-}
+	POINT pt{};
+	GetCursorPos(&pt);
+	ScreenToClient(g_hWnd, &pt);
 
-bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin, Vec3 vDirection)
-{
-	return false;
-}
-
-bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, const POINT& tScreen)
-{
-	D3DVIEWPORT9 vp;
+	D3DVIEWPORT9 vp{};
 	m_pGraphicDevice->GetViewport(&vp);
 
-	D3DXMATRIX proj, view, invView, world;
-	m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &proj);
-	m_pGraphicDevice->GetTransform(D3DTS_VIEW, &view);
-	D3DXMatrixIdentity(&world);
+	D3DXMATRIX matView, matProj, matWorld;
+	m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+	D3DXMatrixIdentity(&matWorld);
 
-	// near/far in world from mouse
-	D3DXVECTOR3 farPt((float)tScreen.x, (float)tScreen.y, 1.0f);
+	RECT rc{};
+	GetClientRect(g_hWnd, &rc);
 
-	D3DXVECTOR3  farWorld;
-	D3DXVec3Unproject(&farWorld, &farPt, &vp, &proj, &view, &world);
+	POINT ptBB = pt;
+	if (rc.right > 0 && rc.bottom > 0 &&
+		((DWORD)rc.right != vp.Width || (DWORD)rc.bottom != vp.Height))
+	{
+		ptBB.x = LONG(pt.x * (vp.Width / float(rc.right)));
+		ptBB.y = LONG(pt.y * (vp.Height / float(rc.bottom)));
+	}
 
-	// camera world position
-	D3DXMatrixInverse(&invView, nullptr, &view);
-	D3DXVECTOR3 camPos(invView._41, invView._42, invView._43);
+	D3DXVECTOR3 vNear((float)ptBB.x, (float)ptBB.y, 0.0f);
+	D3DXVECTOR3 vFar((float)ptBB.x, (float)ptBB.y, 1.0f);
 
-	D3DXVECTOR3 dir = farWorld - camPos;
-	D3DXVec3Normalize(&dir, &dir);
+	D3DXVec3Unproject(&vNear, &vNear, &vp, &matProj, &matView, &matWorld);
+	D3DXVec3Unproject(&vFar, &vFar, &vp, &matProj, &matView, &matWorld);
 
-	RAY ray;
-	ray.vOrigin = camPos;        
-	ray.vDiretion = dir;
-	ray.fMaxDist = 1000.f;
+	D3DXVECTOR3 pixelDir = vFar - vNear;
+	D3DXVec3Normalize(&pixelDir, &pixelDir);
+
+	D3DXVECTOR3 o(vOrigin.x, vOrigin.y, vOrigin.z);
+	D3DXVECTOR3 dir = pixelDir;
+
+	RAY ray{};
+	ray.pHit = tOut;
+	ray.vOrigin = Vec3(o.x, o.y, o.z);
+	ray.vDiretion = Vec3(dir.x, dir.y, dir.z);
+	ray.fMaxDist = 500.f;
 	ray.dwDebugColor = D3DCOLOR_XRGB(255, 0, 0);
 
 	Raycast::GetInstance()->Add_DebugRay(ray);
 
-	return false;
-	//return CollisionDetector::GetInstance()->Detect_Ray(&ray);
+	return PhysicsWorld::GetInstance()->Detect_Ray(&ray);
 }
 
 void Raycast::Render_Ray()
 {
-	Matrix matProj, matView;
-	m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
-	Matrix matViewProj = matView * matProj;
+	// µð¹ö±ë¿ë ·»´õ
 
-	m_pLine->SetWidth(2.f);
-	for (auto& line : m_debugRayList)
-	{
-		Vec3 p[2];
-		p[0] = line.vOrigin;
-		p[1] = p[0] + line.vDiretion * line.fMaxDist;
+	//Matrix matProj, matView, matWorld;
+	//m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
+	//m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+	//D3DXMatrixIdentity(&matWorld);
 
-		m_pLine->Begin();
-		m_pLine->DrawTransform(p, 2, &matViewProj, D3DCOLOR_XRGB(0, 255, 0));
-		m_pLine->End();
-	}
+	//Matrix matPV = matView * matProj;
 
-	m_debugRayList.clear();
+	//D3DVIEWPORT9 vp{};
+	//m_pGraphicDevice->GetViewport(&vp);
+
+	//m_pLine->SetWidth(3.f);
+	//m_pLine->Begin();
+
+	//for (auto& line : m_debugRayList)
+	//{
+	//	Vec3 p[2]{};
+	//	p[0] = line.vOrigin;
+	//	p[1] = p[0] + line.vDiretion * line.fMaxDist;
+
+	//	Vec3 vScreenPos0, vScreenPos1;
+
+	//	D3DXVec3Project(&vScreenPos0, &p[0], &vp, &matProj, &matView, &matWorld);
+	//	D3DXVec3Project(&vScreenPos1, &p[1], &vp, &matProj, &matView, &matWorld);
+
+	//	m_pLine->DrawTransform(p, 2, &matPV, D3DCOLOR_XRGB(0, 255, 0));
+	//}
+	//m_pLine->End();
+
+	//m_debugRayList.clear();
 }
 
 void Raycast::Add_DebugRay(const RAY& tRay)

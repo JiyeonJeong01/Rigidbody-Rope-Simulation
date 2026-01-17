@@ -30,18 +30,19 @@ HRESULT Player::Ready_GameObject()
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	BODY body;
-	body.fAngularDrag = 0.5f;
-	body.fDrag = 0.5f;
+	body.fAngularDrag = 0.1f;
+	body.fDrag = 0.1f;
 	body.fRestitution = 0.f;
-	body.fFriction = 3.f;
+	body.fFriction = 2.f;
 	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 	m_pRigidbody->Set_GeometryType(SPHERE);
 
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
-	m_pSpringJoint->Set_Damper(5.f);
-	m_pSpringJoint->Set_Spring(50.f);
+	m_pSpringJoint->Set_Damper(1.f);
+	m_pSpringJoint->Set_Spring(10.f);
+	m_pSpringJoint->Set_RestLength(0.5f);
 
 	m_pAnchor = Anchor::Create(m_pGraphicDevice);
 
@@ -69,8 +70,9 @@ int Player::Update_GameObject(const float& fTimeDelta)
 	m_pCamera->Update_GameObject(fTimeDelta);
 
 	if (m_bSwing)
+	{
 		m_pAnchor->Update_GameObject(fTimeDelta);
-
+	}
 	return 0;
 }
 
@@ -80,6 +82,11 @@ void Player::LateUpdate_GameObject(const float& fTimeDelta)
 
 	if (m_bSwing)
 		m_pAnchor->LateUpdate_GameObject(fTimeDelta);
+}
+
+void Player::Fixed_Update(const float& fTimeDElta)
+{
+	Object::Fixed_Update(fTimeDElta);
 }
 
 void Player::Render_GameObject()
@@ -93,6 +100,7 @@ void Player::Render_GameObject()
 
 	if (m_bSwing)
 	{
+		Render_Swing();
 		m_pAnchor->Render_GameObject();
 	}
 
@@ -118,105 +126,66 @@ void Player::On_CollisionExit(const COLLISION& tCollision)
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)
 {
-	if (InputSystem::GetInstance()->Get_KeyDown('Q'))
-	{
-		m_pSpringJoint->Set_Active(true);
-		Vec3 vPos = m_pTransform->Get_Position();
-		m_vAnchor = { vPos.x - 10.f, vPos.y + 10.f, vPos.z + 30.f };
-		m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
-		m_bSwing = true;
-		//m_pSpringJoint->Set_RestLength(VectorHelper::Get_Length(vPos - vAnchor));
-		m_pSpringJoint->Set_Anchor(m_vAnchor);
-	}
-
-	if (InputSystem::GetInstance()->Get_KeyUp('Q'))
-	{
-		m_pSpringJoint->Set_Active(false);
-		m_bSwing = false;
-	}
-
-	if (InputSystem::GetInstance()->Get_KeyDown('E'))
-	{
-		m_pSpringJoint->Set_Active(true);
-		Vec3 vPos = m_pTransform->Get_Position();
-		m_vAnchor = {vPos.x + 10.f, vPos.y + 20.f, vPos.z + 15.f };
-		m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
-		m_bSwing = true;
-		// m_pSpringJoint->Set_RestLength(VectorHelper::Get_Length(vPos - vAnchor));
-		m_pSpringJoint->Set_Anchor(m_vAnchor);
-	}
-
-	if (InputSystem::GetInstance()->Get_KeyUp('E'))
-	{
-		m_pSpringJoint->Set_Active(false);
-		m_bSwing = false;
-	}
-
 	const float fSpeed = 80.f;
 
-	// 상하
+	// 상하 이동
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
-		m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed}, FORCE_MODE::FORCE);
+		m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed});
 	}
 	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
-		m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
+		m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed });
 	}
 
-	// 좌우
+	// 좌우 이동
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
-		m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
+		m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f });
 	}
 	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
-		m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
+		m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f });
 	}
 
-	// TEST
+	// 점프
 	if (InputSystem::GetInstance()->Get_KeyDown(VK_SPACE))
 	{
 		m_pRigidbody->Add_LinearImpulse({ 0.f, fSpeed, 0.f });
 	}
-	if (GetAsyncKeyState('X') & 0x8000)
-	{
-		m_pRigidbody->Add_Torque({ 0.f, fSpeed, 0.f }, FORCE_MODE::FORCE);
-	}
 
 	// Raycast 테스트
-	if (GetAsyncKeyState('T') & 0x8000)
+	if (InputSystem::GetInstance()->Get_KeyDown(VK_LBUTTON))
 	{
-		POINT	ptMouse{};
-		GetCursorPos(&ptMouse);
-		ScreenToClient(g_hWnd, &ptMouse);
+		if (m_bSwing)
+			return;
 
 		RAYCAST_HIT hit;
 		static int iskdfjlsdkf = 0;
-		if (Raycast::Intersect_Ray(&hit, ptMouse))
-			printf("%d\n", iskdfjlsdkf++);
+		if (Raycast::Intersect_Ray(&hit, m_pTransform->Get_Position()))
+		{
+			DebugHelper::Print_Vec3(L"success", hit.vPoint);
+			m_vAnchor = hit.vPoint;
+
+			m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
+			m_bSwing = true;
+
+			m_pSpringJoint->Set_Active(true);
+			m_pSpringJoint->Set_Anchor(m_vAnchor);
+		}
+
+	}
+
+	if (InputSystem::GetInstance()->Get_KeyUp(VK_LBUTTON))
+	{
+		if (m_bSwing)
+			m_bSwing = false;
+
+		m_pSpringJoint->Set_Active(false);
+		m_bSwing = false;
 	}
 
 #pragma region DEBUGGING CAM
-	//// 상하
-	//if (GetAsyncKeyState('W') & 0x8000)
-	//{
-	//	m_pRigidbody->Add_Force({ 0.f, 0.f, fSpeed }, FORCE_MODE::FORCE);
-	//}
-	//else if (GetAsyncKeyState('S') & 0x8000)
-	//{
-	//	m_pRigidbody->Add_Force({ 0.f, 0.f, -fSpeed }, FORCE_MODE::FORCE);
-	//}
-	//// 좌우
-	//if (GetAsyncKeyState('A') & 0x8000)
-	//{
-	//	m_pRigidbody->Add_Force({ -fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
-	//}
-	//else if (GetAsyncKeyState('D') & 0x8000)
-	//{
-	//	m_pRigidbody->Add_Force({ fSpeed, 0.f, 0.f }, FORCE_MODE::FORCE);
-	//}
-
 	static bool bLock = true;
 	if (InputSystem::GetInstance()->Get_KeyDown('M'))
 	{
@@ -234,9 +203,39 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 			m_pCamera->Rotate(AXIS::AXIS_X, D3DXToRadian(lMouseMove / 0.5f));
 		}
 	}
+
 #pragma endregion
+}
 
+void Player::Render_Swing()
+{
+	Matrix matProj, matView, matWorld;
+	m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+	D3DXMatrixIdentity(&matWorld);
 
+	Matrix matPV = matView * matProj;
+
+	D3DVIEWPORT9 vp{};
+	m_pGraphicDevice->GetViewport(&vp);
+
+	LPD3DXLINE pLine;
+	D3DXCreateLine(m_pGraphicDevice, &pLine);
+	pLine->SetWidth(3.f);
+	pLine->Begin();
+
+	// 그리기 
+	Vec3 p[2]{};
+	p[0] = m_pTransform->Get_Position();
+	p[1] = m_vAnchor;
+
+	Vec3 vScreenPos0, vScreenPos1;
+
+	D3DXVec3Project(&vScreenPos0, &p[0], &vp, &matProj, &matView, &matWorld);
+	D3DXVec3Project(&vScreenPos1, &p[1], &vp, &matProj, &matView, &matWorld);
+
+	pLine->DrawTransform(p, 2, &matPV, D3DCOLOR_XRGB(0, 255, 0));
+	pLine->End();
 
 }
 

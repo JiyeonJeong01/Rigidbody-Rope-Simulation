@@ -34,6 +34,8 @@ public :
 	const vector<Collider*>&		Get_Colliders() { return m_vecCollider; }
 	Collider*						Find_ColliderByID(uint32_t id);
 
+	bool					Detect_Ray(struct tagRay* pRay);
+
 private :
 	void					Accumulate_Forces();
 	void					Integrate_Forces(float fTimeDelta);
