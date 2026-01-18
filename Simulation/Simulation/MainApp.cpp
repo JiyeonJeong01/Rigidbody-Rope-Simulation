@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "MainApp.h"
 #include "GraphicDevice.h"
 #include "PhysicsWorld.h"
@@ -79,7 +79,7 @@ void MainApp::Render_MainApp()
 
     m_pGraphicDevice->Render_End();
 
-    // FPS, ÇÃ·¹ÀÌ¾î À§Ä¡ »ó´Ü ¹Ù¿¡ Ãâ·ÂÇÏ±â 
+    // FPS, í”Œë ˆì´ì–´ ìœ„ì¹˜ ìƒë‹¨ ë°”ì— ì¶œë ¥í•˜ê¸° 
     ++iFPSCounter;
     if ((unsigned)(llElapsedTime + 1000) < GetTickCount64())
     {
@@ -175,7 +175,7 @@ HRESULT MainApp::Ready_Wall()
 
     return S_OK;
 }
-
+ 
 MainApp* MainApp::Create()
 {
     MainApp* pMainApp = new MainApp;

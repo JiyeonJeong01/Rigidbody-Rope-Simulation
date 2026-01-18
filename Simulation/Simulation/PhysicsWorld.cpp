@@ -1,9 +1,8 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "PhysicsWorld.h"
 #include "Object.h"
 #include "Collider.h"
 #include "CollisionDetector.h"
-#include "PlaneCollider.h"
 #include "Rigidbody.h"
 #include "Solver.h"
 #include "Transform.h"
@@ -80,7 +79,7 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 	if (!pCollider)
 		return;
 
-	// TODO : KeyPairµµ »èÁ¦ÇØ¾ß ÇÑ´Ù 
+	// TODO : KeyPairë„ ì‚­ì œí•´ì•¼ í•œë‹¤ 
 
 	auto it = std::remove(m_vecCollider.begin(), m_vecCollider.end(), pCollider);
 	m_vecCollider.erase(it, m_vecCollider.end());
@@ -141,7 +140,7 @@ void PhysicsWorld::Invoke_CollisionEvent()
         Collider* pB = Find_ColliderByID(k.bKey);
         if (!pA || !pB) continue;
 
-        // TODO : ÇÊ¿äÇÑ Á¤º¸°¡ ¹»Áö ´Ù Â¥°í º¸°¡¤Ó 
+        // TODO : í•„ìš”í•œ ì •ë³´ê°€ ë­˜ì§€ ë‹¤ ì§œê³  ë³´ê°€ã…£ 
         COLLISION tA{};
         COLLISION tB{};
 
@@ -237,7 +236,7 @@ void PhysicsWorld::Integrate_Forces(float fTimeDelta)
             Matrix matR = b.pTransform->Get_RotationMat();
             Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
 
-            // DX row-vector ±Ô¾à ±âÁØ °ü¼º ¿ªÅÙ¼­ º¯È¯
+            // DX row-vector ê·œì•½ ê¸°ì¤€ ê´€ì„± ì—­í…ì„œ ë³€í™˜
             // World(Inv_Inertia) = trans(R) * Local(Inv_Inerta) * R
             Matrix matInvInerta = matRT * b.matInvInertiaTensor * matR;
 

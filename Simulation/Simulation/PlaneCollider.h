@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Collider.h"
 
 class PlaneCollider : public Collider
@@ -25,7 +25,7 @@ public:
 
 	bool			Get_IsInfinite() const				{ return m_bInfinite; }	
 	void			Set_IsInfinite(bool bInfinite)		{ m_bInfinite = bInfinite; }
-
+     
 	const Vec3&		Get_NormVector() const				{ return m_vNorm; }
 	const float&	Get_D() const						{ return m_fD; }
 

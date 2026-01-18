@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Sphere.h"
 #include "VIBuffer.h"
 #include "Object.h"
@@ -85,4 +85,4 @@ Sphere* Sphere::Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner, unsigne
 	}
 
 	return pSphere;
-}
+} 

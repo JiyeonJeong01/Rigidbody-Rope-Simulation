@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Solver.h"
 
 #include "Collider.h"
@@ -30,7 +30,7 @@ void Solver::Solve_Contacts(CONTACT_INFO* pInfo)
 
 void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 {
-	// ¸Ö¾îÁö´Â ÁßÀÌ¾ú´Ù¸é solveÇÏÁö ¾Ê±â 
+	// ë©€ì–´ì§€ëŠ” ì¤‘ì´ì—ˆë‹¤ë©´ solveí•˜ì§€ ì•Šê¸° 
 	if (Is_Seperating(pInfo))
 		return;
 
@@ -42,56 +42,56 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(B->Get_Rigidbody()->Get_BodyID());
 
 
-	// ==================================================== //
+	// ==================================================== // 
 	// ================== Solve Impulse =================== //
 	// ==================================================== //
-	// Ãæµ¹ ÁöÁ¡ 
+	// ì¶©ëŒ ì§€ì  
 	Vec3 vPoint = pInfo->vPoint;
-	// A°¡ B·Î Ä§¹üÇÏ´Â ¹æÇâ
+	// Aê°€ Bë¡œ ì¹¨ë²”í•˜ëŠ” ë°©í–¥
 	Vec3 vNorm = pInfo->vPenetrateN_A;				
 
 
-	// Ãæµ¹ ÁöÁ¡¿¡¼­ÀÇ ¼Óµµ ±¸ÇÏ±â
+	// ì¶©ëŒ ì§€ì ì—ì„œì˜ ì†ë„ êµ¬í•˜ê¸°
 	Vec3 vVel_A = Calc_PointVelocity(bA, vPoint);
 	Vec3 vVel_B = Calc_PointVelocity(bB, vPoint);
 
-	// B°¡ A¿¡ ´ëÇØ ¿òÁ÷ÀÌ´Â »ó´ë¼Óµµ
+	// Bê°€ Aì— ëŒ€í•´ ì›€ì§ì´ëŠ” ìƒëŒ€ì†ë„
 	Vec3 vVel_Rel = vVel_B - vVel_A; 
 
-	// Ãæµ¹ ÁöÁ¡¿¡¼­ COM À¸·ÎÀÇ º¤ÅÍ r ±¸ÇÏ±â
+	// ì¶©ëŒ ì§€ì ì—ì„œ COM ìœ¼ë¡œì˜ ë²¡í„° r êµ¬í•˜ê¸°
 	Vec3 vR_A = vPoint - bA->vCOM;
 	Vec3 vR_B = vPoint - bB->vCOM;
 
-	// r°ú ³ë¸Öº¤ÅÍ ¿ÜÀûÇØ¼­ ÀÓÆŞ½º È¸Àü Ãà ±¸ÇÏ±â
-	// ³ë¸Ö º¤ÅÍ´Â Ãæµ¹À» ÇØ°áÇÏ±â À§ÇÑ ÀÓÆŞ½º°¡ Àû¿ëÇÒ ¹æÇâÀÌ µÈ´Ù
+	// rê³¼ ë…¸ë©€ë²¡í„° ì™¸ì í•´ì„œ ì„í„ìŠ¤ íšŒì „ ì¶• êµ¬í•˜ê¸°
+	// ë…¸ë©€ ë²¡í„°ëŠ” ì¶©ëŒì„ í•´ê²°í•˜ê¸° ìœ„í•œ ì„í„ìŠ¤ê°€ ì ìš©í•  ë°©í–¥ì´ ëœë‹¤
 	Vec3 vJAxis_A = VectorHelper::CrossProduct(vR_A, vNorm);
 	Vec3 vJAxis_B = VectorHelper::CrossProduct(vR_B, vNorm);
 
-	// ÇØ´ç Ãà¿¡ ´ëÇÑ È¸Àü ÀúÇ×(°ü¼º)ÀÇ ¿ª¼ö ±¸ÇÑ´Ù
-	// = ÇØ´ç ÃàÀ» ±âÁØÀ¸·Î ¾ó¸¶³ª È¸ÀüÇÏ´ÂÁö ±¸ÇÑ´Ù 
+	// í•´ë‹¹ ì¶•ì— ëŒ€í•œ íšŒì „ ì €í•­(ê´€ì„±)ì˜ ì—­ìˆ˜ êµ¬í•œë‹¤
+	// = í•´ë‹¹ ì¶•ì„ ê¸°ì¤€ìœ¼ë¡œ ì–¼ë§ˆë‚˜ íšŒì „í•˜ëŠ”ì§€ êµ¬í•œë‹¤ 
 	const float fInvInertia_A = Calc_InvInertiaOfAxis(tA, bA, vJAxis_A);
 	const float fInvInertia_B = Calc_InvInertiaOfAxis(tB, bB, vJAxis_B);
 
-	// ¹ı¼± º¤ÅÍ¿¡ ´ëÇÑ »ó´ë ¼Óµµ ±¸ÇÏ±â : Ãæµ¹ÀÌ ¾ó¸¶³ª °­ÇÑÁö ÆÇ´ÜÇÑ´Ù
-	// Ãæµ¹ ÁßÀÌ¹Ç·Î ¾ğÁ¦³ª fVel_Norm < 0
+	// ë²•ì„  ë²¡í„°ì— ëŒ€í•œ ìƒëŒ€ ì†ë„ êµ¬í•˜ê¸° : ì¶©ëŒì´ ì–¼ë§ˆë‚˜ ê°•í•œì§€ íŒë‹¨í•œë‹¤
+	// ì¶©ëŒ ì¤‘ì´ë¯€ë¡œ ì–¸ì œë‚˜ fVel_Norm < 0
 	float fVel_Norm = VectorHelper::DotProduct(vNorm, vVel_Rel);
 
-	// ¹İ¹ß°è¼ö e : Á¢±ÙÇÏ´ø ¼ÓµµÀÇ e¹è¸¸Å­ ¹İ´ë ¹æÇâÀ¸·Î Æ¨°Ü ³ª¿À°Ô ÇÑ´Ù
+	// ë°˜ë°œê³„ìˆ˜ e : ì ‘ê·¼í•˜ë˜ ì†ë„ì˜ eë°°ë§Œí¼ ë°˜ëŒ€ ë°©í–¥ìœ¼ë¡œ íŠ•ê²¨ ë‚˜ì˜¤ê²Œ í•œë‹¤
 	const float fThreshold = 9.81f / 5.1f;
 	float fRestitution = (fabsf(fVel_Norm) < fThreshold) ? 0.f : max(bA->fRestitution, bB->fRestitution);
 
-	// Ãæµ¹ ÈÄ ¹ı¼± »ó´ë ¼Óµµ¸¦ Æ¯Á¤ °ªÀ¸·Î ¸¸µé±â À§ÇØ ÇÊ¿äÇÑ º¯È­·®
-	// fVel_Norm : ¹ı¼± ¹æÇâÀ¸·Î ¾ó¸¶³ª ºü¸£°Ô ÆÄ°íµé°í ÀÖ´ÂÁö 
+	// ì¶©ëŒ í›„ ë²•ì„  ìƒëŒ€ ì†ë„ë¥¼ íŠ¹ì • ê°’ìœ¼ë¡œ ë§Œë“¤ê¸° ìœ„í•´ í•„ìš”í•œ ë³€í™”ëŸ‰
+	// fVel_Norm : ë²•ì„  ë°©í–¥ìœ¼ë¡œ ì–¼ë§ˆë‚˜ ë¹ ë¥´ê²Œ íŒŒê³ ë“¤ê³  ìˆëŠ”ì§€ 
 	float fNumerator = -(fRestitution + 1) * fVel_Norm;
 
-	// Ãæµ¹¿¡¼­ ÀÓÆŞ½º 1¿¡ ´ëÇÑ ÃÑ ¼Óµµ º¯È­ ¹Î°¨µµ
+	// ì¶©ëŒì—ì„œ ì„í„ìŠ¤ 1ì— ëŒ€í•œ ì´ ì†ë„ ë³€í™” ë¯¼ê°ë„
 	float fMagSq_J_A = VectorHelper::DotProduct(vJAxis_A, vJAxis_A);
 	float fMagSq_J_B = VectorHelper::DotProduct(vJAxis_B, vJAxis_B);
 	float fDenominator = bA->fInvMass + bB->fInvMass + fMagSq_J_A * fInvInertia_A + fMagSq_J_B * fInvInertia_B;
 
-	// Ãæµ¹¿¡ ´ëÇÑ ÀúÇ×°ª ±¸ÇÏ±â : ¹ı¼± »ó´ë ¼Óµµ¸¦ ±¸ÇØ¾ß ÇÑ´Ù 
+	// ì¶©ëŒì— ëŒ€í•œ ì €í•­ê°’ êµ¬í•˜ê¸° : ë²•ì„  ìƒëŒ€ ì†ë„ë¥¼ êµ¬í•´ì•¼ í•œë‹¤ 
 	// impulse = numerator / denominator
-	// j = (¿øÇÏ´Â ¼Óµµ º¯È­·®) / (¹°Ã¼ÀÇ ÀúÇ×)
+	// j = (ì›í•˜ëŠ” ì†ë„ ë³€í™”ëŸ‰) / (ë¬¼ì²´ì˜ ì €í•­)
 	float fJ = fNumerator / fDenominator;
 	if (fJ < 0.f)
 		fJ = 0.f;
@@ -102,48 +102,48 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 	// ================== Solve Friction ================== //
 	// ==================================================== //
 
-	// »ó´ë ¼Óµµ = ³ë¸Ö ¼ººĞ + Á¢¼± ¼ººĞ 
-	// ¾Æ·¡·Î ¶³¾îÁö´Â ¼Óµµ: ³ë¸Ö ¼ººĞ (¹Ù´ÚÀ» ÆÄ°íµç´Ù)
+	// ìƒëŒ€ ì†ë„ = ë…¸ë©€ ì„±ë¶„ + ì ‘ì„  ì„±ë¶„ 
+	// ì•„ë˜ë¡œ ë–¨ì–´ì§€ëŠ” ì†ë„: ë…¸ë©€ ì„±ë¶„ (ë°”ë‹¥ì„ íŒŒê³ ë“ ë‹¤)
 	Vec3 vVel_Parralel = vNorm * fVel_Norm;
 
-	// ¿·À¸·Î ¹Ì²ô·¯Áö´Â ¼Óµµ : Á¢¼± ¼ººĞ(¸¶ÂûÀÌ ¸·¾Æ¾ß ÇÔ)
+	// ì˜†ìœ¼ë¡œ ë¯¸ë„ëŸ¬ì§€ëŠ” ì†ë„ : ì ‘ì„  ì„±ë¶„(ë§ˆì°°ì´ ë§‰ì•„ì•¼ í•¨)
 	Vec3 vVel_Tangent = vVel_Rel - vVel_Parralel;
 
 	Vec3 vJFriction = VectorHelper::Zero();
 
 	if (!VectorHelper::Is_Zero(vVel_Tangent))
 	{
-		// ¹Ì²ô·¯Áö´Â ¹æÇâ ÃßÃâ
+		// ë¯¸ë„ëŸ¬ì§€ëŠ” ë°©í–¥ ì¶”ì¶œ
 		vVel_Tangent = VectorHelper::Get_Normalized(vVel_Tangent);
 
-		// »ó´ë ¼Óµµ¸¦ Á¢¼±¿¡ Åõ¿µ : Ç¥¸éÀ» µû¶ó ¹Ì²ô·¯Áö´Â ½ÇÁ¦ ¼Óµµ ¼ººĞ 
+		// ìƒëŒ€ ì†ë„ë¥¼ ì ‘ì„ ì— íˆ¬ì˜ : í‘œë©´ì„ ë”°ë¼ ë¯¸ë„ëŸ¬ì§€ëŠ” ì‹¤ì œ ì†ë„ ì„±ë¶„ 
 		float vt = VectorHelper::DotProduct(vVel_Rel, vVel_Tangent);
 
-		// ¸¶ÂûÀÌ ¸¸µé È¸Àü °è»êÇÏ±â
-		// ¹°Ã¼°¡ ¸¶Âû·Î ÀÎÇØ È¸ÀüÇÒ Ãà ±¸ÇÏ±â
+		// ë§ˆì°°ì´ ë§Œë“¤ íšŒì „ ê³„ì‚°í•˜ê¸°
+		// ë¬¼ì²´ê°€ ë§ˆì°°ë¡œ ì¸í•´ íšŒì „í•  ì¶• êµ¬í•˜ê¸°
 		const Vec3 vTangentAxis_A = VectorHelper::CrossProduct(vR_A, vVel_Tangent);
 		const Vec3 vTangentAxis_B = VectorHelper::CrossProduct(vR_B, vVel_Tangent);
 
-		// ÇØ´ç È¸Àü ÃàÀ» ±âÁØÀ¸·Î È¸ÀüÇÏ´Â Á¤µµ ±¸ÇÏ±â 
+		// í•´ë‹¹ íšŒì „ ì¶•ì„ ê¸°ì¤€ìœ¼ë¡œ íšŒì „í•˜ëŠ” ì •ë„ êµ¬í•˜ê¸° 
 		float fInvInertiaT_A = Calc_InvInertiaOfAxis(tA, bA, vTangentAxis_A);
 		float fInvInertiaT_B = Calc_InvInertiaOfAxis(tB, bB, vTangentAxis_B);
 
-		// ·¹¹ö¾Ï ±æÀÌ¸¦ ¹İ¿µÇÑ È¸Àü ±â¿©µµ 
+		// ë ˆë²„ì•” ê¸¸ì´ë¥¼ ë°˜ì˜í•œ íšŒì „ ê¸°ì—¬ë„ 
 		float fMagSq_TAxis_A = VectorHelper::DotProduct(vTangentAxis_A, vTangentAxis_A);
 		float fMagSq_TAxis_B = VectorHelper::DotProduct(vTangentAxis_B, vTangentAxis_B);
 
-		// invMass : ÀÛÀ»¼ö·Ï(¹°Ã¼°¡ ¹«°Å¿ï¼ö·Ï) ¿òÁ÷ÀÌ±â ¾î·Æ´Ù
-		// invInertia : ÀÛÀ»¼ö·Ï È¸ÀüÇÏ±â ¾î·Æ´Ù
-		// => fDenominator¸¦ ºĞ¸ğ·Î »ç¿ëÇÏ¿©, ¿òÁ÷ÀÓÀÇ ¹Î°¨µµ·Î ÀÛ¿ëÇÏ°Ô ÇÑ´Ù. 
+		// invMass : ì‘ì„ìˆ˜ë¡(ë¬¼ì²´ê°€ ë¬´ê±°ìš¸ìˆ˜ë¡) ì›€ì§ì´ê¸° ì–´ë µë‹¤
+		// invInertia : ì‘ì„ìˆ˜ë¡ íšŒì „í•˜ê¸° ì–´ë µë‹¤
+		// => fDenominatorë¥¼ ë¶„ëª¨ë¡œ ì‚¬ìš©í•˜ì—¬, ì›€ì§ì„ì˜ ë¯¼ê°ë„ë¡œ ì‘ìš©í•˜ê²Œ í•œë‹¤. 
 		float fDenominatorT = bA->fInvMass + bB->fInvMass + fMagSq_TAxis_A * fInvInertiaT_A + fMagSq_TAxis_B * fInvInertiaT_B;
 
 		float fImpulseT = -vt / fDenominatorT;
 
-		// ¸¶Âû ÀÓÆŞ½º°¡ ³ë¸Ö ÀÓÆŞ½º°¡ Çã¿ëÇÏ´Â ÃÖ´ëÄ¡¸¦ ³ÑÁö ¾Êµµ·Ï Á¦ÇÑÇÑ´Ù.
+		// ë§ˆì°° ì„í„ìŠ¤ê°€ ë…¸ë©€ ì„í„ìŠ¤ê°€ í—ˆìš©í•˜ëŠ” ìµœëŒ€ì¹˜ë¥¼ ë„˜ì§€ ì•Šë„ë¡ ì œí•œí•œë‹¤.
 		float mu = sqrtf(bA->fFriction * bB->fFriction);
 
 		float fMaxFriction = fJ * mu;
-		// Å¬·¥ÇÁ 
+		// í´ë¨í”„ 
 		if (fImpulseT > fMaxFriction)
 			fImpulseT = fMaxFriction;
 		if (fImpulseT < -fMaxFriction) 
@@ -231,8 +231,8 @@ void Solver::Add_ImpulseAtPoint(Transform* pTransform, BODY* b, const Vec3& impu
 
 bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 {
-	// vResolveN_A : "A¸¦ B¿¡°Ô¼­ ¸Ö¾îÁö°Ô ÇÏ´Â ¹æÇâ" (A separation direction)
-	// vRel = vB - vA : A ±âÁØ¿¡¼­ º» BÀÇ »ó´ë¼Óµµ
+	// vResolveN_A : "Aë¥¼ Bì—ê²Œì„œ ë©€ì–´ì§€ê²Œ í•˜ëŠ” ë°©í–¥" (A separation direction)
+	// vRel = vB - vA : A ê¸°ì¤€ì—ì„œ ë³¸ Bì˜ ìƒëŒ€ì†ë„
 
 	BODY* bA = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->A->Get_Rigidbody()->Get_BodyID());
 	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->B->Get_Rigidbody()->Get_BodyID());
@@ -250,7 +250,7 @@ bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 
 	const Vec3 vRel = vB - vA;
 
-	// dot(vRel, vResolveN_A) < 0  => B°¡ -resolve ¹æÇâÀ¸·Î ¿òÁ÷ÀÓ => A¿Í B°¡ ¼­·Î ¸Ö¾îÁö´Â Áß (separating)
+	// dot(vRel, vResolveN_A) < 0  => Bê°€ -resolve ë°©í–¥ìœ¼ë¡œ ì›€ì§ì„ => Aì™€ Bê°€ ì„œë¡œ ë©€ì–´ì§€ëŠ” ì¤‘ (separating)
 	const float vn = VectorHelper::DotProduct(vRel, pInfo->vResolveN_A);
 	const float eps = 1e-4f;
 
@@ -280,7 +280,7 @@ float Solver::Calc_InvInertiaOfAxis(Transform* pTransform, BODY* b, const Vec3& 
 	Matrix matR = pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
 
-	// DX row-vector ±Ô¾à ±âÁØ °ü¼º ¿ªÅÙ¼­ º¯È¯
+	// DX row-vector ê·œì•½ ê¸°ì¤€ ê´€ì„± ì—­í…ì„œ ë³€í™˜
 	// World(Inv_Inertia) = trans(R) * Local(Inv_Inerta) * R
 	Matrix matInvInerta = matRT * b->matInvInertiaTensor * matR;
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "Transform.h"
 #include "Object.h"
 #include "MathHelper.h"
@@ -9,7 +9,6 @@ Transform::Transform(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 		, m_vScale(1.f, 1.f, 1.f), m_vQuaternion(0.f, 0.f, 0.f, 1.f)
 {
 	ZeroMemory(m_vRotation, sizeof(m_vRotation));
-	
 	D3DXMatrixIdentity(&m_matWorld);
 }
 
@@ -41,13 +40,13 @@ int Transform::Update_Component(const float& fTimeDelta)
 		memcpy(&m_vRotation[i], &m_matWorld.m[i][0], sizeof(Vec3));
 	}
 
-	// Ω∫ƒ…¿œ
+	// Ïä§ÏºÄÏùº
 	for (int i = 0; i < AXIS_END; ++i)
 	{
 		m_vRotation[i] *= *((float*)&m_vScale + i);
 	}
 
-	// »∏¿¸ ∞ËªÍ
+	// ÌöåÏ†Ñ Í≥ÑÏÇ∞
 	D3DXQUATERNION qRot (m_vQuaternion.x, m_vQuaternion.y, m_vQuaternion.z, m_vQuaternion.w);
 
 	Matrix	matRot;
@@ -57,7 +56,7 @@ int Transform::Update_Component(const float& fTimeDelta)
 	m_vRotation[AXIS_Y] = Vec3(matRot._21, matRot._22, matRot._23);
 	m_vRotation[AXIS_Z] = Vec3(matRot._31, matRot._32, matRot._33);
 
-	// ≈©±‚, »∏¿¸, ¿ßƒ°∏¶ ø˘µÂ «‡∑ƒø° ∫πªÁ
+	// ÌÅ¨Í∏∞, ÌöåÏ†Ñ, ÏúÑÏπòÎ•º ÏõîÎìú ÌñâÎ†¨Ïóê Î≥µÏÇ¨
 	for (int i = 0; i < AXIS_END; ++i)
 	{
 		memcpy(&m_matWorld.m[i][0], &m_vRotation[i], sizeof(Vec3));

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Object.h"
 
 Object::Object(LPDIRECT3DDEVICE9 pGraphicDevice)
@@ -84,6 +84,6 @@ void Object::Release()
 				p.second = nullptr;
 			}
 	});
-
+     
 	delete this;
 }

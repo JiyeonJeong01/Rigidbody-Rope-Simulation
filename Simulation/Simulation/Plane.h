@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Mesh.h"
 
 class Object;
@@ -18,6 +18,6 @@ private:
 
 public:
 	static Plane* Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner,
-		unsigned long dwColor, float fWidth, float fHeight);
+		                unsigned long dwColor, float fWidth, float fHeight);
 };
 

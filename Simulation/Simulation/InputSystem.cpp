@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "InputSystem.h"
 
 IMPLEMENT_SINGLETON(InputSystem)
@@ -23,18 +23,18 @@ HRESULT InputSystem::Ready_System()
 		NULL)))
 		return E_FAIL;
 
-	// ¸¶¿ì½º °´Ã¼ »ı¼º
+	// ë§ˆìš°ìŠ¤ ê°ì²´ ìƒì„±
 	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr)))
 		return E_FAIL;
 
 
-	// »ı¼ºµÈ ¸¶¿ì½º °´Ã¼ÀÇ ´ëÇÑ Á¤º¸¸¦ ÄÄ °´Ã¼¿¡°Ô Àü´ŞÇÏ´Â ÇÔ¼ö
+	// ìƒì„±ëœ ë§ˆìš°ìŠ¤ ê°ì²´ì˜ ëŒ€í•œ ì •ë³´ë¥¼ ì»´ ê°ì²´ì—ê²Œ ì „ë‹¬í•˜ëŠ” í•¨ìˆ˜
 	m_pMouse->SetDataFormat(&c_dfDIMouse);
 
-	// ÀåÄ¡¿¡ ´ëÇÑ µ¶Á¡±ÇÀ» ¼³Á¤ÇØÁÖ´Â ÇÔ¼ö, Å¬¶óÀÌ¾ğÆ®°¡ ¶°ÀÖ´Â »óÅÂ¿¡¼­ Å° ÀÔ·ÂÀ» ¹ŞÀ»Áö ¸»Áö¸¦ °áÁ¤ÇÏ´Â ÇÔ¼ö
+	// ì¥ì¹˜ì— ëŒ€í•œ ë…ì ê¶Œì„ ì„¤ì •í•´ì£¼ëŠ” í•¨ìˆ˜, í´ë¼ì´ì–¸íŠ¸ê°€ ë– ìˆëŠ” ìƒíƒœì—ì„œ í‚¤ ì…ë ¥ì„ ë°›ì„ì§€ ë§ì§€ë¥¼ ê²°ì •í•˜ëŠ” í•¨ìˆ˜
 	m_pMouse->SetCooperativeLevel(g_hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
 
-	// ÀåÄ¡¿¡ ´ëÇÑ access ¹öÀüÀ» ¹Ş¾Æ¿À´Â ÇÔ¼ö
+	// ì¥ì¹˜ì— ëŒ€í•œ access ë²„ì „ì„ ë°›ì•„ì˜¤ëŠ” í•¨ìˆ˜ 
 	m_pMouse->Acquire();
 
 	return S_OK;

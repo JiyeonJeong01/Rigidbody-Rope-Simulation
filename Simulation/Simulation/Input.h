@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 
 enum class EActionPhase : uint8_t
@@ -10,8 +10,8 @@ enum class EActionPhase : uint8_t
 
 enum class EBindingType : uint8_t
 {
-    AnyOf,   // OR: keys Áß ÇÏ³ª¶óµµ ´­¸®¸é true
-    AllOf     // AND: chord: keys ¸ğµÎ ´­·Á¾ß true
+    AnyOf,   // OR: keys ì¤‘ í•˜ë‚˜ë¼ë„ ëˆŒë¦¬ë©´ true
+    AllOf     // AND: chord: keys ëª¨ë‘ ëˆŒë ¤ì•¼ true
 };
 
 struct Binding
@@ -42,9 +42,9 @@ struct Action
     wstring name;
     vector<Binding> bindings;
 
-    // ¿É¼Ç: ¹öÆ° ¾×¼Ç¿¡¼­ performed¸¦ ¾î¶»°Ô ÁÙÁö
-    // - true: ´­·ÁÀÖ´Â µ¿¾È ¸Å ÇÁ·¹ÀÓ performed (Held ¹æ½Ä)
-    // - false: started(Down) ¶§¸¸ performed 1È¸ (Single-shot ¹æ½Ä)
+    // ì˜µì…˜: ë²„íŠ¼ ì•¡ì…˜ì—ì„œ performedë¥¼ ì–´ë–»ê²Œ ì¤„ì§€
+    // - true: ëˆŒë ¤ìˆëŠ” ë™ì•ˆ ë§¤ í”„ë ˆì„ performed (Held ë°©ì‹)
+    // - false: started(Down) ë•Œë§Œ performed 1íšŒ (Single-shot ë°©ì‹)
     bool performedWhileHeld = true;
 
     bool enabled = true;
@@ -58,5 +58,3 @@ struct ActionMap
     bool enabled = true;
     vector<Action> actions;
 };
-
-// https://chatgpt.com/c/695a7ca3-96b0-8322-ad21-c576b7a75852

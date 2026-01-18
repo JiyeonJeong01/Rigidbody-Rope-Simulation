@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include "Component.h"
 #include "Physics_Struct.h"
 class Rigidbody;
@@ -22,7 +22,7 @@ public:
 	void		Set_Spring(const float& fSpring)	{ m_fSpring = fSpring; }
 	void		Set_Damper(const float& fDamper)	{ m_fDamper = fDamper; }
 	void		Set_RestLength(float fLen)			{ m_fRestLength = fLen; }
-
+     
 private:
 	Rigidbody*	m_pRigidbody;
 
@@ -31,7 +31,7 @@ private:
 	float       m_fSpring;           // k
 	float       m_fDamper;           // c
 
-	float       m_fRestLength;       // ∏Ò«• ±Ê¿Ã
+	float       m_fRestLength;       // Î™©Ìëú Í∏∏Ïù¥
 	float       m_fMinLength;
 	float       m_fMaxLength;
 

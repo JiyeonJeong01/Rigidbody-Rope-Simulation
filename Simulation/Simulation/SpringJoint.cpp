@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "SpringJoint.h"
 
 #include "DebugHelper.h"
@@ -52,12 +52,12 @@ void SpringJoint::Fixed_Update(const float& fTimeDelta)
 
 	Vec3 vN = VectorHelper::Get_Normalized(vDir);
 
-	// ·ÎÇÁ´Â ´Ã¾î³µÀ» ¶§¸¸ ÀÛµ¿
+	// ë¡œí”„ëŠ” ëŠ˜ì–´ë‚¬ì„ ë•Œë§Œ ì‘ë™
 	float fX = fDist - m_fRestLength;
 	if (fX <= 0.f)
 		return ;
 
-	// ·ÎÇÁ ¹æÇâ ¼Óµµ
+	// ë¡œí”„ ë°©í–¥ ì†ë„
 	float fV = VectorHelper::DotProduct(vVel, vN);
 
 	// Spring + Damper
@@ -65,11 +65,10 @@ void SpringJoint::Fixed_Update(const float& fTimeDelta)
 	float fForceMag = (-m_fSpring * fX) - (m_fDamper * fV);
 	Vec3 vForce = fForceMag * vN;
 
-	// Rigidbody¿¡ Èû Àû¿ë
+	// Rigidbodyì— í˜ ì ìš©
 	m_pRigidbody->Add_Force(vForce);
 
 }
-
 
 
 bool SpringJoint::Find_Rigidbody()

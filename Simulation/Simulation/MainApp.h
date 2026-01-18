@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 
 class GraphicDevice;
 class Object;
 
 class MainApp
 {
-public:	// »ý¼ºÀÚ, ¼Ò¸êÀÚ
+public:
 	explicit MainApp();
 	virtual ~MainApp();
 

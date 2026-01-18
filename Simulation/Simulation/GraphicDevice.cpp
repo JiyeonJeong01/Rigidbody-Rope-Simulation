@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GraphicDevice.h"
 
 IMPLEMENT_SINGLETON(GraphicDevice)
@@ -14,6 +14,7 @@ GraphicDevice::~GraphicDevice()
 
 HRESULT GraphicDevice::Ready_GraphicDev(HWND hWnd, GraphicDevice** ppGraphicDev)
 {
+    // DX9 장치 초기화
     m_pSDK = Direct3DCreate9(D3D_SDK_VERSION);
     if (nullptr == m_pSDK)
         return E_FAIL;

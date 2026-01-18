@@ -11,7 +11,7 @@ HINSTANCE g_hInst;
 WCHAR szTitle[MAX_LOADSTRING];          
 WCHAR szWindowClass[MAX_LOADSTRING];         
 HWND    g_hWnd;
-FILE* debug;
+FILE* debug; 
 
 // 프레임 관리
 constexpr double FPS60_DT = 1.f / 60.f;

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "VIBuffer.h"
 #include "Object.h"
 
@@ -18,16 +18,16 @@ VIBuffer::~VIBuffer()
 
 HRESULT VIBuffer::Ready_Component()
 {
-    // ¹öÅØ½º ¹öÆÛ »ý¼º
+    // ë²„í…ìŠ¤ ë²„í¼ ìƒì„±
     if (FAILED(m_pGraphicDevice->CreateVertexBuffer(m_tInfo.dwVtxCnt * m_tInfo.dwVtxSize,
 																						0,
 																						m_tInfo.dwFVF,
 																						D3DPOOL_MANAGED,
 																						&m_pVB,
 																						NULL)))
-																						return E_FAIL;
+						 																return E_FAIL;
 
-    // ÀÎµ¦½º ¹öÆÛ »ý¼º 
+    // ì¸ë±ìŠ¤ ë²„í¼ ìƒì„± 
     if (FAILED(m_pGraphicDevice->CreateIndexBuffer(m_tInfo.dwIdxSize * m_tInfo.dwTriCnt,
 																						0,
 																						m_tInfo.IdxFmt,

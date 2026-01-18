@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 
 class Sphere;
@@ -22,4 +22,3 @@ public:
 	static Anchor* Create(LPDIRECT3DDEVICE9 pGraphicDevice);
 	void Release() override;
 };
-

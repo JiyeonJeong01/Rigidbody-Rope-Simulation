@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 class Object;
 
 typedef struct tagRaycastHit
@@ -22,7 +22,6 @@ typedef struct tagRay
 
 class Raycast
 {
-private :
 	DECLARE_SINGLETON(Raycast)
 	Raycast() {};
 	~Raycast() {};

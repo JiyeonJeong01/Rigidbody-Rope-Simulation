@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Mesh.h"
 
 class Object;
@@ -19,4 +19,3 @@ private :
 public :
 	static Sphere* Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner, unsigned long dwColor, float fRadius, int iSlice);
 };
-

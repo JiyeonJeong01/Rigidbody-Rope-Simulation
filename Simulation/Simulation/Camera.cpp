@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Camera.h"
 #include "Transform.h"
 
@@ -21,11 +21,11 @@ HRESULT Camera::Ready_GameObject()
 {
 	m_pTransformCom = Transform::Create(m_pGraphicDevice, this);
 
-    // ºä º¯È¯
+    // ë·° ë³€í™˜
     D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
     m_pGraphicDevice->SetTransform(D3DTS_VIEW, &m_matView);
 
-    // Åõ¿µ º¯È¯
+    // íˆ¬ì˜ ë³€í™˜
 	D3DXMatrixPerspectiveFovLH(&m_matProj, m_fFov, m_fAspect, m_fNear, m_fFar);
     m_pGraphicDevice->SetTransform(D3DTS_PROJECTION, &m_matProj);
 
@@ -41,8 +41,9 @@ int Camera::Update_GameObject(const float& fTimeDelta)
 
 void Camera::LateUpdate_GameObject(const float& fTimeDelta)
 {
-    // ºä Çà·Ä Àç¼³Á¤
+    // ë·° í–‰ë ¬ ìž¬ì„¤ì •
     Compute_ViewMatrix();
+
     D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
     m_pGraphicDevice->SetTransform(D3DTS_VIEW, &m_matView);
 }

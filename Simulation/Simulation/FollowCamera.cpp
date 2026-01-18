@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "FollowCamera.h"
 
 #include "Transform.h"
@@ -40,7 +40,7 @@ void FollowCamera::Rotate(const float& degree)
 {
     float fRad = D3DXToRadian(degree);
 
-    // ÇÃ·¹ÀÌ¾î(ÇÇ¹þ) À§Ä¡
+    // í”Œë ˆì´ì–´(í”¼ë²—) ìœ„ì¹˜
     Vec3 pivot = m_pTarget->Get_Transform()->Get_Position();
 	float fC = cosf(fRad);
 	float fS = sinf(fRad);

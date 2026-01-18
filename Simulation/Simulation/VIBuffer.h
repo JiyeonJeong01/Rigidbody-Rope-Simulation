@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 class Object;
 typedef struct tagVIBufferInfo
 {
-	unsigned long					dwVtxSize;	// ¹öÅØ½º ±¸Á¶Ã¼ Å©±â
-	unsigned long					dwVtxCnt;		// ¹öÅØ½º °³¼ö
-	unsigned long					dwTriCnt;		// Ãâ·ÂÇÏ°íÀÚÇÏ´Â »ï°¢Çü °³¼ö
-	unsigned long					dwFVF;		// ¹öÅØ½º Æ÷¸ËÀ» ÁöÁ¤ÇÏ´Â »ó¼ö °ª
+	unsigned long					dwVtxSize;	// ë²„í…ìŠ¤ êµ¬ì¡°ì²´ í¬ê¸°
+	unsigned long					dwVtxCnt;		// ë²„í…ìŠ¤ ê°œìˆ˜
+	unsigned long					dwTriCnt;		// ì¶œë ¥í•˜ê³ ìí•˜ëŠ” ì‚¼ê°í˜• ê°œìˆ˜
+	unsigned long					dwFVF;		// ë²„í…ìŠ¤ í¬ë§·ì„ ì§€ì •í•˜ëŠ” ìƒìˆ˜ ê°’
 
 	D3DFORMAT								IdxFmt;
 	unsigned long								dwIdxSize;
@@ -41,4 +41,3 @@ public :
 	static VIBuffer* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, VIBUFFER_INFO tInfo);
 	void Release() override;
 };
-

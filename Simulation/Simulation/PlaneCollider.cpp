@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "PlaneCollider.h"
 #include "Object.h"
 #include "CollisionDetector.h"
@@ -41,17 +41,17 @@ HRESULT PlaneCollider::Resolve_Dependency()
 
 	if (m_eBodyType == STATIC)
 		Calc_EquationOfPlane();
-}
+} 
 
 void PlaneCollider::Calc_EquationOfPlane()
 {
 	Transform* pTransform = m_pOwner->Get_Transform();
 	if (!pTransform) return;
 
-	// Æò¸é À§ Á¡
+	// í‰ë©´ ìœ„ ì 
 	m_vPoint = pTransform->Get_Position();
 
-	// ¹ı¼± º¤ÅÍ
+	// ë²•ì„  ë²¡í„°
 	m_vNorm = pTransform->Get_RotationAxis(AXIS_Z);
 	D3DXVec3Normalize(&m_vNorm, &m_vNorm);
 
@@ -63,7 +63,7 @@ bool PlaneCollider::Is_Contacting(const Vec3& vPoint)
 {
 	const Vec3 vCenter = Get_Transform()->Get_Position();
 
-	// ¿ùµå °ø°£¿¡¼­ÀÇ ³ë¸Ö º¤ÅÍ
+	// ì›”ë“œ ê³µê°„ì—ì„œì˜ ë…¸ë©€ ë²¡í„°
 	Vec3 n = m_vNorm;
 	n = VectorHelper::Get_Normalized(n);
 
@@ -72,18 +72,18 @@ bool PlaneCollider::Is_Contacting(const Vec3& vPoint)
 	const float fPlaneEps = 1e-2f;
 	const float fDist = VectorHelper::DotProduct(n, vR);
 
-	// fDist == 0, Æò¸é À§¿¡ Á¸ÀçÇÑ´Ù
+	// fDist == 0, í‰ë©´ ìœ„ì— ì¡´ì¬í•œë‹¤
 	if (fabsf(fDist) > fPlaneEps)
 		return false;
 
-	// ¹«ÇÑ Æò¸éÀÌ¶ó¸é vPoint°¡ ¹üÀ§ ¾È¿¡ ÀÖ´ÂÁö È®ÀÎÇÏÁö ¾Ê°í return ÇÑ´Ù.
+	// ë¬´í•œ í‰ë©´ì´ë¼ë©´ vPointê°€ ë²”ìœ„ ì•ˆì— ìˆëŠ”ì§€ í™•ì¸í•˜ì§€ ì•Šê³  return í•œë‹¤.
 	if (m_bInfinite)
 		return true;
 
-	// Æò¸éÀÇ È¸ÀüÀ» °í·ÁÇÏ¿© u, v, nÀÌ ¼­·Î Á÷±³ÇÏ´Â ·ÎÄÃ ÁÂÇ¥°è ¸¸µé±â 
-	// ÆòÇàÇÏ´Â º¤ÅÍ Á¦¿ÜÇÏ±â : NaN ¹æÁö
+	// í‰ë©´ì˜ íšŒì „ì„ ê³ ë ¤í•˜ì—¬ u, v, nì´ ì„œë¡œ ì§êµí•˜ëŠ” ë¡œì»¬ ì¢Œí‘œê³„ ë§Œë“¤ê¸° 
+	// í‰í–‰í•˜ëŠ” ë²¡í„° ì œì™¸í•˜ê¸° : NaN ë°©ì§€
 	Vec3 vRef = Vec3(0, 1, 0);
-	if (fabsf(VectorHelper::DotProduct(vRef, n)) > 0.99f)	// °ÅÀÇ ÆòÇàÇÏ´Â Ãà
+	if (fabsf(VectorHelper::DotProduct(vRef, n)) > 0.99f)	// ê±°ì˜ í‰í–‰í•˜ëŠ” ì¶•
 		vRef = Vec3(1, 0, 0);
 
 	Vec3 vU = VectorHelper::Get_Normalized(VectorHelper::CrossProduct(vRef, n));
@@ -92,7 +92,7 @@ bool PlaneCollider::Is_Contacting(const Vec3& vPoint)
 	const float fHalfW = m_vDimension.x * 0.5f;
 	const float fHalfH = m_vDimension.y * 0.5f;
 
-	// Æò¸éÀÇ ·ÎÄÃ ÁÂÇ¥°è¿¡¼­ vPoint°¡ ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎÇÑ´Ù.
+	// í‰ë©´ì˜ ë¡œì»¬ ì¢Œí‘œê³„ì—ì„œ vPointê°€ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸í•œë‹¤.
 	const float fU = VectorHelper::DotProduct(vU, vR);
 	const float fV = VectorHelper::DotProduct(vV, vR);
 
@@ -106,7 +106,7 @@ bool PlaneCollider::Is_Contacting(const Vec3& vPoint)
 float PlaneCollider::Calculate_SignedDistToPlane(const Vec3& vPoint) const
 {
 	// dot(n, (p - p0)) = dot(n, p) + d
-	// °ø°£ÀÇ Á¡°ú Æò¸é °£ÀÇ ÃÖ¼Ò °Å¸®
+	// ê³µê°„ì˜ ì ê³¼ í‰ë©´ ê°„ì˜ ìµœì†Œ ê±°ë¦¬
 	float fDist = D3DXVec3Dot(&m_vNorm, &vPoint) + m_fD;
 	return fDist;
 }

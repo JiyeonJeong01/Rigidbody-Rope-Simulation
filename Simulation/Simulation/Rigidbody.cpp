@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Rigidbody.h"
 
 #include "DebugHelper.h"
@@ -30,7 +30,7 @@ HRESULT Rigidbody::Ready_Component(BODY* b)
 	Calc_COM(b);
 	b->pTransform = m_pTransform;
 
-	m_eCachedBodyType = b->eType; // ¸Å¹ø Á¢±ÙÇÏ´Â °úÁ¤ »ı·«À» À§ÇØ Ä³½Ì
+	m_eCachedBodyType = b->eType; // ë§¤ë²ˆ ì ‘ê·¼í•˜ëŠ” ê³¼ì • ìƒëµì„ ìœ„í•´ ìºì‹±
 
 	return S_OK;
 }
@@ -64,7 +64,7 @@ void Rigidbody::Calc_Dimension(BODY* b)
 	VIBuffer* pVIBuffer = static_cast<VIBuffer*>(m_pOwner->Find_Component(L"Buffer"));
 
 	iVtxCnt = pVIBuffer->Get_VIBufferInfo().dwVtxCnt;
-
+     
 	VTXCOL* pVertices = nullptr;
 	pVIBuffer->Get_VertexBuffer()->Lock(0, 0, reinterpret_cast<void**>(&pVertices), 0);
 
@@ -100,7 +100,7 @@ void Rigidbody::Calc_Inertia(BODY* b)
 		return;
 	}
 
-	// Rigidbody Çü»ó¿¡ µû¸¥ Inertia Tensor °è»êÇÏ±â 
+	// Rigidbody í˜•ìƒì— ë”°ë¥¸ Inertia Tensor ê³„ì‚°í•˜ê¸° 
 	D3DXMatrixIdentity(&b->matInertiaTensor);
 
 	switch (m_eGeometryType)
@@ -150,7 +150,7 @@ float Rigidbody::Calc_InvInertiaOfAxis(const Vec3& vAxis)
 	Matrix matR = m_pTransform->Get_RotationMat();
 	Matrix matRT = *D3DXMatrixTranspose(&matRT, &matR);
 
-	// DX row-vector ±Ô¾à ±âÁØ °ü¼º ¿ªÅÙ¼­ º¯È¯
+	// DX row-vector ê·œì•½ ê¸°ì¤€ ê´€ì„± ì—­í…ì„œ ë³€í™˜
 	// World(Inv_Inertia) = trans(R) * Local(Inv_Inerta) * R
 	Matrix matInvInerta = matRT * b->matInvInertiaTensor * matR;
 
@@ -161,7 +161,7 @@ float Rigidbody::Calc_InvInertiaOfAxis(const Vec3& vAxis)
 
 void Rigidbody::Translate(const Vec3 vDeltaPos)
 {
-	// STATIC BODY´Â Àı´ë ¿òÁ÷ÀÌÁö ¾Ê´Â´Ù
+	// STATIC BODYëŠ” ì ˆëŒ€ ì›€ì§ì´ì§€ ì•ŠëŠ”ë‹¤
 	if (m_eCachedBodyType == STATIC)
 		return;
 

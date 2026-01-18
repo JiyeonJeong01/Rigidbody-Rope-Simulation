@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CollisionDetector.h"
 
 #include "Object.h"
@@ -60,7 +60,7 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 			bool bOnCollision(false);
 			CONTACT_INFO tContact;
 
-			// TODO : ±¸Á¶ ¹Ù²ã¾ß ÇÑ´Ù -> ÇÔ¼ö Å×ÀÌºíÀÌ³ª µð½ºÆÐÃÄ µîÀ¸·Î... 
+			// TODO : êµ¬ì¡° ë°”ê¿”ì•¼ í•œë‹¤ -> í•¨ìˆ˜ í…Œì´ë¸”ì´ë‚˜ ë””ìŠ¤íŒ¨ì³ ë“±ìœ¼ë¡œ...  
 			if (eCldr == CUBE && eClde == CUBE)
 			{
 
@@ -151,7 +151,7 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	pOut->A = pSphere;
 	pOut->B = pPlane;
 
-	// vResolveN_A = A¸¦ B¿¡°Ô¼­ ¶¼¾î³»´Â ¹æÇâ(separation normal)
+	// vResolveN_A = Aë¥¼ Bì—ê²Œì„œ ë–¼ì–´ë‚´ëŠ” ë°©í–¥(separation normal)
 	pOut->vResolveN_A = nSep;
 	pOut->vPenetrateN_A = -nSep;
 	pOut->vN_PlaneA = -nSep;
@@ -187,15 +187,15 @@ bool CollisionDetector::Detect_RayPlaneCollision(tagRay* pRay, PlaneCollider* pP
 	const Vec3 vOrigin = pRay->vOrigin;
 	const Vec3 vDir = pRay->vDiretion;
 	const Vec3 vNorm = pPlane->Get_NormVector();
-	const float fPlaneD = pPlane->Get_D(); // n¡¤x + d = 0
+	const float fPlaneD = pPlane->Get_D(); // nÂ·x + d = 0
 
 	const float fDenom = D3DXVec3Dot(&vNorm, &vDir);
 	if (fabsf(fDenom) < 1e-6f)
-		return false; // ÆòÇà
+		return false; // í‰í–‰
 
 	const float t = -(D3DXVec3Dot(&vNorm, &vOrigin) + fPlaneD) / fDenom;
 
-	// vOriging µÚ ÂÊ
+	// vOriging ë’¤ ìª½
 	if (t < 0.f)
 		return false;
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 
 class Object;
@@ -52,7 +52,6 @@ private:
 	Vec3		m_vEuler;
 	Vec4		m_vQuaternion;
 	Vec3		m_vPosition;
-
 	Vec3		m_vRotation[AXIS_END];
 	Matrix		m_matWorld;
 

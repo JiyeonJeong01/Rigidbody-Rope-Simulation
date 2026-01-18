@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Collider.h"
 class SphereCollider : public Collider
 {
@@ -25,4 +25,3 @@ public:
 	static SphereCollider* Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);
 	void Release() override;
 };
-

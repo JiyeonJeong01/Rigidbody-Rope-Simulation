@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Collider.h"
 #include "Component.h"
@@ -15,7 +15,6 @@ public:
 	virtual int				Update_GameObject(const float& fTimeDelta);
 	virtual void			LateUpdate_GameObject(const float& fTimeDelta);
 	virtual void			Fixed_Update(const float& fTimeDelta);
-
 	virtual void			Render_GameObject();
 
 	Transform*				Get_Transform() const								{ return m_pTransform; }

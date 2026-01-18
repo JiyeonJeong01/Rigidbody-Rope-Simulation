@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 #include "PhysicsWorld.h"
 #include "Physics_Struct.h"
@@ -14,8 +14,8 @@ private:
 	~Rigidbody() override;
 
 public :
-	HRESULT			Ready_Component(BODY* b); // Find~ ÇÔ¼öµé ½ÇÇàÇÏ±â
-	int				Update_Component(const float& fTimeDelta)override;					// m_fLinearVel, COM, m_fAngularVel, m_vLook ¼³Á¤
+	HRESULT			Ready_Component(BODY* b); // Find~ í•¨ìˆ˜ë“¤ ì‹¤í–‰í•˜ê¸°
+	int				Update_Component(const float& fTimeDelta)override;					// m_fLinearVel, COM, m_fAngularVel, m_vLook ì„¤ì •
 	void			LateUpdate_Component(const float& fTimeDelta) override;
 	void			Fixed_Update(const float& fTimeDelta);
 
@@ -24,8 +24,8 @@ public :
 	void			Add_LinearImpulse(Vec3 vImpulse);
 	void			Add_Force(Vec3 vForce);
 	void			Add_Torque(Vec3 vTorque);
-
-	void			Calc_Dimension(BODY* b); // m_vDimension°ú m_vDimensionCenter¸¦ ±¸ÇÑ´Ù
+     
+	void			Calc_Dimension(BODY* b); // m_vDimensionê³¼ m_vDimensionCenterë¥¼ êµ¬í•œë‹¤
 	void			Calc_Inertia(BODY* b);	
 	void			Calc_COM(BODY* b);
 	float			Calc_InvInertiaOfAxis(const Vec3& vAxis);
@@ -43,7 +43,7 @@ public:
 	GEOMETRY_TYPE	Get_GeometryType() const					{ return m_eGeometryType; }
 
 private:
-	// ============ ¸â¹ö º¯¼ö ============
+	// ============ ë©¤ë²„ ë³€ìˆ˜ ============
 	BODY			m_tBody;
 
 	BODY_TYPE		m_eCachedBodyType;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 class GraphicDevice
 {
 	DECLARE_SINGLETON(GraphicDevice)
@@ -8,9 +8,7 @@ private :
 
 public:
 	LPDIRECT3DDEVICE9		Get_GraphicDev() { return m_pDevice; }
-
-public:
-	HRESULT Ready_GraphicDev(HWND hWnd, GraphicDevice** ppGraphicDev);
+    HRESULT Ready_GraphicDev(HWND hWnd, GraphicDevice** ppGraphicDev);
 
 	void		Render_Begin(D3DXCOLOR Color);
 	void		Render_End();
