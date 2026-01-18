@@ -67,8 +67,6 @@ void Wall::On_CollisionEnter(const COLLISION& tCollision)
 void Wall::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
-
-	m_pMesh->Set_Hilight(true);
 }
 
 void Wall::On_CollisionExit(const COLLISION& tCollision)

@@ -23,7 +23,7 @@ public:
     const Vec3&     Get_Pos() const;
 
 protected:
-    void            Compute_ViewMatrix();
+    virtual void    Compute_ViewMatrix();
 
 protected:
     Matrix		    m_matView, m_matProj;

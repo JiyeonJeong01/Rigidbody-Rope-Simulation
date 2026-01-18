@@ -3,6 +3,7 @@
 
 class Anchor;
 class Camera;
+class FollowCamera;
 class Transform;
 class Rigidbody;
 class SphereCollider;
@@ -31,7 +32,7 @@ private :
 	void				Render_Swing();
 
 private :
-	Camera*				m_pCamera;
+	FollowCamera*		m_pCamera;
 
 	Transform*			m_pTransform;
 	Rigidbody*			m_pRigidbody;

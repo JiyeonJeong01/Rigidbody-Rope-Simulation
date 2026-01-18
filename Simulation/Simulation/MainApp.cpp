@@ -28,7 +28,7 @@ HRESULT MainApp::Ready_MainApp()
         return E_FAIL;
 
     Ready_Ground();
-    Ready_Wall();
+    // Ready_Wall();
 
     PhysicsWorld::GetInstance()->Ready_System(m_pGraphicDev);
     InputSystem::GetInstance()->Ready_System();

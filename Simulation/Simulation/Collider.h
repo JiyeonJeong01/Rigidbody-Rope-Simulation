@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 
 class Rigidbody;
@@ -7,10 +7,10 @@ typedef struct tagCollision
 {
 	friend class Collider;
 	friend class Rigidbody;
-	Object*			pCounterObject;			// Ãæµ¹ ´çÇÑ ¿ÀºêÁ§Æ®
-	Collider*		pCounterCollider;		// Ãæµ¹ ´çÇÑ ¿ÀºêÁ§Æ®ÀÇ Äİ¶óÀÌ´õ
+	Object*			pCounterObject;			// ì¶©ëŒ ë‹¹í•œ ì˜¤ë¸Œì íŠ¸
+	Collider*		pCounterCollider;		// ì¶©ëŒ ë‹¹í•œ ì˜¤ë¸Œì íŠ¸ì˜ ì½œë¼ì´ë”
 	Rigidbody*		pCounterRigidbody;
-
+     
 	Vec3			vN;
 	Vec3			vPoint;
 	Vec3			vImpulse;
