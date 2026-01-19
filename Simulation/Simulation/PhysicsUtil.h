@@ -29,24 +29,24 @@ namespace PhysicsUtil
         b.bGravity = false;
     }
 
-    //inline void ApplyPositionLock(BODY& b)
-    //{
-    //    if (b.tPositionLock.bX)
-    //    { b.vLinearVel.x = 0.f; b.vForceAccum.x = 0.f; }
-    //    if (b.tPositionLock.bY)
-    //    { b.vLinearVel.y = 0.f; b.vForceAccum.y = 0.f; }
-    //    if (b.tPositionLock.bZ)
-    //    { b.vLinearVel.z = 0.f; b.vForceAccum.z = 0.f; }
-    //}
+    inline void ApplyPositionLock(BODY& b)
+    {
+        if (b.tPositionLock.bX)
+        { b.vLinearVel.x = 0.f; b.vForceAccum.x = 0.f; }
+        if (b.tPositionLock.bY)
+        { b.vLinearVel.y = 0.f; b.vForceAccum.y = 0.f; }
+        if (b.tPositionLock.bZ)
+        { b.vLinearVel.z = 0.f; b.vForceAccum.z = 0.f; }
+    }
 
-    //inline void ApplyRotationLock(BODY& b)
-    //{
-    //    if (b.tRotationLock.bX)
-    //    { b.vAngularVel.x = 0.f; b.vTorqueAccum.x = 0.f; }
-    //    if (b.tRotationLock.bY)
-    //    { b.vAngularVel.y = 0.f; b.vTorqueAccum.y = 0.f; }
-    //    if (b.tRotationLock.bZ)
-    //    { b.vAngularVel.z = 0.f; b.vTorqueAccum.z = 0.f; }
-    //}
+    inline void ApplyRotationLock(BODY& b)
+    {
+        if (b.tRotationLock.bX)
+        { b.vAngularVel.x = 0.f; b.vTorqueAccum.x = 0.f; }
+        if (b.tRotationLock.bY)
+        { b.vAngularVel.y = 0.f; b.vTorqueAccum.y = 0.f; }
+        if (b.tRotationLock.bZ)
+        { b.vAngularVel.z = 0.f; b.vTorqueAccum.z = 0.f; }
+    }
 
 }

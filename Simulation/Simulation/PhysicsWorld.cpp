@@ -55,11 +55,21 @@ int PhysicsWorld::Update_System(float fTimeDelta)
             m_pSolver->Solve_Contacts(&contact);
 
     // Apply Lock
-    //for (BODY& b : m_vecBodies)
-    //{
-    //    PhysicsUtil::ApplyPositionLock(b);
-    //    PhysicsUtil::ApplyRotationLock(b);
-    //}
+    for (BODY& b : m_vecBodies)
+    {
+        if(b.eType == DYNAMIC)
+        {
+            //DebugHelper::Print_Vec3(L"Linear Before", b.vLinearVel);
+        }
+
+        PhysicsUtil::ApplyPositionLock(b);
+        PhysicsUtil::ApplyRotationLock(b);
+
+        if (b.eType == DYNAMIC)
+        {
+            //DebugHelper::Print_Vec3(L"Linear After", b.vLinearVel);
+        }
+    }
 
     Invoke_CollisionEvent();
 	return 0;
@@ -252,8 +262,8 @@ void PhysicsWorld::Integrate_Forces(float fTimeDelta)
             b.vAngularVel += deltaW * fTimeDelta;
         }
 
-        // PhysicsUtil::ApplyPositionLock(b);
-        // PhysicsUtil::ApplyRotationLock(b);
+         PhysicsUtil::ApplyPositionLock(b);
+         PhysicsUtil::ApplyRotationLock(b);
 
         // 초기화 : accum 값은 해당 프레임에만 적용된다. 
         b.vForceAccum = VectorHelper::Zero();

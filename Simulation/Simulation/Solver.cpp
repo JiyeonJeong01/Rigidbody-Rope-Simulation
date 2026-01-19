@@ -160,11 +160,8 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 
 	if (!VectorHelper::Is_NearlyZero(vJFriction))
 	{
-        DebugHelper::Print_Vec3(L"A vel before", bA->vLinearVel);
-        DebugHelper::Print_Float(L"A inv mass", bA->fInvMass);
 		Add_ImpulseAtPoint(tA, bA, vJFriction * -1.f, vPoint);
 		Add_ImpulseAtPoint(tB, bB, vJFriction, vPoint);
-        DebugHelper::Print_Vec3(L"A vel After", bA->vLinearVel);
 	}
 }
 

@@ -38,7 +38,8 @@ HRESULT Player::Ready_GameObject()
 	body.fFriction = 10.f;
 	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
-    body.tRotationLock = { false, false, false };
+    body.tRotationLock = { true, false, true };
+    body.tPositionLock = { false, true, false };
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 	m_pRigidbody->Set_GeometryType(SPHERE);
 
@@ -63,7 +64,6 @@ HRESULT Player::Ready_GameObject()
     m_pRope->Set_Owner(this);
     m_pRope->Set_Active(false);
 
-    
     Management::GetInstance()->Add_Object(m_pAnchor);
     Management::GetInstance()->Add_Object(m_pCamera);
     Management::GetInstance()->Add_Object(m_pRope);
@@ -92,28 +92,39 @@ void Player::FixedUpdate_GameObject(const float& fTimeDElta)
 
     const float fSpeed = 10.f;
 
-    // 상하 이동
-    if (InputSystem::GetInstance()->Get_Key('W'))
-    {
-        m_pRigidbody->Set_LinearVelocity({ 0.f, 0.f, fSpeed });
-    }
-    else if (InputSystem::GetInstance()->Get_Key('S'))
-    {
-        m_pRigidbody->Set_LinearVelocity({ 0.f, 0.f, -fSpeed });
-    }
-
     Vec3 vCurVel = m_pRigidbody->Get_BodyInfo().vLinearVel;
 
-    // 좌우 이동
-    if (InputSystem::GetInstance()->Get_Key('A'))
-    {
-        m_pRigidbody->Set_LinearVelocity({ -fSpeed, vCurVel.y, vCurVel.z });
-    }
-    else if (InputSystem::GetInstance()->Get_Key('D'))
-    {
-        m_pRigidbody->Set_LinearVelocity({ fSpeed, vCurVel.y, vCurVel.z });
-    }
+    float ix = 0.f;
+    float iz = 0.f;
 
+    if (InputSystem::GetInstance()->Get_Key('A')) ix -= 1.f;
+    if (InputSystem::GetInstance()->Get_Key('D')) ix += 1.f;
+    if (InputSystem::GetInstance()->Get_Key('W')) iz += 1.f;
+    if (InputSystem::GetInstance()->Get_Key('S')) iz -= 1.f;
+
+    Vec3 right, forward;
+    m_pTransform->Get_Info(AXIS_X, &right);
+    m_pTransform->Get_Info(AXIS_Z, &forward);
+
+    right.y = 0.f;
+    forward.y = 0.f;
+
+    right = VectorHelper::Get_Normalized(right);
+    forward = VectorHelper::Get_Normalized(forward);
+
+    Vec3 moveDir = right * ix + forward * iz;
+
+    if (!VectorHelper::Is_Zero(moveDir))
+        moveDir = VectorHelper::Get_Normalized(moveDir);
+
+    bool hasInput = (ix != 0.f || iz != 0.f);
+
+    if (hasInput)
+    {
+        Vec3 vNewVel = moveDir * fSpeed;
+        vNewVel.y = vCurVel.y;
+        m_pRigidbody->Set_LinearVelocity(vNewVel);
+    }
 
     // 점프
     if (InputSystem::GetInstance()->Get_KeyDown(VK_SPACE))
@@ -122,10 +133,20 @@ void Player::FixedUpdate_GameObject(const float& fTimeDElta)
     }
 
     // 회전 테스트
-    if (InputSystem::GetInstance()->Get_KeyDown('T'))
+
+    if (InputSystem::GetInstance()->Get_Key('T'))
+    {
+        m_pRigidbody->Add_Torque({ fSpeed * 10.f, vCurVel.y, vCurVel.z });
+    }
+    if (InputSystem::GetInstance()->Get_Key('Y'))
     {
         m_pRigidbody->Add_Torque({ vCurVel.x, fSpeed * 10.f, vCurVel.z });
     }
+    if (InputSystem::GetInstance()->Get_Key('U'))
+    {
+        m_pRigidbody->Add_Torque({ vCurVel.x, vCurVel.y, fSpeed * 10.f });
+    }
+
 }
 
 void Player::Render_GameObject()
@@ -185,55 +206,17 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_X))
 	{
         float fDegree = lMouseMove / 20.f;
-		//m_pCamera->Yaw(fDegree);
-        //m_pTransform->Rotate(AXIS_Y, fDegree);
-
-        Vec3 vRight, vForward;
-        // m_pTransform->Get_Info(AXIS_X, &vRight);
-        // DebugHelper::Print_Vec3(L"Right", vRight);
-
-	    m_pTransform->Get_Info(AXIS_Z, &vForward);
+		m_pCamera->Yaw(fDegree);
+        m_pTransform->Rotate(AXIS_Y, fDegree);
 	}
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_Y))
 	{
         float fDegree = lMouseMove / 20.f;
 
-		//m_pCamera->Pitch(fDegree);
-        //m_pTransform->Rotate(AXIS_X, fDegree);
+		m_pCamera->Pitch(fDegree);
+        m_pTransform->Rotate(AXIS_X, -fDegree);
 	}
 #pragma endregion
-}
-
-void Player::Render_Swing()
-{
-	//Matrix matProj, matView, matWorld;
-	//m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
-	//m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
-	//D3DXMatrixIdentity(&matWorld);
-
-	//Matrix matPV = matView * matProj;
-
-	//D3DVIEWPORT9 vp{};
-	//m_pGraphicDevice->GetViewport(&vp);
-
-	//LPD3DXLINE pLine;
-	//D3DXCreateLine(m_pGraphicDevice, &pLine);
-	//pLine->SetWidth(3.f);
-	//pLine->Begin();
-
-	//// 그리기 
-	//Vec3 p[2]{};
-	//p[0] = m_pTransform->Get_Position();
-	//p[1] = m_vAnchor;
-
-	//Vec3 vScreenPos0, vScreenPos1;
-
-	//D3DXVec3Project(&vScreenPos0, &p[0], &vp, &matProj, &matView, &matWorld);
-	//D3DXVec3Project(&vScreenPos1, &p[1], &vp, &matProj, &matView, &matWorld);
-
-	//pLine->DrawTransform(p, 2, &matPV, D3DCOLOR_XRGB(0, 255, 0));
-	//pLine->End();
-
 }
 
 void Player::Start_Swing(Vec3 vAnchor)
