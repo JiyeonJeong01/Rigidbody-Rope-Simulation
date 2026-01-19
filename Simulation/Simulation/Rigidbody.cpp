@@ -28,12 +28,14 @@ HRESULT Rigidbody::Ready_Component(BODY* b)
 	if (!m_pTransform)
 		return E_FAIL;
 
+    m_eGeometryType = b->eGeoType;
+
 	Calc_Dimension(b);
 	Calc_Inertia(b);
 	Calc_COM(b);
 	b->pTransform = m_pTransform;
 
-	m_eCachedBodyType = b->eType; // 매번 접근하는 과정 생략을 위해 캐싱
+	m_eCachedBodyType = b->eBodyType; // 매번 접근하는 과정 생략을 위해 캐싱
 
 	return S_OK;
 }
@@ -119,7 +121,7 @@ void Rigidbody::Calc_Inertia(BODY* b)
 
 		}
 		break;
-	case CUBE:
+	case BOX:
 		{
 		float k = (1.f / 12.f) * b->fMass;
 

@@ -3,19 +3,20 @@
 #include "Management.h"
 #include "FollowCamera.h"
 #include "InputSystem.h"
-#include "Raycast.h"
+#include "Box.h"
 #include "Sphere.h"
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "SphereCollider.h"
 #include "DebugHelper.h"
 #include "Anchor.h"
+#include "BoxCollider.h"
 #include "SpringJoint.h"
 #include "Rope.h"
 
 Player::Player(LPDIRECT3DDEVICE9 pGraphicDevice)
     : Object(pGraphicDevice), m_pCamera(nullptr)
-      , m_pRope(nullptr), m_pRigidbody(nullptr), m_pCollider(nullptr), m_pMesh(nullptr), m_pSpringJoint(nullptr)
+      , m_pRope(nullptr), m_pRigidbody(nullptr), m_pCollider(nullptr), m_pMainMesh(nullptr), m_pSpringJoint(nullptr)
 {
 }
 
@@ -25,23 +26,26 @@ Player::~Player()
 
 HRESULT Player::Ready_GameObject()
 {
-	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
+	m_pMainMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
+	m_pAssistMesh = Box::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0),{3.f, 0.3f, 0.3f});
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
+	//m_pCollider = BoxCollider::Create(m_pGraphicDevice, this);
 
     // Rigidbody
 	BODY body;
 	body.fAngularDrag = 0.1f;
 	body.fDrag = 1.f;
-	body.fRestitution = 0.2f;
+	body.fRestitution = 0.5f;
 	body.fFriction = 10.f;
 	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
+    body.eGeoType = SPHERE;
     body.tRotationLock = { true, false, true };
-    body.tPositionLock = { false, true, false };
+    // body.tPositionLock = { false, true, false };
+    //m_pRigidbody->Set_GeometryType(SPHERE);
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
-	m_pRigidbody->Set_GeometryType(SPHERE);
 
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 	m_pSpringJoint->Set_Damper(m_fDamper);
@@ -92,36 +96,36 @@ void Player::FixedUpdate_GameObject(const float& fTimeDElta)
 
     const float fSpeed = 10.f;
 
-    Vec3 vCurVel = m_pRigidbody->Get_BodyInfo().vLinearVel;
-
-    float ix = 0.f;
-    float iz = 0.f;
+    float ix(0.f), iz(0.f);
 
     if (InputSystem::GetInstance()->Get_Key('A')) ix -= 1.f;
     if (InputSystem::GetInstance()->Get_Key('D')) ix += 1.f;
     if (InputSystem::GetInstance()->Get_Key('W')) iz += 1.f;
     if (InputSystem::GetInstance()->Get_Key('S')) iz -= 1.f;
 
-    Vec3 right, forward;
-    m_pTransform->Get_Info(AXIS_X, &right);
-    m_pTransform->Get_Info(AXIS_Z, &forward);
+    const bool bHasInput = (ix != 0.f || iz != 0.f);
+    Vec3 vCurVel = m_pRigidbody->Get_BodyInfo().vLinearVel;
 
-    right.y = 0.f;
-    forward.y = 0.f;
-
-    right = VectorHelper::Get_Normalized(right);
-    forward = VectorHelper::Get_Normalized(forward);
-
-    Vec3 moveDir = right * ix + forward * iz;
-
-    if (!VectorHelper::Is_Zero(moveDir))
-        moveDir = VectorHelper::Get_Normalized(moveDir);
-
-    bool hasInput = (ix != 0.f || iz != 0.f);
-
-    if (hasInput)
+    if (bHasInput)
     {
-        Vec3 vNewVel = moveDir * fSpeed;
+        Vec3 vCamPos = m_pCamera->Get_Pos();
+        Vec3 vPlyrPos = m_pTransform->Get_Position();
+
+        Vec3 vToPlyr = VectorHelper::Get_Normalized(vPlyrPos - vCamPos);
+
+        Vec3 vLook = vToPlyr;
+        vLook.y = 0;
+        vLook = VectorHelper::Get_Normalized(vLook);
+
+        Vec3 vRight = VectorHelper::CrossProduct(Vec3(0.f, 1.f, 0.f), vLook);
+        vRight.y = 0.f;
+        vRight = VectorHelper::Get_Normalized(vRight);
+
+        Vec3 vMoveDir = vRight * ix + vLook * iz;
+        if (!VectorHelper::Is_Zero(vMoveDir))
+            vMoveDir = VectorHelper::Get_Normalized(vMoveDir);
+
+        Vec3 vNewVel = vMoveDir * fSpeed;
         vNewVel.y = vCurVel.y;
         m_pRigidbody->Set_LinearVelocity(vNewVel);
     }
@@ -154,7 +158,8 @@ void Player::Render_GameObject()
 	m_pCamera->LateUpdate_GameObject(0.016f);
 
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
-	m_pMesh->Render_Mesh();
+	m_pMainMesh->Render_Mesh();
+    m_pAssistMesh->Render_Mesh();
 
     Object::Render_GameObject();
 }
@@ -168,13 +173,15 @@ void Player::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
-	m_pMesh->Set_Highlight(true);
+	m_pMainMesh->Set_Highlight(true);
+	m_pAssistMesh->Set_Highlight(true);
 }
 
 void Player::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	m_pMesh->Set_Highlight(false);
+	m_pMainMesh->Set_Highlight(false);
+	m_pAssistMesh->Set_Highlight(false);
 }
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)
@@ -206,15 +213,14 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_X))
 	{
         float fDegree = lMouseMove / 20.f;
+        m_fYawDegree += fDegree;
 		m_pCamera->Yaw(fDegree);
-        m_pTransform->Rotate(AXIS_Y, fDegree);
 	}
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_Y))
 	{
         float fDegree = lMouseMove / 20.f;
-
+        m_fPitchDegree += fDegree;
 		m_pCamera->Pitch(fDegree);
-        m_pTransform->Rotate(AXIS_X, -fDegree);
 	}
 #pragma endregion
 }
@@ -252,7 +258,8 @@ Player* Player::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
 
 void Player::Release()
 {
-	m_pMesh->Release();
+    Safe_Release(m_pMainMesh);
+    Safe_Release(m_pAssistMesh);
 
 	Object::Release();
 }

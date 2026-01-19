@@ -45,7 +45,6 @@ public:
 	Vec3			Get_PointVelocity(const Vec3& vPoint);
 	Vec3			Get_COM();
 
-	void			Set_GeometryType(GEOMETRY_TYPE eGeometry)	{ m_eGeometryType = eGeometry; }
 	GEOMETRY_TYPE	Get_GeometryType() const					{ return m_eGeometryType; }
 
 private:

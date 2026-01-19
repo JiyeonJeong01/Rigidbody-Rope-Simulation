@@ -32,7 +32,7 @@ HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSiz
 	m_pCollider->Set_IsInfinite(false);
 
 	BODY body;
-	body.eType = STATIC;
+	body.eBodyType = STATIC;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 
 	__super::Resolve_Dependencies();

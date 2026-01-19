@@ -184,8 +184,8 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	float fInvA = bA->fInvMass;
 	float fInvB = bB->fInvMass;
 
-	if (bA->eType == STATIC) fInvA = 0.f;
-	if (bB->eType == STATIC) fInvB = 0.f;
+	if (bA->eBodyType == STATIC) fInvA = 0.f;
+	if (bB->eBodyType == STATIC) fInvB = 0.f;
 
 	float fTotalInv = fInvA + fInvB;
 	if (fTotalInv <= 0.f)
@@ -207,7 +207,7 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 
 void Solver::Add_ImpulseAtPoint(Transform* pTransform, BODY* b, const Vec3& impulse, const Vec3& point)
 {
-	if (b->eType != DYNAMIC)
+	if (b->eBodyType != DYNAMIC)
 		return;
 
 	// Linear impulse
@@ -238,12 +238,12 @@ bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->B->Get_Rigidbody()->Get_BodyID());
 
 	Vec3 vA, vB;
-	if (bA->eType == STATIC)
+	if (bA->eBodyType == STATIC)
 		vA = VectorHelper::Zero();
 	else
 		vA = pInfo->A->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
 
-	if (bB->eType == STATIC)
+	if (bB->eBodyType == STATIC)
 		vB = VectorHelper::Zero();
 	else 
 		vB = pInfo->B->Get_Rigidbody()->Get_PointVelocity(pInfo->vPoint);
@@ -259,7 +259,7 @@ bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 
 Vec3 Solver::Calc_PointVelocity(BODY* b, const Vec3& vPoint)
 {
-	if (b->eType == STATIC)
+	if (b->eBodyType == STATIC)
 		return VectorHelper::Zero();
 
 	Vec3 vComToPoint = vPoint - b->vCOM;
@@ -272,7 +272,7 @@ float Solver::Calc_InvInertiaOfAxis(Transform* pTransform, BODY* b, const Vec3& 
 	if (VectorHelper::Is_Zero(vAxis))
 		return 0.f;
 
-	if (b->eType != DYNAMIC)
+	if (b->eBodyType != DYNAMIC)
 		return 0.f;
 
 	Vec3 vBaseAxis = VectorHelper::Get_Normalized(vAxis);

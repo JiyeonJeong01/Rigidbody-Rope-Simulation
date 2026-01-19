@@ -5,7 +5,7 @@ namespace PhysicsUtil
 {
     void Set_StaticBody(BODY& b)
     {
-        b.eType = STATIC;
+        b.eBodyType = STATIC;
         b.fInvMass = 0.f;
         ZeroMemory(&b.matInvInertiaTensor, sizeof(b.matInvInertiaTensor));
         b.bGravity = false;
@@ -13,7 +13,7 @@ namespace PhysicsUtil
 
     void Set_DynamicBody(BODY& b)
     {
-        b.eType = DYNAMIC;
+        b.eBodyType = DYNAMIC;
         b.fMass = (b.fMass <= 0.f ? 1.f : b.fMass);
         b.fInvMass = 1.f / b.fMass;
         b.bGravity = true;
@@ -21,7 +21,7 @@ namespace PhysicsUtil
 
     void Set_KinematicBody(BODY& b)
     {
-        b.eType = KINEMATIC;
+        b.eBodyType = KINEMATIC;
         b.fInvMass = 0.f;
         ZeroMemory(&b.matInvInertiaTensor, sizeof(b.matInvInertiaTensor));
         b.vForceAccum = {};

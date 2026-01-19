@@ -57,18 +57,8 @@ int PhysicsWorld::Update_System(float fTimeDelta)
     // Apply Lock
     for (BODY& b : m_vecBodies)
     {
-        if(b.eType == DYNAMIC)
-        {
-            //DebugHelper::Print_Vec3(L"Linear Before", b.vLinearVel);
-        }
-
         PhysicsUtil::ApplyPositionLock(b);
         PhysicsUtil::ApplyRotationLock(b);
-
-        if (b.eType == DYNAMIC)
-        {
-            //DebugHelper::Print_Vec3(L"Linear After", b.vLinearVel);
-        }
     }
 
     Invoke_CollisionEvent();
@@ -104,11 +94,11 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 
 uint_fast32_t PhysicsWorld::Create_Body(BODY body)
 {
-    if (body.eType == STATIC)
+    if (body.eBodyType == STATIC)
         PhysicsUtil::Set_StaticBody(body);
-    else if (body.eType == KINEMATIC)
+    else if (body.eBodyType == KINEMATIC)
         PhysicsUtil::Set_KinematicBody(body);
-    else if (body.eType == DYNAMIC)
+    else if (body.eBodyType == DYNAMIC)
         PhysicsUtil::Set_DynamicBody(body);
 
     if (!m_freeIds.empty())
@@ -222,7 +212,7 @@ void PhysicsWorld::Accumulate_Forces()
 {
     for (BODY& b : m_vecBodies)
     {
-        if (!b.bActive || b.eType != DYNAMIC)
+        if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
 
         if (b.bGravity)
@@ -237,7 +227,7 @@ void PhysicsWorld::Integrate_Forces(float fTimeDelta)
 {
     for (BODY& b : m_vecBodies)
     {
-        if (!b.bActive || b.eType != DYNAMIC)
+        if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
 
         // Linear
@@ -276,7 +266,7 @@ void PhysicsWorld::Apply_Damping(float fTimeDelta)
 
     for (BODY& b : m_vecBodies)
     {
-        if (!b.bActive || b.eType != DYNAMIC)
+        if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
 
         // Linear damping
@@ -303,7 +293,7 @@ void PhysicsWorld::Integrate_Velocities(float fTimeDelta)
 {
     for (BODY& b : m_vecBodies)
     {
-        if (!b.bActive || b.eType != DYNAMIC)
+        if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
 
         // Linear integration

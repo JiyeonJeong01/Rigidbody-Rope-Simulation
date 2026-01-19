@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #pragma once
 
 // Singleton
@@ -45,6 +45,8 @@ void	Safe_Delete(T& Pointer)
 template<typename T>
 void Safe_Release(T& pInstance)
 {
+    if (pInstance == NULL)
+        return;
 	pInstance->Release();
 	pInstance = NULL;
 }

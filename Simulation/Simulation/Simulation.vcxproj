@@ -132,6 +132,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Anchor.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionDetector.h" />
@@ -177,6 +179,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Anchor.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="CollisionDetector.cpp" />

@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 
-// ȭ�� �ػ�
+// 화면 해상도
 #define	WINCX		1080
 #define	WINCY		720
 
@@ -18,7 +18,7 @@ enum COL_STATE { ENTER, STAY, SEPERATE, EXIT, C_END };
 enum BODY_TYPE { STATIC, DYNAMIC, KINEMATIC, CT_END };
 enum AXIS { AXIS_X, AXIS_Y, AXIS_Z, AXIS_END };
 enum FILL_MODE { SOLID, WIRE, RM_END };
-enum GEOMETRY_TYPE { SPHERE, CUBE, PLANE, G_END };
+enum GEOMETRY_TYPE { SPHERE, BOX, PLANE, G_END };
 enum FORCE_MODE { FORCE, IMPULSE, ACCELER, VEL_CHANGE, F_END };
 
 enum MOUSEKEYSTATE { DIM_LB, DIM_RB, DIM_MB, DIM_END };

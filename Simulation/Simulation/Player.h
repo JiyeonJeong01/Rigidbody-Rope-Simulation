@@ -8,6 +8,8 @@ class Transform;
 class Rigidbody;
 class SphereCollider;
 class Sphere;
+class Box;
+class BoxCollider;
 class SpringJoint;
 class Rope;
 
@@ -30,15 +32,16 @@ public :
 
 private :
 	void				Handle_PlayerInput(const float& fTimeDelta);
-	void				Render_Swing();
     void                Start_Swing(Vec3 vAnchor);
     void                End_Swing();
 
 private :
     // Components
 	Rigidbody*			m_pRigidbody;
-	SphereCollider*		m_pCollider;
-	Sphere*				m_pMesh;
+	//SphereCollider*		m_pCollider;
+	Sphere*		        m_pMainMesh;
+    Collider*           m_pCollider;
+    Box*				m_pAssistMesh;
 	SpringJoint*		m_pSpringJoint;
 
     // Children
@@ -52,6 +55,10 @@ private :
     float               m_fSpring = 10.f;
     float               m_fDamper = 5.f;
     float               m_fRest = 0.5f;
+
+    // Camera
+    float               m_fYawDegree{};
+    float               m_fPitchDegree{};
 
 
 public :

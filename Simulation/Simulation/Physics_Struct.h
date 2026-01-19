@@ -13,7 +13,8 @@ typedef struct tagAxisMask
 typedef struct tagBody
 {
     bool    bActive = true;
-    BODY_TYPE eType = DYNAMIC;
+    BODY_TYPE eBodyType = DYNAMIC;
+    GEOMETRY_TYPE eGeoType = GEOMETRY_TYPE::G_END;
 
     float   fMass = 1.f;
     float   fInvMass = 1.f; // invMass

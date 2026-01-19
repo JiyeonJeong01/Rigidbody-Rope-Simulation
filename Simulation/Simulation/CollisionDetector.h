@@ -1,9 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "PhysicsWorld.h"
 
 class Collider;
 class SphereCollider;
 class PlaneCollider;
+class BoxCollider;
 
 struct tagRay;
 
@@ -20,6 +21,7 @@ public :
 	void			Clear_CollisionGroup();
 
 	static bool		Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollider* pCollider, SphereCollider* pCollidee);
+    static bool		Detect_BoxPlaneCollision(CONTACT_INFO* pOut, BoxCollider* pBox, PlaneCollider* pPlane);
 	static bool		Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pCollider, PlaneCollider* pCollidee);
 
 	bool			Detect_Ray(tagRay* pRay);
