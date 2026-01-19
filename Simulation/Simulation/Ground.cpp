@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Ground.h"
 
 #include "Plane.h"
@@ -8,7 +8,7 @@
 
 Ground::Ground(LPDIRECT3DDEVICE9 pGraphicDevice)
 	: Object(pGraphicDevice)
-	, m_pTransform(nullptr), m_pMesh(nullptr)
+	, m_pMesh(nullptr)
 {
 }
 
@@ -18,6 +18,9 @@ Ground::~Ground()
 
 HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY)
 {
+    if (FAILED(Object::Ready_GameObject()))
+        return E_FAIL;
+
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
 	m_pMesh->Set_FillMode(D3DFILL_SOLID);
 
@@ -53,8 +56,15 @@ void Ground::LateUpdate_GameObject(const float& fTimeDelta)
 
 void Ground::Render_GameObject()
 {
+    Object::Render_GameObject();
+
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
+}
+
+void Ground::Active_Highlight(bool bColor)
+{
+    m_pMesh->Set_Highlight(bColor);
 }
 
 void Ground::On_CollisionEnter(const COLLISION& tCollision)

@@ -15,20 +15,28 @@ FollowCamera::~FollowCamera()
 
 HRESULT FollowCamera::Ready_GameObject()
 {
-	m_vOffset = { 0.f, 2.f, -15.f };
+    if (FAILED(Camera::Ready_GameObject()))
+        return E_FAIL;
+
+	m_vOffset = { 0.f, 4.f, -15.f };
+
 	return Camera::Ready_GameObject();
 }
 
 int FollowCamera::Update_GameObject(const float& fTimeDelta)
 {
+    Camera::Update_GameObject(fTimeDelta);
+
  	Vec3 vTargetPos = m_pTarget->Get_Transform()->Get_Position();
+
 	Vec3 vNewPos = vTargetPos + m_vOffset;
 
+    vNewPos.y = max(vTargetPos.y, vNewPos.y);
 
 	m_pTransform->Set_Position(vNewPos);
 	m_vAt = vTargetPos;
 
-	return Camera::Update_GameObject(fTimeDelta);
+	return 0;
 }
 
 void FollowCamera::LateUpdate_GameObject(const float& fTimeDelta)
@@ -36,9 +44,25 @@ void FollowCamera::LateUpdate_GameObject(const float& fTimeDelta)
 	Camera::LateUpdate_GameObject(fTimeDelta);
 }
 
-void FollowCamera::Rotate(const float& degree)
+void FollowCamera::Pitch(const float& fDegree)
 {
-    float fRad = D3DXToRadian(degree);
+    float fRad = D3DXToRadian(fDegree);
+
+    // 플레이어(피벗) 위치
+    Vec3 pivot = m_pTarget->Get_Transform()->Get_Position();
+    float fC = cosf(fRad);
+    float fS = sinf(fRad);
+
+    Vec3 vTmp = m_vOffset;
+
+    // x 축 기준 회전 : pitch
+    m_vOffset.y = vTmp.y * fC + vTmp.z * fS;
+    m_vOffset.z = vTmp.z * fC - vTmp.y * fS;
+}
+
+void FollowCamera::Yaw(const float& fDegree)
+{
+    float fRad = D3DXToRadian(fDegree);
 
     // 플레이어(피벗) 위치
     Vec3 pivot = m_pTarget->Get_Transform()->Get_Position();
@@ -46,7 +70,8 @@ void FollowCamera::Rotate(const float& degree)
 	float fS = sinf(fRad);
 
 	Vec3 vTmp = m_vOffset;
-	
+
+    // y 축 기준 회전 : yaw
 	m_vOffset.x = vTmp.x * fC - vTmp.z * fS;
 	m_vOffset.z = vTmp.x * fS + vTmp.z * fC;
 }
@@ -54,11 +79,11 @@ void FollowCamera::Rotate(const float& degree)
 void FollowCamera::Compute_ViewMatrix()
 {
 	// Eye
-	m_vEye = m_pTransformCom->Get_Position();
+	m_vEye = m_pTransform->Get_Position();
 
 	// At
 	Vec3 vLook;
-	m_pTransformCom->Get_Info(AXIS_Z, &vLook);
+    m_pTransform->Get_Info(AXIS_Z, &vLook);
 	D3DXVec3Normalize(&vLook, &vLook);
 }
 

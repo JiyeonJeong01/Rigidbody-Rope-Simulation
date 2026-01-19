@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iomanip>
 #include <iostream>
 
@@ -6,6 +6,8 @@
 
 namespace DebugHelper
 {
+    static int DEBUG_POINT = 10;
+
 	static void Print_Vec3(const wchar_t* str, const Vec3& v)
 	{
 		std::wcout << std::fixed << std::setprecision(8)

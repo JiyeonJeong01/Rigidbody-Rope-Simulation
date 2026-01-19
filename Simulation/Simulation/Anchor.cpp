@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Anchor.h"
 
 #include "Transform.h"
@@ -15,17 +15,18 @@ Anchor::~Anchor()
 
 HRESULT Anchor::Ready_GameObject()
 {
+    if (FAILED(Object::Ready_GameObject()))
+        return E_FAIL;
+
 	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 255, 255, 255), 0.5f, 10);
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 
-
-	return Object::Ready_GameObject();
+    return S_OK;
 }
 
 void Anchor::Render_GameObject()
 {
 	Object::Render_GameObject();
-
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 }

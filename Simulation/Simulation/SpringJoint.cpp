@@ -9,7 +9,7 @@
 
 SpringJoint::SpringJoint(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Component(pGraphicDev, pOwner)
-	  , m_pRigidbody(nullptr), m_fSpring(0), m_fDamper(0), m_fRestLength(0), m_fMinLength(0), m_fMaxLength(0), m_bActive(false)
+	  , m_pRigidbody(nullptr), m_fSpring(0), m_fDamper(0), m_fRestLength(0), m_fMinLength(0), m_fMaxLength(0)
 {
 }
 
@@ -35,6 +35,7 @@ void SpringJoint::LateUpdate_Component(const float& fTimeDelta)
 void SpringJoint::Fixed_Update(const float& fTimeDelta)
 {
 	Component::Fixed_Update(fTimeDelta);
+
 	if (!m_bActive || (m_pRigidbody == nullptr && !Find_Rigidbody()))
 		return ;
 
@@ -57,17 +58,22 @@ void SpringJoint::Fixed_Update(const float& fTimeDelta)
 	if (fX <= 0.f)
 		return ;
 
-	// 로프 방향 속도
+	// 앵커 방향으로 멀어지는지/가까워지는지
 	float fV = VectorHelper::DotProduct(vVel, vN);
 
 	// Spring + Damper
 	// F = -k x - c v
+    // -k x : 늘어난 만큼 자연 길이로 돌아가려는 힘
+    // -c v : 현재 움직임을 방해하는 힘 
 	float fForceMag = (-m_fSpring * fX) - (m_fDamper * fV);
 	Vec3 vForce = fForceMag * vN;
 
-	// Rigidbody에 힘 적용
-	m_pRigidbody->Add_Force(vForce);
+    // 로프 상승 효과 넣기 위하여 임의 조정 
+    vForce.y *= 1.3f;
+    vForce.z *= 0.7f;
 
+	// Rigidbody에 힘 적용
+	 m_pRigidbody->Add_Force(vForce);
 }
 
 

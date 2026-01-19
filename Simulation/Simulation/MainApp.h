@@ -25,7 +25,6 @@ private:
 private:
 	GraphicDevice*		m_pGraphicDevice;
 	LPDIRECT3DDEVICE9	m_pGraphicDev;
-	list<Object*>		m_ObjectList;
 
 	int					iFPS{};
 	int					iFPSCounter{};

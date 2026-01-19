@@ -41,6 +41,8 @@ HRESULT PlaneCollider::Resolve_Dependency()
 
 	if (m_eBodyType == STATIC)
 		Calc_EquationOfPlane();
+
+    return S_OK;
 } 
 
 void PlaneCollider::Calc_EquationOfPlane()

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Raycast.h"
 #include "VectorHelper.h"
 #include "CollisionDetector.h"
@@ -6,12 +6,14 @@
 IMPLEMENT_SINGLETON(Raycast)
 
 LPDIRECT3DDEVICE9 Raycast::m_pGraphicDevice = NULL;
+D3DVIEWPORT9 Raycast::m_Viewport;
 
 HRESULT Raycast::Ready_Raycast(LPDIRECT3DDEVICE9 pGraphicDevice)
 {
 	m_pGraphicDevice = pGraphicDevice;
 
 	D3DXCreateLine(m_pGraphicDevice, &m_pLine);
+    m_pGraphicDevice->GetViewport(&m_Viewport);
 
 	return S_OK;
 }
@@ -68,9 +70,51 @@ bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin)
 	return PhysicsWorld::GetInstance()->Detect_Ray(&ray);
 }
 
+bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, POINT pt)
+{
+    if (tOut == nullptr)
+        return false;
+
+    D3DXMATRIX matView, matProj, matWorld;
+    m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
+    m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+    D3DXMatrixIdentity(&matWorld);
+
+    RECT rc{};
+    GetClientRect(g_hWnd, &rc);
+
+    if (rc.right > 0 && rc.bottom > 0 &&
+        ((DWORD)rc.right != m_Viewport.Width || (DWORD)rc.bottom != m_Viewport.Height))
+    {
+        pt.x = LONG(pt.x * (m_Viewport.Width / float(rc.right)));
+        pt.y = LONG(pt.y * (m_Viewport.Height / float(rc.bottom)));
+    }
+
+    Vec3 vNear((float)pt.x, (float)pt.y, 0.0f);
+    Vec3 vFar((float)pt.x, (float)pt.y, 1.0f);
+
+    D3DXVec3Unproject(&vNear, &vNear, &m_Viewport, &matProj, &matView, &matWorld);
+    D3DXVec3Unproject(&vFar, &vFar, &m_Viewport, &matProj, &matView, &matWorld);
+
+    Vec3 vDir = vFar - vNear;
+
+    RAY ray{};
+    ray.pHit = tOut;
+    ray.vOrigin = vNear;
+    ray.vDiretion = VectorHelper::Get_Normalized(vDir);
+    ray.fMaxDist = 100.f;
+    ray.dwDebugColor = D3DCOLOR_XRGB(255, 0, 0);
+
+    tOut->vRayDir = ray.vDiretion;
+
+    Raycast::GetInstance()->Add_DebugRay(ray);
+
+    return PhysicsWorld::GetInstance()->Detect_Ray(&ray);
+}
+
 void Raycast::Render_Ray()
 {
-	// µð¹ö±ë¿ë ·»´õ
+	// ë””ë²„ê¹…ìš© ë Œë”
 
 	//Matrix matProj, matView, matWorld;
 	//m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);

@@ -6,7 +6,7 @@
 #include "Rigidbody.h"
 #include "Solver.h"
 #include "Transform.h"
-
+#include "PhysicsUtil.h"
 IMPLEMENT_SINGLETON(PhysicsWorld)
 
 unsigned int PhysicsWorld::s_iCurColCnt = 0;
@@ -54,6 +54,13 @@ int PhysicsWorld::Update_System(float fTimeDelta)
         for (auto& contact : m_ContactInfosList)
             m_pSolver->Solve_Contacts(&contact);
 
+    // Apply Lock
+    //for (BODY& b : m_vecBodies)
+    //{
+    //    PhysicsUtil::ApplyPositionLock(b);
+    //    PhysicsUtil::ApplyRotationLock(b);
+    //}
+
     Invoke_CollisionEvent();
 	return 0;
 }
@@ -88,11 +95,11 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 uint_fast32_t PhysicsWorld::Create_Body(BODY body)
 {
     if (body.eType == STATIC)
-        body.Set_StaticBody();
+        PhysicsUtil::Set_StaticBody(body);
     else if (body.eType == KINEMATIC)
-        body.Set_KinematicBody();
+        PhysicsUtil::Set_KinematicBody(body);
     else if (body.eType == DYNAMIC)
-        body.Set_DynamicBody();
+        PhysicsUtil::Set_DynamicBody(body);
 
     if (!m_freeIds.empty())
     {
@@ -245,7 +252,10 @@ void PhysicsWorld::Integrate_Forces(float fTimeDelta)
             b.vAngularVel += deltaW * fTimeDelta;
         }
 
-        // Clear 
+        // PhysicsUtil::ApplyPositionLock(b);
+        // PhysicsUtil::ApplyRotationLock(b);
+
+        // 초기화 : accum 값은 해당 프레임에만 적용된다. 
         b.vForceAccum = VectorHelper::Zero();
         b.vTorqueAccum = VectorHelper::Zero();
     }
@@ -303,7 +313,6 @@ void PhysicsWorld::Integrate_Velocities(float fTimeDelta)
         }
     }
 }
-
 
 void PhysicsWorld::Release()
 {

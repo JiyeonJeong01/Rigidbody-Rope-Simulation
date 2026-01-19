@@ -15,7 +15,6 @@ public:
 
 
 private:
-	Transform* m_pTransform;
 	Sphere* m_pMesh;
 
 public:

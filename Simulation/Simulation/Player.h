@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 
 class Anchor;
@@ -9,6 +9,7 @@ class Rigidbody;
 class SphereCollider;
 class Sphere;
 class SpringJoint;
+class Rope;
 
 class Player : public Object
 {
@@ -20,7 +21,7 @@ public :
 	HRESULT				Ready_GameObject();
 	int					Update_GameObject(const float& fTimeDelta);
 	void				LateUpdate_GameObject(const float& fTimeDelta);
-	void				Fixed_Update(const float& fTimeDElta);
+	void				FixedUpdate_GameObject(const float& fTimeDElta);
 	void				Render_GameObject();
 
 	void				On_CollisionEnter(const COLLISION& tCollision) override;
@@ -30,19 +31,28 @@ public :
 private :
 	void				Handle_PlayerInput(const float& fTimeDelta);
 	void				Render_Swing();
+    void                Start_Swing(Vec3 vAnchor);
+    void                End_Swing();
 
 private :
-	FollowCamera*		m_pCamera;
-
-	Transform*			m_pTransform;
+    // Components
 	Rigidbody*			m_pRigidbody;
 	SphereCollider*		m_pCollider;
 	Sphere*				m_pMesh;
 	SpringJoint*		m_pSpringJoint;
 
+    // Children
+    Anchor* m_pAnchor{};
+    FollowCamera* m_pCamera;
+    Rope* m_pRope;
+
+    // Variables
 	bool				m_bSwing{};
 	Vec3				m_vAnchor;
-	Anchor* m_pAnchor{};
+    float               m_fSpring = 10.f;
+    float               m_fDamper = 5.f;
+    float               m_fRest = 0.5f;
+
 
 public :
 	static Player* Create(LPDIRECT3DDEVICE9 pGraphicDevice);

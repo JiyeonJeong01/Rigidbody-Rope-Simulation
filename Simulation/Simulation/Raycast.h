@@ -4,8 +4,9 @@ class Object;
 typedef struct tagRaycastHit
 {
 	Object* pObject;
-	Vec3 vPoint;			// The impact point
-	float fDist;				// Ray'r origint to impactPoint
+	Vec3 vPoint;		// 충돌 지점
+	float fDist;		// 거리
+    Vec3 vRayDir;       // Ray의 방향
 }RAYCAST_HIT;
 
 typedef struct tagRay
@@ -28,7 +29,8 @@ class Raycast
 
 public :
 	HRESULT		Ready_Raycast(LPDIRECT3DDEVICE9 pGraphicDevice);
-	static bool Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin);
+	static bool Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin);             // vOrigin -> Mouse 방향으로 Ray 생성
+	static bool Intersect_Ray(RAYCAST_HIT* tOut, POINT pt);  // 화면의 위치
 
 	void Render_Ray();
 
@@ -37,6 +39,7 @@ private:
 
 private:
 	static LPDIRECT3DDEVICE9		m_pGraphicDevice;
+    static D3DVIEWPORT9             m_Viewport;
 
 	LPD3DXLINE						m_pLine;
 	list<RAY>						m_debugRayList;

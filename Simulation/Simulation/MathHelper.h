@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <random>
 
@@ -39,5 +39,21 @@ namespace MathHelper
 	{
 		return 	std::numeric_limits<T>::infinity();
 	}
-
+    static float Lerp(float a, float b, float t)
+	{
+        return a + (b - a) * t;
+	}
+    static float LerpClamped(float a, float b, float t)
+    {
+        t = (t < 0.f) ? 0.f : (t > 1.f ? 1.f : t);
+        return a + (b - a) * t;
+    }
+    static Vec3 LerpVec3(const Vec3& a, const Vec3& b, float t)
+    {
+        return {
+            a.x + (b.x - a.x) * t,
+            a.y + (b.y - a.y) * t,
+            a.z + (b.z - a.z) * t
+        };
+    }
 }

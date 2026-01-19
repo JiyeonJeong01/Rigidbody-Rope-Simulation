@@ -20,6 +20,9 @@ Rigidbody::~Rigidbody()
 
 HRESULT Rigidbody::Ready_Component(BODY* b)
 {
+    if (FAILED(Component::Ready_Component()))
+        return E_FAIL;
+
 	m_pTransform = static_cast<Transform*>(m_pOwner->Find_Component(L"Transform"));
 
 	if (!m_pTransform)
@@ -37,6 +40,8 @@ HRESULT Rigidbody::Ready_Component(BODY* b)
 
 int Rigidbody::Update_Component(const float& fTimeDelta)
 {
+    Component::Update_Component(fTimeDelta);
+
 	if (m_eCachedBodyType != DYNAMIC)
 		return 0;
 
@@ -48,12 +53,16 @@ int Rigidbody::Update_Component(const float& fTimeDelta)
 
 void Rigidbody::LateUpdate_Component(const float& fTimeDelta)
 {
+    Component::LateUpdate_Component(fTimeDelta);
+
 	if (m_eCachedBodyType != DYNAMIC)
 		return ;
 }
 
 void Rigidbody::Fixed_Update(const float& fTimeDelta)
 {
+    Component::Fixed_Update(fTimeDelta);
+
 	if (m_eCachedBodyType != DYNAMIC)
 		return ;
 }
@@ -94,12 +103,6 @@ void Rigidbody::Calc_Dimension(BODY* b)
 
 void Rigidbody::Calc_Inertia(BODY* b)
 {
-	if (b->eType == STATIC)
-	{
-		b->Set_StaticBody();
-		return;
-	}
-
 	// Rigidbody 형상에 따른 Inertia Tensor 계산하기 
 	D3DXMatrixIdentity(&b->matInertiaTensor);
 
@@ -204,6 +207,35 @@ void Rigidbody::Add_Torque(Vec3 vTorque)
 	if (!b) return;
 
 	b->vTorqueAccum += vTorque;
+}
+
+void Rigidbody::Set_LinearVelocity(const Vec3& vVel)
+{
+    if (m_eCachedBodyType != DYNAMIC)
+        return;
+
+    BODY* b = Try_GetMyBody();
+    if (!b) return;
+
+    b->vLinearVel = vVel;
+}
+
+void Rigidbody::Set_AngularVelocity(const Vec3& vVel)
+{
+    if (m_eCachedBodyType != DYNAMIC)
+        return;
+
+    BODY* b = Try_GetMyBody();
+    if (!b) return;
+
+    b->vAngularVel = vVel;
+}
+
+const BODY& Rigidbody::Get_BodyInfo()
+{
+    BODY* b = Try_GetMyBody();
+    if (!b) return BODY{};
+    else return *b;
 }
 
 Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint)

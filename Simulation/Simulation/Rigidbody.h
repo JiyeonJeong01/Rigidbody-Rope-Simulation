@@ -24,6 +24,11 @@ public :
 	void			Add_LinearImpulse(Vec3 vImpulse);
 	void			Add_Force(Vec3 vForce);
 	void			Add_Torque(Vec3 vTorque);
+
+    void            Set_LinearVelocity(const Vec3& vVel);
+    void            Set_AngularVelocity(const Vec3& vVel);
+
+private :
      
 	void			Calc_Dimension(BODY* b); // m_vDimension과 m_vDimensionCenter를 구한다
 	void			Calc_Inertia(BODY* b);	
@@ -36,6 +41,7 @@ public:
 	void			Set_BodyID(uint_fast16_t iId) { m_iId = iId; }
 	BODY*			Try_GetMyBody() { return PhysicsWorld::GetInstance()->Try_GetBody(m_iId);}
 
+    const BODY&     Get_BodyInfo();
 	Vec3			Get_PointVelocity(const Vec3& vPoint);
 	Vec3			Get_COM();
 

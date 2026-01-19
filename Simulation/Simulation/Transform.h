@@ -42,7 +42,10 @@ public:
 		return &m_matWorld;
 	}
 
-	void Get_Info(AXIS eAxis, Vec3* pAxis) { memcpy(pAxis, &m_matWorld.m[eAxis][0], sizeof(Vec3)); }
+	void Get_Info(AXIS eAxis, Vec3* pAxis)
+	{
+	    memcpy(pAxis, &m_matWorld.m[eAxis][0], sizeof(Vec3));
+	}
 
 private :
 	void Euler_ToQuaternion();

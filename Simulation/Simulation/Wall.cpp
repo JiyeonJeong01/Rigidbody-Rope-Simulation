@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Wall.h"
 #include "pch.h"
 #include "Wall.h"
@@ -10,7 +10,7 @@
 
 Wall::Wall(LPDIRECT3DDEVICE9 pGraphicDevice)
 	: Object(pGraphicDevice)
-	, m_pTransform(nullptr), m_pMesh(nullptr)
+	, m_pMesh(nullptr)
 {
 }
 
@@ -20,12 +20,14 @@ Wall::~Wall()
 
 HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY)
 {
+    if (FAILED(Object::Ready_GameObject()))
+        return E_FAIL;
+
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
 	m_pMesh->Set_FillMode(D3DFILL_SOLID);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_Y, 90.f);
-	m_pTransform->Rotate(AXIS_Z, 50.f);
 
 	m_pCollider = PlaneCollider::Create(m_pGraphicDevice, this);
 	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
@@ -54,6 +56,8 @@ void Wall::LateUpdate_GameObject(const float& fTimeDelta)
 
 void Wall::Render_GameObject()
 {
+    Object::Render_GameObject();
+
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 }
@@ -61,7 +65,7 @@ void Wall::Render_GameObject()
 void Wall::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
-	m_pMesh->Set_Hilight(true);
+	//m_pMesh->Set_Highlight(true);
 }
 
 void Wall::On_CollisionStay(const COLLISION& tCollision)
@@ -72,7 +76,7 @@ void Wall::On_CollisionStay(const COLLISION& tCollision)
 void Wall::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	m_pMesh->Set_Hilight(false);
+	//m_pMesh->Set_Highlight(false);
 }
 
 void Wall::Set_Position(const Vec3& vPosition)

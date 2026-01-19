@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 
 class Transform;
@@ -29,8 +29,6 @@ protected:
     Matrix		    m_matView, m_matProj;
     Vec3		    m_vEye, m_vAt, m_vUp;
     float		    m_fFov, m_fAspect, m_fNear, m_fFar;
-
-	Transform*      m_pTransformCom;
 
 public:
     static Camera* Create(LPDIRECT3DDEVICE9 pGraphicDev,

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Camera.h"
 class FollowCamera : public Camera
 {
@@ -12,13 +12,15 @@ public:
     HRESULT		    Ready_GameObject() override;
     int		        Update_GameObject(const float& fTimeDelta) override;
     void		    LateUpdate_GameObject(const float& fTimeDelta) override;
-    void            Rotate(const float& fDegree);
+    void            Yaw(const float& fDegree);
+    void            Pitch(const float& fDegree);
 
 private:
     void            Compute_ViewMatrix() override;
 
 	Object*         m_pTarget{};
     Vec3            m_vOffset{};
+    float           m_fFixedY{};
 
 public:
     static FollowCamera* Create(LPDIRECT3DDEVICE9 pGraphicDev,

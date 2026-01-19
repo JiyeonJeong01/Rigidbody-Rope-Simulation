@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 
 class Transform;
@@ -23,7 +23,6 @@ public:
 	void			On_CollisionExit(const COLLISION& tCollision) override;
 
 private:
-	Transform*		m_pTransform;
 	Rigidbody*		m_pRigidbody;
 	Sphere*			m_pMesh;
 	SphereCollider* m_pCollider;

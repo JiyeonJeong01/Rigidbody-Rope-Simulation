@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "d3dx9.h"
 
 typedef struct tagVertexColor
@@ -33,3 +33,24 @@ typedef struct tagRectFloat {
 	float right;
 	float bottom;
 }RECT_F;
+
+typedef struct tagDynamicValue
+{
+    float fGain = 0.f;      // 강도
+    float fDamping = 0.f;   // 저항
+    float fTarget = 0.f;    // 목표값
+    float fVelocity = 0.f;  // 변화 속도
+    float fValue = 0.f;     // 현재 값
+
+    float Get_Value(float fTimeDelta)
+    {
+        float fDiff = fTarget - fValue;
+        float fSign = fDiff >= 0 ? 1.f : -1.f;
+        float fForce = fabsf(fDiff) * fGain;
+        fVelocity += (fSign * fForce - fVelocity * fDamping) * fTimeDelta;
+        fValue += fVelocity * fTimeDelta;
+
+        return fValue;
+    }
+}DYNAMIC_VALUE;
+

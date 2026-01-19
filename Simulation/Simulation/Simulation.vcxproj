@@ -147,10 +147,12 @@
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="MainApp.h" />
+    <ClInclude Include="Management.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PhysicsUtil.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Physics_Struct.h" />
     <ClInclude Include="Plane.h" />
@@ -159,6 +161,7 @@
     <ClInclude Include="Raycast.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="Rope.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="Sphere.h" />
@@ -184,6 +187,7 @@
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="MainApp.cpp" />
+    <ClCompile Include="Management.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="pch.cpp">
@@ -195,6 +199,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Raycast.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="Rope.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="Sphere.cpp" />

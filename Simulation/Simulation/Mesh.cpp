@@ -6,7 +6,7 @@
 Mesh::Mesh(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner)
 	: m_pGraphicDevice(pGraphicDevice), m_pOwner(pOwner)
 	, m_pVIBuffer(nullptr), m_dwColor(0)
-	, m_bHilight(false), m_dwHilghtColor(D3DCOLOR_ARGB(255, 255, 0, 0))
+	, m_bHighlight(false), m_dwHilghtColor(D3DCOLOR_ARGB(255, 255, 0, 0))
 {
 }
 
@@ -37,7 +37,7 @@ void Mesh::Render_Mesh()
 	// ¼³Á¤
 	m_pGraphicDevice->SetRenderState(D3DRS_FILLMODE, m_fillMode);
 
-	if (m_bHilight)
+	if (m_bHighlight)
 	{
 		m_pGraphicDevice->SetRenderState(D3DRS_TEXTUREFACTOR, m_dwHilghtColor);
 		m_pGraphicDevice->SetTexture(0, nullptr);

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MainApp.h"
 #include "GraphicDevice.h"
+#include "Management.h"
 #include "PhysicsWorld.h"
 #include "InputSystem.h"
 
@@ -28,7 +29,7 @@ HRESULT MainApp::Ready_MainApp()
         return E_FAIL;
 
     Ready_Ground();
-    // Ready_Wall();
+    Ready_Wall();
 
     PhysicsWorld::GetInstance()->Ready_System(m_pGraphicDev);
     InputSystem::GetInstance()->Ready_System();
@@ -36,44 +37,40 @@ HRESULT MainApp::Ready_MainApp()
 
     m_pPlayer = Player::Create(m_pGraphicDev);
     m_pPlayer->Get_Transform()->Set_Position(-2.f, 10.f, 0.f);
-    m_ObjectList.push_back(m_pPlayer);
+    Management::GetInstance()->Add_Object(m_pPlayer);
 
     //Object* pEnemy = Enemy::Create(m_pGraphicDev);
     //m_ObjectList.push_back(pEnemy);
+    //Management::GetInstance()->Add_Object(pEnemy);
 
     return S_OK;
 }
 
 int MainApp::Update_MainApp(const float& fTimeDelta)
 {
-    for (auto* pObj : m_ObjectList)
-        pObj->Update_GameObject(fTimeDelta);
+    Management::GetInstance()->Update_Management(fTimeDelta);
 
     return 0;
 }
 
 void MainApp::Fixed_Update(const float& fTimeDelta)
 {
-    for (auto* pObj : m_ObjectList)
-        pObj->Fixed_Update(fTimeDelta);
+    Management::GetInstance()->FixedUpdate_Management(fTimeDelta);
 
     PhysicsWorld::GetInstance()->Update_System(fTimeDelta);
 }
 
 void MainApp::LateUpdate_MainApp(const float& fTimeDelta)
 {
-    for (auto* pObj : m_ObjectList)
-        pObj->LateUpdate_GameObject(fTimeDelta);
-
     InputSystem::GetInstance()->Update_System();
+    Management::GetInstance()->LateUpdate_Management(fTimeDelta);
 }
 
 void MainApp::Render_MainApp()
 {
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.8f, 0.8f, 0.5f, 1.f));
 
-    for (auto* pObj : m_ObjectList)
-        pObj->Render_GameObject();
+    Management::GetInstance()->Render_Management();
 
     Raycast::GetInstance()->Render_Ray();
 
@@ -145,7 +142,7 @@ HRESULT MainApp::Ready_Ground()
 	    {
             Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
             pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, -5.f, fStartZ + j * fSizeZ);
-            m_ObjectList.push_back(pGround);
+            Management::GetInstance()->Add_Object(pGround);
 	    }
     }
 
@@ -154,7 +151,7 @@ HRESULT MainApp::Ready_Ground()
 
 HRESULT MainApp::Ready_Wall()
 {
-    int iCntX = 2;
+    int iCntX = 1;
     int iCntZ = 10;
     float fSizeX = 50;
     float fSizeY = 50;
@@ -169,7 +166,7 @@ HRESULT MainApp::Ready_Wall()
         {
             Object* pWall = Wall::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 180), MathHelper::Random_Int(0, 180), MathHelper::Random_Int(0, 180)), fSizeX, fSizeY);
             pWall->Get_Transform()->Set_Position(fStartX + i * fSizeX, fSizeY * 0.5f, fStartZ + j * fSizeY);
-            m_ObjectList.push_back(pWall);
+            Management::GetInstance()->Add_Object(pWall);
         }
     }
 
@@ -191,8 +188,7 @@ MainApp* MainApp::Create()
 void MainApp::Release()
 {
     // Objects
-    for (auto* pObj : m_ObjectList)
-        Safe_Release(pObj);
+    Management::GetInstance()->Release_Management();
 
     // Singleton
     PhysicsWorld::DestroyInstance();

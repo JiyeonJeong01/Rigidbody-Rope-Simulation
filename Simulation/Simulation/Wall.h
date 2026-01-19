@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 
 class Transform;
@@ -24,7 +24,6 @@ public:
 	void			Set_Position(const Vec3& vPosition);
 
 private:
-	Transform*		m_pTransform;
 	PlaneCollider*	m_pCollider;
 	Plane*			m_pMesh;
 	Rigidbody*		m_pRigidbody;

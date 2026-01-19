@@ -1,9 +1,7 @@
 ﻿#include "pch.h"
 #include "SphereCollider.h"
 #include "Object.h"
-#include "CollisionDetector.h"
 #include "Rigidbody.h"
-#include "VectorHelper.h"
 
 SphereCollider::SphereCollider(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
 	: Collider(pGraphicDev, pOwner)
@@ -35,6 +33,8 @@ HRESULT SphereCollider::Resolve_Dependency()
 {
 	if (FAILED(Collider::Resolve_Dependency()))
 		return E_FAIL;
+
+    return S_OK;
 }
 
 SphereCollider* SphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)

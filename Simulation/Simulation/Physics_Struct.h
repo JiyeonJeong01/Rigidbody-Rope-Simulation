@@ -1,7 +1,14 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 class Collider;
 class Transform;
+
+typedef struct tagAxisMask
+{
+    bool bX = false;
+    bool bY = false;
+    bool bZ = false;
+}AXIS_MASK;
 
 typedef struct tagBody
 {
@@ -33,47 +40,16 @@ typedef struct tagBody
 
 	Transform* pTransform;
 
-    void Set_StaticBody()
-    {
-        eType = STATIC;
-
-        fInvMass = 0.f;
-        ZeroMemory(&matInvInertiaTensor, sizeof(matInvInertiaTensor));
-
-        bGravity = false;
-    }
-
-    void Set_KinematicBody()
-    {
-        eType = KINEMATIC;
-
-        fInvMass = 0.f;
-        ZeroMemory(&matInvInertiaTensor, sizeof(matInvInertiaTensor));
-
-        vForceAccum = {};
-        vTorqueAccum = {};
-
-        bGravity = false;
-    }
-
-    void Set_DynamicBody()
-    {
-        eType = DYNAMIC;
-
-        fMass = (fMass <= 0.f ? 1.f : fMass);
-        fInvMass = 1.f / fMass;
-
-        bGravity = true;
-    }
-    
+    AXIS_MASK   tRotationLock;
+    AXIS_MASK   tPositionLock;
 }BODY;
 
 typedef struct tagContactInfo
 {
 	Collider*	A;
 	Collider*	B;
-	Vec3		vResolveN_A;		// A°¡ °ãÄ§À» ÇØ°áÇÏ´Â ¹æÇâ
-	Vec3		vPenetrateN_A;	// A°¡ Ä§¹üÇÏ´Â ¹æÇâ
+	Vec3		vResolveN_A;		// Aê°€ ê²¹ì¹¨ì„ í•´ê²°í•˜ëŠ” ë°©í–¥
+	Vec3		vPenetrateN_A;	// Aê°€ ì¹¨ë²”í•˜ëŠ” ë°©í–¥
 	Vec3		vN_PlaneA;
 	Vec3		vN_PlaneB;
 	Vec3		vPoint;

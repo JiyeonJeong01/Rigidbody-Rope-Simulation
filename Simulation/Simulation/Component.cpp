@@ -1,9 +1,9 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Component.h"
 #include "Object.h"
 
 Component::Component(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner)
-	: m_pGraphicDevice(pGraphicDev), m_pOwner(pOwner)
+	: m_pGraphicDevice(pGraphicDev), m_pOwner(pOwner), m_bActive(true)
 {
 }
 

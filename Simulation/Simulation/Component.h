@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class Object;
 class Transform;
@@ -20,10 +20,13 @@ public :
 	Transform*				Get_Transform();
 	Object*					Get_Object() const { return m_pOwner; }
 
+    bool                    Get_Active() const { return m_bActive; }
+    void                    Set_Active(bool bActive) { m_bActive = bActive; }
+
 protected :
 	LPDIRECT3DDEVICE9		m_pGraphicDevice;
 	Object*					m_pOwner;
-
+    bool                    m_bActive;
 public:
 	virtual void Release();
 };

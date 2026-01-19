@@ -18,6 +18,9 @@ Transform::~Transform()
 
 HRESULT Transform::Ready_Component()
 {
+    if (FAILED(Component::Ready_Component()))
+        return E_FAIL;
+
 	D3DXMatrixIdentity(&m_matWorld);
 
 	for (int i = 0; i < AXIS_END; ++i)
@@ -32,6 +35,8 @@ HRESULT Transform::Ready_Component()
 
 int Transform::Update_Component(const float& fTimeDelta)
 {
+    Component::Update_Component(fTimeDelta);
+
 	D3DXMatrixIdentity(&m_matWorld);
 
 	// Clear prev info
@@ -69,6 +74,7 @@ int Transform::Update_Component(const float& fTimeDelta)
 
 void Transform::LateUpdate_Component(const float& fTimeDelta)
 {
+    Component::LateUpdate_Component(fTimeDelta);
 }
 
 void Transform::Rotate(AXIS eAxis, const float& fDegree)

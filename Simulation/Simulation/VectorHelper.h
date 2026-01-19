@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Define.h"
 
@@ -28,6 +28,11 @@ namespace VectorHelper
 		return D3DXVec3Length(&vSrc);
 	}
 
+	static float Get_LengthSq(const Vec3& vSrc)
+	{
+		return D3DXVec3LengthSq(&vSrc);
+	}
+
 	static Vec3 CrossProduct(const Vec3& v1, const Vec3& v2)
 	{
 		Vec3 vTmp; 
@@ -38,6 +43,11 @@ namespace VectorHelper
 	static float DotProduct(const Vec3& v1, const Vec3& v2)
 	{
 		return D3DXVec3Dot(&v1, &v2);
+	}
+
+	static Vec3 HadamardProduct(const Vec3& v1, const Vec3& v2)
+	{
+        return { v1.x * v2.x, v1.y * v2.y, v1.z * v2.z };
 	}
 
 	static Vec3 TransformNormal(Vec3* pVec, Matrix* pMat)

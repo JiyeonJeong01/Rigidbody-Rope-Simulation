@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Enemy.h"
 
 #include "Sphere.h"
@@ -8,7 +8,7 @@
 
 Enemy::Enemy(LPDIRECT3DDEVICE9 pGraphicDevice)
 	: Object(pGraphicDevice)
-	, m_pTransform(nullptr), m_pRigidbody(nullptr), m_pMesh(nullptr)
+	, m_pRigidbody(nullptr), m_pMesh(nullptr)
 {
 }
 
@@ -18,6 +18,9 @@ Enemy::~Enemy()
 
 HRESULT Enemy::Ready_GameObject()
 {
+    if (FAILED(Object::Ready_GameObject()))
+        return E_FAIL;
+
 	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 255), 1.f, 10);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
@@ -47,11 +50,12 @@ int Enemy::Update_GameObject(const float& fTimeDelta)
 void Enemy::LateUpdate_GameObject(const float& fTimeDelta)
 {
 	Object::LateUpdate_GameObject(fTimeDelta);
-
 }
 
 void Enemy::Render_GameObject()
 {
+    Object::Render_GameObject();
+
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
 }
@@ -65,13 +69,13 @@ void Enemy::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
-	m_pMesh->Set_Hilight(true);
+	m_pMesh->Set_Highlight(true);
 }
 
 void Enemy::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	m_pMesh->Set_Hilight(false);
+	m_pMesh->Set_Highlight(false);
 }
 
 Enemy* Enemy::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
