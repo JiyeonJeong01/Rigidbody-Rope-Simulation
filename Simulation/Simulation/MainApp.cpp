@@ -36,7 +36,7 @@ HRESULT MainApp::Ready_MainApp()
     Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
     m_pPlayer = Player::Create(m_pGraphicDev);
-    m_pPlayer->Get_Transform()->Set_Position(-2.f, 10.f, 0.f);
+    m_pPlayer->Get_Transform()->Set_Position(-25.f, 10.f, 0.f);
     Management::GetInstance()->Add_Object(m_pPlayer);
 
     //Object* pEnemy = Enemy::Create(m_pGraphicDev);
@@ -71,8 +71,6 @@ void MainApp::Render_MainApp()
     m_pGraphicDevice->Render_Begin(D3DXCOLOR(0.8f, 0.8f, 0.5f, 1.f));
 
     Management::GetInstance()->Render_Management();
-
-    Raycast::GetInstance()->Render_Ray();
 
     m_pGraphicDevice->Render_End();
 
@@ -116,6 +114,8 @@ HRESULT MainApp::Ready_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev)
 
     m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
+    ShowCursor(FALSE);
+
     return S_OK;
 }
 
@@ -127,8 +127,8 @@ HRESULT MainApp::Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev)
 
 HRESULT MainApp::Ready_Ground()
 {
-    int iCntX = 10;
-    int iCntZ = 10;
+    int iCntX = 3;
+    int iCntZ = 20;
     float fSizeX = 50;
     float fSizeZ = 50;
     float fStartX = iCntX * 0.5f * fSizeX;
@@ -151,8 +151,8 @@ HRESULT MainApp::Ready_Ground()
 
 HRESULT MainApp::Ready_Wall()
 {
-    int iCntX = 1;
-    int iCntZ = 10;
+    int iCntX = 2;
+    int iCntZ = 20;
     float fSizeX = 50;
     float fSizeY = 50;
     float fStartX = iCntX * 0.5f * fSizeX;
@@ -165,7 +165,7 @@ HRESULT MainApp::Ready_Wall()
         for (int j = 0; j < iCntZ; ++j)
         {
             Object* pWall = Wall::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 180), MathHelper::Random_Int(0, 180), MathHelper::Random_Int(0, 180)), fSizeX, fSizeY);
-            pWall->Get_Transform()->Set_Position(fStartX + i * fSizeX, fSizeY * 0.5f, fStartZ + j * fSizeY);
+            pWall->Get_Transform()->Set_Position(fStartX + i * fSizeX, fSizeY * 0.3f, fStartZ + j * fSizeY);
             Management::GetInstance()->Add_Object(pWall);
         }
     }

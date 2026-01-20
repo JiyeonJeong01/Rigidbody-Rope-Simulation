@@ -30,12 +30,17 @@ public :
 	void				On_CollisionStay(const COLLISION& tCollision) override;
 	void				On_CollisionExit(const COLLISION& tCollision) override;
 
+    void                Start_Swing(Vec3 vAnchor);
+
+    void                Draw_Crosshair();
+
 private :
 	void				Handle_PlayerInput(const float& fTimeDelta);
-    void                Start_Swing(Vec3 vAnchor);
     void                End_Swing();
 
 private :
+    ID3DXLine*          m_pLine;
+
     // Components
 	Rigidbody*			m_pRigidbody;
 	//SphereCollider*		m_pCollider;
@@ -52,14 +57,14 @@ private :
     // Variables
 	bool				m_bSwing{};
 	Vec3				m_vAnchor;
-    float               m_fSpring = 10.f;
+    float               m_fSpring = 25.f;
     float               m_fDamper = 5.f;
     float               m_fRest = 0.5f;
+    bool                m_bGround{};
 
     // Camera
     float               m_fYawDegree{};
     float               m_fPitchDegree{};
-
 
 public :
 	static Player* Create(LPDIRECT3DDEVICE9 pGraphicDevice);

@@ -17,6 +17,8 @@ public:
 	void			LateUpdate_GameObject(const float& fTimeDelta);
 	void			Render_GameObject();
 
+    void            Active_Highlight(bool bColor);
+
 	void			On_CollisionEnter(const COLLISION& tCollision) override;
 	void			On_CollisionStay(const COLLISION& tCollision) override;
 	void			On_CollisionExit(const COLLISION& tCollision) override;

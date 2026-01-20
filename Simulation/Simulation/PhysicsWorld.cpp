@@ -138,6 +138,11 @@ BODY* PhysicsWorld::Try_GetBody(uint_fast32_t iID)
     return &b;
 }
 
+bool PhysicsWorld::Detect_Ray(tagRaycastHit* tOut, tagRay* pRay)
+{
+    return m_pCollisionDetector->Detect_Ray(tOut, pRay);
+}
+
 void PhysicsWorld::Invoke_CollisionEvent()
 {
     // Enter / Stay
@@ -201,11 +206,6 @@ Collider* PhysicsWorld::Find_ColliderByID(uint32_t id)
             return pCol;
     }
     return nullptr;
-}
-
-bool PhysicsWorld::Detect_Ray(tagRay* pRay)
-{
-    return m_pCollisionDetector->Detect_Ray(pRay);
 }
 
 void PhysicsWorld::Accumulate_Forces()

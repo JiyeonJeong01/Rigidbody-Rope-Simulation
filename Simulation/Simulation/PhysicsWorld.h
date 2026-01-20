@@ -33,7 +33,7 @@ public :
 	BODY*					Try_GetBody(uint_fast32_t iID);
 
     /* Raycast */
-	bool					Detect_Ray(struct tagRay* pRay);
+	bool					Detect_Ray(struct tagRaycastHit* tOut, struct tagRay* pRay);
 
 private :
     /* Core Physics Logic */

@@ -3,10 +3,9 @@
 
 class SpringJoint;
 
-using Callback = function<void()>;
-
 class Rope : public Object
 {
+public :
     enum class ROPE_STATE { NONE, EXTEND, GRAPPLING, RETURN };
 
 private:
@@ -22,8 +21,6 @@ public:
     void    Try_Grappling();
     void    Extend_Rope(const float& fTimeDelta);
     void    Do_Grappling(); // 성공 시, 업데이트
-
-    void    Add_Listener(Callback onSuccess) { m_OnSuccess.push_back(onSuccess); }
 
     void    Set_Owner(Object* pObj) { m_pOwner = pObj; }
     void    Set_Render(bool bRender) { m_bRender = bRender; }
@@ -45,7 +42,6 @@ private:
     vector<Vec3>  m_RopePoints;
 
     Vec3                m_vTrialDir;
-    list<Callback>      m_OnSuccess;
     ROPE_STATE          m_eState;
     float               m_fExtendVel;
     Vec3                m_vCurExtendPos;

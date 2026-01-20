@@ -69,8 +69,7 @@ void SpringJoint::Fixed_Update(const float& fTimeDelta)
 	Vec3 vForce = fForceMag * vN;
 
     // 로프 상승 효과 넣기 위하여 임의 조정 
-    vForce.y *= 1.3f;
-    vForce.z *= 0.7f;
+    vForce.y *= 1.8f;
 
 	// Rigidbody에 힘 적용
 	 m_pRigidbody->Add_Force(vForce);

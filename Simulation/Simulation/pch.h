@@ -1,8 +1,8 @@
-#ifndef PCH_H
+﻿#ifndef PCH_H
 #define PCH_H
+#define NOMINMAX
 
 #include "framework.h"
-
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dinput.h>

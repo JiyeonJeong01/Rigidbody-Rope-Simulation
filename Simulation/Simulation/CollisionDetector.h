@@ -6,8 +6,6 @@ class SphereCollider;
 class PlaneCollider;
 class BoxCollider;
 
-struct tagRay;
-
 class CollisionDetector
 {
 private :
@@ -24,8 +22,8 @@ public :
     static bool		Detect_BoxPlaneCollision(CONTACT_INFO* pOut, BoxCollider* pBox, PlaneCollider* pPlane);
 	static bool		Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pCollider, PlaneCollider* pCollidee);
 
-	bool			Detect_Ray(tagRay* pRay);
-	static bool		Detect_RayPlaneCollision(tagRay* pRay, PlaneCollider* pPlane);
+	bool			Detect_Ray(struct tagRaycastHit* tOut, struct tagRay* pRay);
+	static bool		Detect_RayPlaneCollision(struct tagRaycastHit* tOut, tagRay* pRay, PlaneCollider* pPlane);
 
 public :
 	static CollisionDetector* Create();

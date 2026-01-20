@@ -131,14 +131,22 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	g_hInst = hInstance;
 
-	RECT rc{ 0,0, 800, 600 };
+	RECT rc{ 0,0, WINCX, WINCY };
 
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, 0,
-		rc.right - rc.left,
-		rc.bottom - rc.top, nullptr, nullptr, hInstance, nullptr);
+    int screenW = GetSystemMetrics(SM_CXSCREEN);
+    int screenH = GetSystemMetrics(SM_CYSCREEN);
+
+    HWND hWnd = CreateWindowW(
+        szWindowClass,
+        szTitle,
+        WS_POPUP,              // 테두리 제거
+        0, 0,
+        screenW,
+        screenH,
+        nullptr, nullptr, hInstance, nullptr
+    );
 
 	if (!hWnd)
 	{
@@ -167,7 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		HWND hConsole = GetConsoleWindow();
 		MoveWindow(hConsole, 0, 50, 600, 800, TRUE);
-		MoveWindow(hWnd, 600, 50, WINCX, WINCY, TRUE);
+		//MoveWindow(hWnd, 600, 50, WINCX, WINCY, TRUE);
 	}
 	break;
 

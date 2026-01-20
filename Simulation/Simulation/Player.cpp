@@ -26,6 +26,8 @@ Player::~Player()
 
 HRESULT Player::Ready_GameObject()
 {
+    D3DXCreateLine(m_pGraphicDevice, &m_pLine);
+
 	m_pMainMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
 	m_pAssistMesh = Box::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0),{3.f, 0.3f, 0.3f});
 
@@ -106,7 +108,7 @@ void Player::FixedUpdate_GameObject(const float& fTimeDElta)
     const bool bHasInput = (ix != 0.f || iz != 0.f);
     Vec3 vCurVel = m_pRigidbody->Get_BodyInfo().vLinearVel;
 
-    if (bHasInput)
+    if (bHasInput && m_bGround)
     {
         Vec3 vCamPos = m_pCamera->Get_Pos();
         Vec3 vPlyrPos = m_pTransform->Get_Position();
@@ -161,12 +163,15 @@ void Player::Render_GameObject()
 	m_pMainMesh->Render_Mesh();
     m_pAssistMesh->Render_Mesh();
 
+    Draw_Crosshair();
+
     Object::Render_GameObject();
 }
 
 void Player::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
+    m_bGround = true;
 }
 
 void Player::On_CollisionStay(const COLLISION& tCollision)
@@ -182,6 +187,7 @@ void Player::On_CollisionExit(const COLLISION& tCollision)
 	Object::On_CollisionExit(tCollision);
 	m_pMainMesh->Set_Highlight(false);
 	m_pAssistMesh->Set_Highlight(false);
+    m_bGround = false;
 }
 
 void Player::Handle_PlayerInput(const float& fTimeDelta)
@@ -240,6 +246,26 @@ void Player::Start_Swing(Vec3 vAnchor)
     m_pSpringJoint->Set_Anchor(m_vAnchor);
 }
 
+void Player::Draw_Crosshair()
+{
+    if (!m_pLine) return;
+
+    const float fCX = WINCX * 0.5f;
+    const float fCY = WINCY * 0.5f;
+    const float fLen = 10;
+
+
+    D3DXVECTOR2 h[2] = { {fCX - fLen, fCY}, {fCX + fLen, fCY} };
+    D3DXVECTOR2 v[2] = { {fCX, fCY - fLen}, {fCX, fCY + fLen} };
+
+    // 필요하면 라인 두께
+    m_pLine->SetWidth(1.0f);
+    m_pLine->Begin();
+    m_pLine->Draw(h, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+    m_pLine->Draw(v, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+    m_pLine->End();
+}
+
 void Player::End_Swing()
 {
 }
@@ -260,6 +286,7 @@ void Player::Release()
 {
     Safe_Release(m_pMainMesh);
     Safe_Release(m_pAssistMesh);
+    Safe_Release(m_pLine);
 
 	Object::Release();
 }

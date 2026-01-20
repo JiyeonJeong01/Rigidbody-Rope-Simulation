@@ -13,6 +13,7 @@
 #include "Raycast.h"
 
 #include "MathHelper.h"
+#include "Raycast.h"
 
 bool CollisionDetector::s_bTEST = false;
 
@@ -252,24 +253,44 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	return true;
 }
 
-bool CollisionDetector::Detect_Ray(tagRay* pRay)
+bool CollisionDetector::Detect_Ray(RAYCAST_HIT* tOut, tagRay* pRay)
 {
 	const auto& vecCollider = PhysicsWorld::GetInstance()->Get_Colliders();
 	size_t iTotalColCnt = vecCollider.size();
+
+    list<tagRay*> pCandidates;
 
 	for (int i = 0; i < iTotalColCnt; ++i)
 	{
 		if (vecCollider[i]->Get_GeometryType() == PLANE)
 		{
-			if (Detect_RayPlaneCollision(pRay, static_cast<PlaneCollider*>(vecCollider[i])))
-				return true;
+			if (Detect_RayPlaneCollision(tOut, pRay, static_cast<PlaneCollider*>(vecCollider[i])))
+			{
+                pCandidates.push_back(pRay);
+			}
 		}
 	}
 
-	return false;
+    // 감지 실패 
+    if (pCandidates.size() == 0)
+        return false;
+
+    float fClosest = numeric_limits<float>::max();
+    RAYCAST_HIT* pClosest = nullptr;
+
+    for(auto* c : pCandidates)
+    {
+        float fDot = VectorHelper::DotProduct(c->vOrigin, pRay->vOrigin);
+        fClosest = min(fClosest, fDot);
+        pClosest = c->pHit;
+    }
+
+    *tOut = *pClosest;
+
+    return true;
 }
 
-bool CollisionDetector::Detect_RayPlaneCollision(tagRay* pRay, PlaneCollider* pPlane)
+bool CollisionDetector::Detect_RayPlaneCollision(RAYCAST_HIT* tOut, tagRay* pRay, PlaneCollider* pPlane)
 {
 	pPlane->Get_Object()->On_CollisionExit(COLLISION{});
 
@@ -297,8 +318,11 @@ bool CollisionDetector::Detect_RayPlaneCollision(tagRay* pRay, PlaneCollider* pP
 		return false;
 
 	if (pRay->pHit)
-		pRay->pHit->vPoint = vHit;
+		pRay->pHit->tTarget.vPoint = vHit;
 			pPlane->Get_Object()->On_CollisionEnter(COLLISION{});
+
+    tOut->tTarget.pObject = pPlane->Get_Object();
+    tOut->tTarget.vPoint = vHit;
 
 	return true;
 }

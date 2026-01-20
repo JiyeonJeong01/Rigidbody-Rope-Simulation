@@ -24,7 +24,7 @@ HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY
         return E_FAIL;
 
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
-	m_pMesh->Set_FillMode(D3DFILL_SOLID);
+	m_pMesh->Set_FillMode(D3DFILL_WIREFRAME);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_Y, 90.f);
@@ -60,6 +60,11 @@ void Wall::Render_GameObject()
 
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMesh->Render_Mesh();
+}
+
+void Wall::Active_Highlight(bool bColor)
+{
+    m_pMesh->Set_Highlight(bColor);
 }
 
 void Wall::On_CollisionEnter(const COLLISION& tCollision)

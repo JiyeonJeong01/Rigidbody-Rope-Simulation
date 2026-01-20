@@ -28,10 +28,12 @@ int FollowCamera::Update_GameObject(const float& fTimeDelta)
     Camera::Update_GameObject(fTimeDelta);
 
  	Vec3 vTargetPos = m_pTarget->Get_Transform()->Get_Position();
+    float fLimitY = vTargetPos.y - 1.f;;
+    vTargetPos.y += 5.f;
 
 	Vec3 vNewPos = vTargetPos + m_vOffset;
 
-    vNewPos.y = max(vTargetPos.y, vNewPos.y);
+    vNewPos.y = max(fLimitY, vNewPos.y);
 
 	m_pTransform->Set_Position(vNewPos);
 	m_vAt = vTargetPos;

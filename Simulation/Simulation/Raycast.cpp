@@ -65,91 +65,60 @@ bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin)
 	ray.fMaxDist = 500.f;
 	ray.dwDebugColor = D3DCOLOR_XRGB(255, 0, 0);
 
-	Raycast::GetInstance()->Add_DebugRay(ray);
-
-	return PhysicsWorld::GetInstance()->Detect_Ray(&ray);
+	return PhysicsWorld::GetInstance()->Detect_Ray(tOut, &ray);
 }
 
 bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, POINT pt)
 {
-    if (tOut == nullptr)
+    if (!tOut)
         return false;
 
-    D3DXMATRIX matView, matProj, matWorld;
+    D3DXMATRIX matView{}, matProj{}, matWorld{};
     m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
     m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
     D3DXMatrixIdentity(&matWorld);
 
-    RECT rc{};
-    GetClientRect(g_hWnd, &rc);
+    D3DVIEWPORT9 vp{};
+    m_pGraphicDevice->GetViewport(&vp);
 
-    if (rc.right > 0 && rc.bottom > 0 &&
-        ((DWORD)rc.right != m_Viewport.Width || (DWORD)rc.bottom != m_Viewport.Height))
-    {
-        pt.x = LONG(pt.x * (m_Viewport.Width / float(rc.right)));
-        pt.y = LONG(pt.y * (m_Viewport.Height / float(rc.bottom)));
-    }
+    const LONG minX = (LONG)vp.X;
+    const LONG minY = (LONG)vp.Y;
+    const LONG maxX = (LONG)(vp.X + vp.Width - 1);
+    const LONG maxY = (LONG)(vp.Y + vp.Height - 1);
 
-    Vec3 vNear((float)pt.x, (float)pt.y, 0.0f);
-    Vec3 vFar((float)pt.x, (float)pt.y, 1.0f);
+    if (pt.x < minX) pt.x = minX;
+    if (pt.y < minY) pt.y = minY;
+    if (pt.x > maxX) pt.x = maxX;
+    if (pt.y > maxY) pt.y = maxY;
 
-    D3DXVec3Unproject(&vNear, &vNear, &m_Viewport, &matProj, &matView, &matWorld);
-    D3DXVec3Unproject(&vFar, &vFar, &m_Viewport, &matProj, &matView, &matWorld);
+    Vec3 vNearS((float)pt.x, (float)pt.y, 0.0f);
+    Vec3 vFarS((float)pt.x, (float)pt.y, 1.0f);
 
-    Vec3 vDir = vFar - vNear;
+    D3DXVec3Unproject(&vNearS, &vNearS, &vp, &matProj, &matView, &matWorld);
+    D3DXVec3Unproject(&vFarS, &vFarS, &vp, &matProj, &matView, &matWorld);
+
+    Vec3 vNear(vNearS.x, vNearS.y, vNearS.z);
+    Vec3 vFar(vFarS.x, vFarS.y, vFarS.z);
+
+    Matrix matInvView{};
+    D3DXMatrixInverse(&matInvView, nullptr, &matView);
+
+    Vec3 vCamPos(matInvView._41, matInvView._42, matInvView._43);
+    Vec3 vCamLook(matInvView._31, matInvView._32, matInvView._33);
+    vCamLook = VectorHelper::Get_Normalized(vCamLook);
+
+    Vec3 vRayDir = VectorHelper::Get_Normalized(vFar - vNear);
 
     RAY ray{};
     ray.pHit = tOut;
     ray.vOrigin = vNear;
-    ray.vDiretion = VectorHelper::Get_Normalized(vDir);
-    ray.fMaxDist = 100.f;
+    ray.vDiretion = vRayDir;
+    ray.fMaxDist = 1000.f;
     ray.dwDebugColor = D3DCOLOR_XRGB(255, 0, 0);
 
     tOut->vRayDir = ray.vDiretion;
 
-    Raycast::GetInstance()->Add_DebugRay(ray);
-
-    return PhysicsWorld::GetInstance()->Detect_Ray(&ray);
-}
-
-void Raycast::Render_Ray()
-{
-	// 디버깅용 렌더
-
-	//Matrix matProj, matView, matWorld;
-	//m_pGraphicDevice->GetTransform(D3DTS_VIEW, &matView);
-	//m_pGraphicDevice->GetTransform(D3DTS_PROJECTION, &matProj);
-	//D3DXMatrixIdentity(&matWorld);
-
-	//Matrix matPV = matView * matProj;
-
-	//D3DVIEWPORT9 vp{};
-	//m_pGraphicDevice->GetViewport(&vp);
-
-	//m_pLine->SetWidth(3.f);
-	//m_pLine->Begin();
-
-	//for (auto& line : m_debugRayList)
-	//{
-	//	Vec3 p[2]{};
-	//	p[0] = line.vOrigin;
-	//	p[1] = p[0] + line.vDiretion * line.fMaxDist;
-
-	//	Vec3 vScreenPos0, vScreenPos1;
-
-	//	D3DXVec3Project(&vScreenPos0, &p[0], &vp, &matProj, &matView, &matWorld);
-	//	D3DXVec3Project(&vScreenPos1, &p[1], &vp, &matProj, &matView, &matWorld);
-
-	//	m_pLine->DrawTransform(p, 2, &matPV, D3DCOLOR_XRGB(0, 255, 0));
-	//}
-	//m_pLine->End();
-
-	//m_debugRayList.clear();
-}
-
-void Raycast::Add_DebugRay(const RAY& tRay)
-{
-	m_debugRayList.push_back(tRay);
+    return PhysicsWorld::GetInstance()->Detect_Ray(tOut, &ray);
 }
 
 void Raycast::Release()

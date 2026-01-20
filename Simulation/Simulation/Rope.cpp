@@ -6,6 +6,8 @@
 #include "SpringJoint.h"
 #include "Anchor.h"
 #include "Ground.h"
+#include "Player.h"
+#include "Wall.h"
 
 Rope::Rope(LPDIRECT3DDEVICE9 pGraphicDevice)
     : Object(pGraphicDevice), m_pLine(nullptr), m_pOwner(nullptr), m_pSJ(nullptr), m_bRender(false)
@@ -26,15 +28,10 @@ HRESULT Rope::Ready_GameObject()
     
     m_pTransform = Transform::Create(m_pGraphicDevice, this);
 
-    m_fWaveHeight = 50.f;
-    m_iWaveCnt = 5;
+    m_fWaveHeight = 200.f;
+    m_iWaveCnt = 2;
     m_iPointCnt = 20;
-    m_fExtendVel = 5.f;
-
-    Add_Listener([&]()
-    {
-        m_eState = ROPE_STATE::GRAPPLING;
-    });
+    m_fExtendVel = 100.f;
 
     return __super::Resolve_Dependencies();
 }
@@ -88,37 +85,39 @@ void Rope::Render_GameObject()
 void Rope::Try_Grappling()
 {
     RAYCAST_HIT hit;
-    if (Raycast::Intersect_Ray(&hit, {WINCX, WINCY}))
+    list<Vec3> m_pCandidates;
+    if (Raycast::Intersect_Ray(&hit, {int(WINCX * 0.5f), int(WINCY * 0.5f)}))
     {
-        m_vAnchor = hit.vPoint;
-        Ground* pGround = dynamic_cast<Ground*>(hit.pObject);
-        pGround->Active_Highlight(true);
+        m_vAnchor = hit.tTarget.vPoint;
+        m_vCurExtendPos = m_pOwner->Get_Transform()->Get_Position();
+        m_pCandidates.push_back(hit.tTarget.vPoint);
     }
 
     // 공통
-    m_vTrialDir = hit.vRayDir;
+    m_vTrialDir = VectorHelper::Get_Normalized(hit.vRayDir);
+    
     m_eState = ROPE_STATE::EXTEND;
 }
 
 void Rope::Extend_Rope(const float& fTimeDelta)
 {
-    //m_vCurExtendPos += m_vTrialDir * m_fExtendVel * fTimeDelta;
+    m_vCurExtendPos += m_vTrialDir * m_fExtendVel * fTimeDelta;
 
-    //DebugHelper::Print_Vec3(L"Extended", m_vCurExtendPos);
+    DebugHelper::Print_Vec3(L"Extended", m_vCurExtendPos);
 
     float fVisual = m_tDynamicValue.Get_Value(fTimeDelta);
-    Vec3 vTip = m_pOwner->Get_Transform()->Get_Position();              // 로프 시작 위치 
-    Vec3 vDir = VectorHelper::Get_Normalized(m_vAnchor - vTip);   // 팁 -> 앵커
+    Vec3 vTip = m_pOwner->Get_Transform()->Get_Position();          // 로프 시작 위치 
+    Vec3 vDir = VectorHelper::Get_Normalized(m_vAnchor - vTip);     // 팁 -> 앵커
 
-    m_vCurGrapplePos = MathHelper::LerpVec3(m_vCurGrapplePos, m_vAnchor, fTimeDelta * 10);
+    m_vCurGrapplePos = MathHelper::LerpVec3(m_vCurGrapplePos, m_vCurExtendPos, fTimeDelta * 10);
 
-    Vec3 vWorldUp = VectorHelper::Up();
-    Vec3 vRight = VectorHelper::CrossProduct(vDir, vWorldUp);
+    Vec3 vWorldLook = VectorHelper::Look();
+    Vec3 vRight = VectorHelper::CrossProduct(vDir, vWorldLook);
 
     if (VectorHelper::Get_LengthSq(vRight) <= 1e-6f)
     {
-        vWorldUp = VectorHelper::Look();
-        vRight = VectorHelper::CrossProduct(vDir, vWorldUp);
+        vWorldLook = VectorHelper::Up();
+        vRight = VectorHelper::CrossProduct(vDir, vWorldLook);
     }
 
     vRight = VectorHelper::Get_Normalized(vRight);
@@ -144,18 +143,22 @@ void Rope::Extend_Rope(const float& fTimeDelta)
         m_RopePoints.emplace_back(vBase + vOffset);
     }
 
-    //const float fDist = VectorHelper::Get_Length(m_vCurExtendPos - m_vAnchor);
-    //if (fDist < 1e-2f)
-    //{
-    //    // 이벤트 실행
-    //    for (auto& e : m_OnSuccess)
-    //        e();
-    //}
+    const float fDist = VectorHelper::Get_Length(m_vCurExtendPos - m_vAnchor);
+
+    Vec3 vCurDir = m_vAnchor - m_vCurExtendPos;
+    float fDot = VectorHelper::DotProduct(vCurDir, m_vTrialDir);
+
+    if (fDist < 1.f || fDot < 0.f)
+    {
+        static_cast<Player*>(m_pOwner)->Start_Swing(m_vAnchor);
+        m_eState = ROPE_STATE::GRAPPLING;
+    }
 
 }
 
 void Rope::Do_Grappling()
 {
+    m_RopePoints.clear();
     m_RopePoints.push_back(m_pOwner->Get_Transform()->Get_Position());
     m_RopePoints.push_back(m_vAnchor);
 }
