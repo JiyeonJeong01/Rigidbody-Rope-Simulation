@@ -2,6 +2,9 @@
 #include "Camera.h"
 #include "Transform.h"
 
+Matrix Camera::matView = {};
+Matrix Camera::matProj = {};
+Matrix Camera::matInvView = {};
 
 Camera::Camera(LPDIRECT3DDEVICE9 pGraphicDev, const Vec3* pEye, const Vec3* pAt, const Vec3* pUp,
     float fFov, float fAspect, float fNear, float fFar)
@@ -53,6 +56,11 @@ void Camera::LateUpdate_GameObject(const float& fTimeDelta)
 
     D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
     m_pGraphicDevice->SetTransform(D3DTS_VIEW, &m_matView);
+
+    Camera::matView = m_matView;
+    Camera::matProj = m_matProj;
+
+    D3DXMatrixInverse(&matInvView, 0, &matView);
 }
 
 void Camera::Translate(const Vec3& vDir, const float& fSpeed)

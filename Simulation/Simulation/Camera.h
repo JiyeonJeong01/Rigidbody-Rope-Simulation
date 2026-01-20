@@ -35,6 +35,13 @@ public:
         const Vec3* pEye, const Vec3* pAt, const Vec3* pUp,
         float fFov, float fAspect, float fNear, float fFar);
 
+public :
+    static const Matrix& Get_InvViewMat() { return matInvView; }
+    static const Matrix& Get_ViewMat() { return matView; }
+    static const Matrix& Get_ProjMat() { return matProj; }
+private :
+    static Matrix matView, matProj, matInvView;
+
 public:
     void    Release() override;
 };

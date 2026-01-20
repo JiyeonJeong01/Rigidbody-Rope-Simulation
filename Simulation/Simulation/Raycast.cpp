@@ -59,7 +59,6 @@ bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, Vec3 vOrigin)
 	D3DXVECTOR3 dir = pixelDir;
 
 	RAY ray{};
-	ray.pHit = tOut;
 	ray.vOrigin = Vec3(o.x, o.y, o.z);
 	ray.vDiretion = Vec3(dir.x, dir.y, dir.z);
 	ray.fMaxDist = 500.f;
@@ -110,7 +109,6 @@ bool Raycast::Intersect_Ray(RAYCAST_HIT* tOut, POINT pt)
     Vec3 vRayDir = VectorHelper::Get_Normalized(vFar - vNear);
 
     RAY ray{};
-    ray.pHit = tOut;
     ray.vOrigin = vNear;
     ray.vDiretion = vRayDir;
     ray.fMaxDist = 1000.f;

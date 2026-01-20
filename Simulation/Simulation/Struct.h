@@ -34,7 +34,7 @@ typedef struct tagRectFloat {
 	float bottom;
 }RECT_F;
 
-typedef struct tagDynamicValue
+typedef struct tagRopeAmplitude
 {
     float fGain = 0.f;      // 강도
     float fDamping = 0.f;   // 저항
@@ -52,5 +52,5 @@ typedef struct tagDynamicValue
 
         return fValue;
     }
-}DYNAMIC_VALUE;
+}AMPLITUDE_VALUE;
 

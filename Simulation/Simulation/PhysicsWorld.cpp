@@ -152,8 +152,8 @@ void PhysicsWorld::Invoke_CollisionEvent()
         Collider* pB = Find_ColliderByID(k.bKey);
         if (!pA || !pB) continue;
 
-        // TODO : 필요한 정보가 뭘지 다 짜고 보가ㅣ 
-        COLLISION tA{};
+        // TODO : 여기서 채울 게 아니라 CollisionDetector에서 채워야 하나? 
+        COLLISION tA{  };
         COLLISION tB{};
 
         if (m_prevPair.find(k) == m_prevPair.end())

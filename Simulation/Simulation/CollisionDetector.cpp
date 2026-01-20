@@ -29,6 +29,35 @@ CollisionDetector::~CollisionDetector()
 
 HRESULT CollisionDetector::Ready_System()
 {
+    /* 함수 테이블 등록 */
+
+    // REFACOT : 디스패처 사용 고려
+
+    /* SPHERE -> */
+    m_DetectTable[SPHERE][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool { return Detect_ShpereCollision(pInfo, static_cast<SphereCollider*>(c1), static_cast<SphereCollider*>(c2)); };
+    m_DetectTable[SPHERE][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool { return /* NOT IMPLEMENTED */ false; };
+    m_DetectTable[SPHERE][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool { return Detect_SpherePlaneCollision(pInfo, static_cast<SphereCollider*>(c1), static_cast<PlaneCollider*>(c2)); };
+
+    /* BOX -> */
+    m_DetectTable[BOX][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return /* NOT IMPLEMENTED */ false; };
+    m_DetectTable[BOX][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return /* NOT IMPLEMENTED */ false; };
+    m_DetectTable[BOX][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return Detect_BoxPlaneCollision(pInfo, static_cast<BoxCollider*>(c1), static_cast<PlaneCollider*>(c2)); };
+
+    /* PLANE -> */
+    m_DetectTable[PLANE][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return Detect_SpherePlaneCollision(pInfo, static_cast<SphereCollider*>(c2), static_cast<PlaneCollider*>(c1));  };
+    m_DetectTable[PLANE][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return Detect_BoxPlaneCollision(pInfo, static_cast<BoxCollider*>(c2), static_cast<PlaneCollider*>(c1)); };
+    m_DetectTable[PLANE][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return /* NOT IMPLEMENTED */ false;  };
+
+
 	return S_OK;
 }
 
@@ -62,31 +91,7 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 			bool bOnCollision(false);
 			CONTACT_INFO tContact;
 
-			// TODO : 구조 바꿔야 한다 -> 함수 테이블이나 디스패쳐 등으로...  
-			if (eCldr == BOX && eClde == BOX)
-			{
-
-			}
-			else if (eCldr == SPHERE && eClde == SPHERE)
-			{
-				bOnCollision = Detect_ShpereCollision(&tContact, static_cast<SphereCollider*>(pCollider), static_cast<SphereCollider*>(pCollidee));
-			}
-			else if (eCldr == SPHERE && eClde == PLANE)
-			{
-				bOnCollision = Detect_SpherePlaneCollition(&tContact, static_cast<SphereCollider*>(pCollider), static_cast<PlaneCollider*>(pCollidee));
-			}
-			else if (eCldr == PLANE && eClde == SPHERE)
-			{
-				bOnCollision = Detect_SpherePlaneCollition(&tContact, static_cast<SphereCollider*>(pCollidee), static_cast<PlaneCollider*>(pCollider));
-			}
-			else if (eCldr == BOX && eClde == PLANE)
-			{
-				bOnCollision = Detect_BoxPlaneCollision(&tContact, static_cast<BoxCollider*>(pCollider), static_cast<PlaneCollider*>(pCollidee));
-			}
-			else if (eCldr == PLANE && eClde == BOX)
-			{
-				bOnCollision = Detect_BoxPlaneCollision(&tContact, static_cast<BoxCollider*>(pCollidee), static_cast<PlaneCollider*>(pCollider));
-			}
+            bOnCollision = m_DetectTable[eCldr][eClde](&tContact, pCollider, pCollidee);
 
 			if (bOnCollision)
 			{
@@ -171,22 +176,7 @@ bool CollisionDetector::Detect_BoxPlaneCollision(CONTACT_INFO* pOut, BoxCollider
 
     Vec3 nSep = (fDist >= 0.f) ? vPlaneN : -vPlaneN;
 
-    // 간단한 버전 
     Vec3 vPlanePoint = vBoxCom - vPlaneN * fDist;
-
-    // 복잡한 버전
-    //Vec3 dirToPlane = -nSep; // box에서 plane쪽
-    //float sx = (VectorHelper::DotProduct(dirToPlane, vRight) >= 0.f) ? 1.f : -1.f;
-    //float sy = (VectorHelper::DotProduct(dirToPlane, vUp) >= 0.f) ? 1.f : -1.f;
-    //float sz = (VectorHelper::DotProduct(dirToPlane, vLook) >= 0.f) ? 1.f : -1.f;
-
-    //Vec3 support = vBoxCom
-    //    + vRight * (sx * vHalfDim.x)
-    //    + vUp * (sy * vHalfDim.y)
-    //    + vLook * (sz * vHalfDim.z);
-
-    //float ds = pPlane->Calculate_SignedDistToPlane(support);
-    //Vec3 vPlanePoint = support - vPlaneN * ds;
 
     if (!pPlane->Get_IsInfinite())
     {
@@ -208,7 +198,7 @@ bool CollisionDetector::Detect_BoxPlaneCollision(CONTACT_INFO* pOut, BoxCollider
     return true;
 }
 
-bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pSphere, PlaneCollider* pPlane)
+bool CollisionDetector::Detect_SpherePlaneCollision(CONTACT_INFO* pOut, SphereCollider* pSphere, PlaneCollider* pPlane)
 {
 	BODY* bS = PhysicsWorld::GetInstance()->Try_GetBody(pSphere->Get_Rigidbody()->Get_BodyID());
 
@@ -253,44 +243,46 @@ bool CollisionDetector::Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCo
 	return true;
 }
 
-bool CollisionDetector::Detect_Ray(RAYCAST_HIT* tOut, tagRay* pRay)
+bool CollisionDetector::Detect_Ray(RAYCAST_HIT* pRayHit, tagRay* pRay)
 {
 	const auto& vecCollider = PhysicsWorld::GetInstance()->Get_Colliders();
 	size_t iTotalColCnt = vecCollider.size();
-
-    list<tagRay*> pCandidates;
 
 	for (int i = 0; i < iTotalColCnt; ++i)
 	{
 		if (vecCollider[i]->Get_GeometryType() == PLANE)
 		{
-			if (Detect_RayPlaneCollision(tOut, pRay, static_cast<PlaneCollider*>(vecCollider[i])))
-			{
-                pCandidates.push_back(pRay);
-			}
+			Detect_RayPlaneCollision(pRayHit, pRay, static_cast<PlaneCollider*>(vecCollider[i]));
 		}
 	}
 
     // 감지 실패 
-    if (pCandidates.size() == 0)
+    if (pRayHit->tTargetList.size() == 0)
         return false;
 
-    float fClosest = numeric_limits<float>::max();
-    RAYCAST_HIT* pClosest = nullptr;
+    pRayHit->vRayOrigin = pRay->vOrigin;
+    pRayHit->vRayDir = pRay->vDiretion;
 
-    for(auto* c : pCandidates)
+    float fClosest = numeric_limits<float>::max();
+    HIT_TARGET tClosest{};
+
+    for(auto t : pRayHit->tTargetList)
     {
-        float fDot = VectorHelper::DotProduct(c->vOrigin, pRay->vOrigin);
-        fClosest = min(fClosest, fDot);
-        pClosest = c->pHit;
+        float fDist = VectorHelper::Get_Length(pRayHit->vRayOrigin - t.vPoint);
+
+        if (fDist < fClosest)
+        {
+            fClosest = fDist;
+            tClosest = t;
+        }
     }
 
-    *tOut = *pClosest;
+    pRayHit->tTarget = tClosest;
 
     return true;
 }
 
-bool CollisionDetector::Detect_RayPlaneCollision(RAYCAST_HIT* tOut, tagRay* pRay, PlaneCollider* pPlane)
+bool CollisionDetector::Detect_RayPlaneCollision(RAYCAST_HIT* pRayHit, tagRay* pRay, PlaneCollider* pPlane)
 {
 	pPlane->Get_Object()->On_CollisionExit(COLLISION{});
 
@@ -317,12 +309,7 @@ bool CollisionDetector::Detect_RayPlaneCollision(RAYCAST_HIT* tOut, tagRay* pRay
 	if (!pPlane->Is_Contacting(vHit))
 		return false;
 
-	if (pRay->pHit)
-		pRay->pHit->tTarget.vPoint = vHit;
-			pPlane->Get_Object()->On_CollisionEnter(COLLISION{});
-
-    tOut->tTarget.pObject = pPlane->Get_Object();
-    tOut->tTarget.vPoint = vHit;
+    pRayHit->tTargetList.push_back({ pPlane->Get_Object(), vHit });
 
 	return true;
 }

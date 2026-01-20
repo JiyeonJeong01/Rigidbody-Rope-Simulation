@@ -70,7 +70,6 @@ void Wall::Active_Highlight(bool bColor)
 void Wall::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
-	//m_pMesh->Set_Highlight(true);
 }
 
 void Wall::On_CollisionStay(const COLLISION& tCollision)
@@ -81,7 +80,6 @@ void Wall::On_CollisionStay(const COLLISION& tCollision)
 void Wall::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	//m_pMesh->Set_Highlight(false);
 }
 
 void Wall::Set_Position(const Vec3& vPosition)

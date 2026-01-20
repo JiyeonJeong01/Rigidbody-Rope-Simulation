@@ -151,7 +151,7 @@ HRESULT MainApp::Ready_Ground()
 
 HRESULT MainApp::Ready_Wall()
 {
-    int iCntX = 2;
+    int iCntX = 4;
     int iCntZ = 20;
     float fSizeX = 50;
     float fSizeY = 50;

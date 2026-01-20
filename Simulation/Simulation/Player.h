@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "Object.h"
 
-class Anchor;
-class Camera;
 class FollowCamera;
 class Transform;
 class Rigidbody;
@@ -50,7 +48,6 @@ private :
 	SpringJoint*		m_pSpringJoint;
 
     // Children
-    Anchor* m_pAnchor{};
     FollowCamera* m_pCamera;
     Rope* m_pRope;
 

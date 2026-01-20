@@ -49,12 +49,12 @@ private :
 	LPDIRECT3DDEVICE9		m_pGraphicDevice;
 
     /* Collision */
+    CollisionDetector* m_pCollisionDetector;
+
     vector<Collider*>		m_vecCollider;
     list<CONTACT_INFO>		m_ContactInfosList;
 	unordered_set<PAIR_KEY, PAIR_KEY_HASH>		m_prevPair;
 	unordered_set<PAIR_KEY, PAIR_KEY_HASH>		m_CurPair;
-
-	CollisionDetector*				m_pCollisionDetector;
 
     /* Solver */
     Solver*								m_pSolver;

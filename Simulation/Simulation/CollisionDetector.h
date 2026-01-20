@@ -6,6 +6,8 @@ class SphereCollider;
 class PlaneCollider;
 class BoxCollider;
 
+using DetectFunc = std::function<bool(CONTACT_INFO*, Collider*, Collider*)>;
+
 class CollisionDetector
 {
 private :
@@ -13,17 +15,20 @@ private :
 	~CollisionDetector();
 
 public :
-	HRESULT			Ready_System();
-	void			Generate_ContactInfo();
-	void			NarrowPhase_ObjectToObject();
-	void			Clear_CollisionGroup();
+	HRESULT	Ready_System();
+	void	Generate_ContactInfo();
+	void	NarrowPhase_ObjectToObject();
 
-	static bool		Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollider* pCollider, SphereCollider* pCollidee);
-    static bool		Detect_BoxPlaneCollision(CONTACT_INFO* pOut, BoxCollider* pBox, PlaneCollider* pPlane);
-	static bool		Detect_SpherePlaneCollition(CONTACT_INFO* pOut, SphereCollider* pCollider, PlaneCollider* pCollidee);
+	bool	Detect_ShpereCollision(CONTACT_INFO* pOut, SphereCollider* pCollider, SphereCollider* pCollidee);
+    bool	Detect_SpherePlaneCollision(CONTACT_INFO* pOut, SphereCollider* pCollider, PlaneCollider* pCollidee);
 
-	bool			Detect_Ray(struct tagRaycastHit* tOut, struct tagRay* pRay);
-	static bool		Detect_RayPlaneCollision(struct tagRaycastHit* tOut, tagRay* pRay, PlaneCollider* pPlane);
+    bool	Detect_BoxPlaneCollision(CONTACT_INFO* pOut, BoxCollider* pBox, PlaneCollider* pPlane);
+
+	bool	Detect_Ray(struct tagRaycastHit* pRayHit, struct tagRay* pRay);
+    bool	Detect_RayPlaneCollision(struct tagRaycastHit* pRayHit, tagRay* pRay, PlaneCollider* pPlane);
+
+private:
+    array<array<DetectFunc, GEOMETRY_TYPE::G_END>, GEOMETRY_TYPE::G_END> m_DetectTable = { nullptr };
 
 public :
 	static CollisionDetector* Create();

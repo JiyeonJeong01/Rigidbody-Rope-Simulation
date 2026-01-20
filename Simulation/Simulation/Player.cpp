@@ -11,6 +11,7 @@
 #include "DebugHelper.h"
 #include "Anchor.h"
 #include "BoxCollider.h"
+#include "Ground.h"
 #include "SpringJoint.h"
 #include "Rope.h"
 
@@ -44,19 +45,19 @@ HRESULT Player::Ready_GameObject()
 	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
     body.eGeoType = SPHERE;
+
+    // Rigidbody Lock 기능
     body.tRotationLock = { true, false, true };
     // body.tPositionLock = { false, true, false };
-    //m_pRigidbody->Set_GeometryType(SPHERE);
+
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 
+    // SpringJoint 
 	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 	m_pSpringJoint->Set_Damper(m_fDamper);
 	m_pSpringJoint->Set_Spring(m_fSpring);
 	m_pSpringJoint->Set_RestLength(m_fRest);
     m_pSpringJoint->Set_Active(false);
-
-	m_pAnchor = Anchor::Create(m_pGraphicDevice);
-    m_pAnchor->Set_Active(false);
 
 	Vec3 vEye = { 0.f, 5.f, -10.f };
 	Vec3 vAt = { 0.f, 0.f, 0.f };
@@ -68,9 +69,7 @@ HRESULT Player::Ready_GameObject()
 
     m_pRope = Rope::Create(m_pGraphicDevice);
     m_pRope->Set_Owner(this);
-    m_pRope->Set_Active(false);
 
-    Management::GetInstance()->Add_Object(m_pAnchor);
     Management::GetInstance()->Add_Object(m_pCamera);
     Management::GetInstance()->Add_Object(m_pRope);
 
@@ -171,7 +170,6 @@ void Player::Render_GameObject()
 void Player::On_CollisionEnter(const COLLISION& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
-    m_bGround = true;
 }
 
 void Player::On_CollisionStay(const COLLISION& tCollision)
@@ -180,6 +178,7 @@ void Player::On_CollisionStay(const COLLISION& tCollision)
 
 	m_pMainMesh->Set_Highlight(true);
 	m_pAssistMesh->Set_Highlight(true);
+    m_bGround = true;
 }
 
 void Player::On_CollisionExit(const COLLISION& tCollision)
@@ -196,8 +195,9 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	// Raycast 테스트
 	if (InputSystem::GetInstance()->Get_KeyDown('Q'))
 	{
-		// if (m_bSwing) return;
-        m_pRope->Set_Active(true);
+		if (m_bSwing) return;
+        m_bSwing = true;
+        m_pRope->Set_RopeAmplitueInfo({ m_fSpring, m_fDamper, 0.f, 0.2f, 0.f });
 	    m_pRope->Try_Grappling();
 	}
 
@@ -208,13 +208,10 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
             m_bSwing = false;
 
 		    m_pSpringJoint->Set_Active(m_bSwing);
-            m_pRope->Set_Active(m_bSwing);
-            m_pAnchor->Set_Active(m_bSwing);
+            m_pRope->Finish_Grappling();
 		}
 	}
 
-#pragma region DEBUGGING CAM
-	static bool bLock = true;
 	long lMouseMove;
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_X))
 	{
@@ -228,7 +225,6 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
         m_fPitchDegree += fDegree;
 		m_pCamera->Pitch(fDegree);
 	}
-#pragma endregion
 }
 
 void Player::Start_Swing(Vec3 vAnchor)
@@ -237,9 +233,7 @@ void Player::Start_Swing(Vec3 vAnchor)
 
     m_bSwing = true;
 
-    m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
     m_pRope->Set_Active(m_bSwing);
-    m_pRope->Set_VisualSpringValue({ m_fSpring, m_fDamper, 0.f, 0.2f, 0.f });
     m_pRope->Set_Anchor(m_vAnchor);
 
     m_pSpringJoint->Set_Active(m_bSwing);
@@ -258,8 +252,7 @@ void Player::Draw_Crosshair()
     D3DXVECTOR2 h[2] = { {fCX - fLen, fCY}, {fCX + fLen, fCY} };
     D3DXVECTOR2 v[2] = { {fCX, fCY - fLen}, {fCX, fCY + fLen} };
 
-    // 필요하면 라인 두께
-    m_pLine->SetWidth(1.0f);
+    m_pLine->SetWidth(2.0f);
     m_pLine->Begin();
     m_pLine->Draw(h, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
     m_pLine->Draw(v, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
