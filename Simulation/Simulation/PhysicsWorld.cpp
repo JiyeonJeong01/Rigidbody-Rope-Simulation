@@ -3,7 +3,6 @@
 #include "Object.h"
 #include "Collider.h"
 #include "CollisionDetector.h"
-#include "Rigidbody.h"
 #include "Solver.h"
 #include "Transform.h"
 #include "PhysicsUtil.h"
@@ -86,8 +85,6 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 	if (!pCollider)
 		return;
 
-	// TODO : KeyPair도 삭제해야 한다 
-
 	auto it = std::remove(m_vecCollider.begin(), m_vecCollider.end(), pCollider);
 	m_vecCollider.erase(it, m_vecCollider.end());
 }
@@ -152,8 +149,7 @@ void PhysicsWorld::Invoke_CollisionEvent()
         Collider* pB = Find_ColliderByID(k.bKey);
         if (!pA || !pB) continue;
 
-        // TODO : 여기서 채울 게 아니라 CollisionDetector에서 채워야 하나? 
-        COLLISION tA{  };
+        COLLISION tA{};
         COLLISION tB{};
 
         if (m_prevPair.find(k) == m_prevPair.end())

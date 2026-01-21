@@ -3,21 +3,6 @@
 
 class Rigidbody;
 
-typedef struct tagCollision
-{
-	friend class Collider;
-	friend class Rigidbody;
-	Object*			pCounterObject;			// 충돌 당한 오브젝트
-	Collider*		pCounterCollider;		// 충돌 당한 오브젝트의 콜라이더
-	Rigidbody*		pCounterRigidbody;
-     
-	Vec3			vN;
-	Vec3			vPoint;
-	Vec3			vImpulse;
-	Vec3			vRelativeVel;
-	float			fDepth;
-}COLLISION;
-
 class Collider :  public Component
 {
 protected:

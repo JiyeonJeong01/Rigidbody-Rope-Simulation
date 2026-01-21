@@ -29,9 +29,11 @@ HRESULT Enemy::Ready_GameObject()
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
 
 	BODY body;
-	body.eBodyType = STATIC;
-	body.fAngularDrag = 5.f;
+	body.eBodyType = DYNAMIC;
+	body.fAngularDrag = 0.f;
 	body.fDrag = 0.5f;
+    body.fRestitution = 1.f;
+    body.fMass = 0.1f;
     body.eGeoType = SPHERE;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 
@@ -68,14 +70,11 @@ void Enemy::On_CollisionEnter(const COLLISION& tCollision)
 void Enemy::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
-
-	m_pMesh->Set_Highlight(true);
 }
 
 void Enemy::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	m_pMesh->Set_Highlight(false);
 }
 
 Enemy* Enemy::Create(LPDIRECT3DDEVICE9 pGraphicDevice)

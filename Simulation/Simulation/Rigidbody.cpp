@@ -105,7 +105,7 @@ void Rigidbody::Calc_Dimension(BODY* b)
 
 void Rigidbody::Calc_Inertia(BODY* b)
 {
-	// Rigidbody 형상에 따른 Inertia Tensor 계산하기 
+	// 물리 공식을 따른 Rigidbody 형상에 따른 Inertia Tensor 계산하기 
 	D3DXMatrixIdentity(&b->matInertiaTensor);
 
 	switch (m_eGeometryType)

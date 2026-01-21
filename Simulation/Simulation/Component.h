@@ -3,7 +3,7 @@
 class Object;
 class Transform;
 
-class Component
+class Component abstract
 {
 protected:
 	Component(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner);

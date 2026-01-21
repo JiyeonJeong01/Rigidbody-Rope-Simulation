@@ -27,6 +27,10 @@ public :
 	bool	Detect_Ray(struct tagRaycastHit* pRayHit, struct tagRay* pRay);
     bool	Detect_RayPlaneCollision(struct tagRaycastHit* pRayHit, tagRay* pRay, PlaneCollider* pPlane);
 
+private :
+    void    Register_DetectTable();
+    void    Fill_CollisionInfo(CONTACT_INFO* pInfo);
+
 private:
     array<array<DetectFunc, GEOMETRY_TYPE::G_END>, GEOMETRY_TYPE::G_END> m_DetectTable = { nullptr };
 

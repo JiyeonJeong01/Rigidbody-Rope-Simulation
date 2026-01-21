@@ -24,7 +24,7 @@ HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY
         return E_FAIL;
 
 	m_pMesh = Plane::Create(m_pGraphicDevice, this, dwColor, fSizeX, fSizeY);
-	m_pMesh->Set_FillMode(D3DFILL_WIREFRAME);
+	m_pMesh->Set_FillMode(D3DFILL_SOLID);
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pTransform->Rotate(AXIS_Y, 90.f);

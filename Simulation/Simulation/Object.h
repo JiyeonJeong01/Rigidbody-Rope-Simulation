@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "Collider.h"
 #include "Component.h"
+#include "Physics_Struct.h"
 class Transform;
 
 class Object

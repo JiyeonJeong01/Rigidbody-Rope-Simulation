@@ -19,6 +19,8 @@ HRESULT Anchor::Ready_GameObject()
         return E_FAIL;
 
 	m_pMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 255, 255, 255), 0.5f, 10);
+    m_pMesh->Set_FillMode(D3DFILL_WIREFRAME);
+
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 
     return S_OK;

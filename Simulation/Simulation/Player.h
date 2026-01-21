@@ -41,7 +41,6 @@ private :
 
     // Components
 	Rigidbody*			m_pRigidbody;
-	//SphereCollider*		m_pCollider;
 	Sphere*		        m_pMainMesh;
     Collider*           m_pCollider;
     Box*				m_pAssistMesh;

@@ -29,34 +29,7 @@ CollisionDetector::~CollisionDetector()
 
 HRESULT CollisionDetector::Ready_System()
 {
-    /* 함수 테이블 등록 */
-
-    // REFACOT : 디스패처 사용 고려
-
-    /* SPHERE -> */
-    m_DetectTable[SPHERE][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool { return Detect_ShpereCollision(pInfo, static_cast<SphereCollider*>(c1), static_cast<SphereCollider*>(c2)); };
-    m_DetectTable[SPHERE][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool { return /* NOT IMPLEMENTED */ false; };
-    m_DetectTable[SPHERE][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool { return Detect_SpherePlaneCollision(pInfo, static_cast<SphereCollider*>(c1), static_cast<PlaneCollider*>(c2)); };
-
-    /* BOX -> */
-    m_DetectTable[BOX][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool {  return /* NOT IMPLEMENTED */ false; };
-    m_DetectTable[BOX][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool {  return /* NOT IMPLEMENTED */ false; };
-    m_DetectTable[BOX][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool {  return Detect_BoxPlaneCollision(pInfo, static_cast<BoxCollider*>(c1), static_cast<PlaneCollider*>(c2)); };
-
-    /* PLANE -> */
-    m_DetectTable[PLANE][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool {  return Detect_SpherePlaneCollision(pInfo, static_cast<SphereCollider*>(c2), static_cast<PlaneCollider*>(c1));  };
-    m_DetectTable[PLANE][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool {  return Detect_BoxPlaneCollision(pInfo, static_cast<BoxCollider*>(c2), static_cast<PlaneCollider*>(c1)); };
-    m_DetectTable[PLANE][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
-        -> bool {  return /* NOT IMPLEMENTED */ false;  };
-
+    Register_DetectTable();
 
 	return S_OK;
 }
@@ -95,6 +68,7 @@ void CollisionDetector::NarrowPhase_ObjectToObject()
 
 			if (bOnCollision)
 			{
+                Fill_CollisionInfo(&tContact);
 				PhysicsWorld::GetInstance()->Add_ContactInfo(tContact);
 				PhysicsWorld::GetInstance()->Add_ContactPair(PAIR_KEY(pCollider->Get_ColliderID(), pCollidee->Get_ColliderID()));
 			}
@@ -312,6 +286,51 @@ bool CollisionDetector::Detect_RayPlaneCollision(RAYCAST_HIT* pRayHit, tagRay* p
     pRayHit->tTargetList.push_back({ pPlane->Get_Object(), vHit });
 
 	return true;
+}
+
+void CollisionDetector::Register_DetectTable()
+{
+    /* 함수 테이블 등록 */
+
+    // REFACTOR : 디스패처 사용 고려
+
+    /* SPHERE -> */
+    m_DetectTable[SPHERE][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool { return Detect_ShpereCollision(pInfo, static_cast<SphereCollider*>(c1), static_cast<SphereCollider*>(c2)); };
+    m_DetectTable[SPHERE][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool { return /* NOT IMPLEMENTED */ false; };
+    m_DetectTable[SPHERE][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool { return Detect_SpherePlaneCollision(pInfo, static_cast<SphereCollider*>(c1), static_cast<PlaneCollider*>(c2)); };
+
+    /* BOX -> */
+    m_DetectTable[BOX][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return /* NOT IMPLEMENTED */ false; };
+    m_DetectTable[BOX][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return /* NOT IMPLEMENTED */ false; };
+    m_DetectTable[BOX][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return Detect_BoxPlaneCollision(pInfo, static_cast<BoxCollider*>(c1), static_cast<PlaneCollider*>(c2)); };
+
+    /* PLANE -> */
+    m_DetectTable[PLANE][SPHERE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return Detect_SpherePlaneCollision(pInfo, static_cast<SphereCollider*>(c2), static_cast<PlaneCollider*>(c1));  };
+    m_DetectTable[PLANE][BOX] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return Detect_BoxPlaneCollision(pInfo, static_cast<BoxCollider*>(c2), static_cast<PlaneCollider*>(c1)); };
+    m_DetectTable[PLANE][PLANE] = [this](CONTACT_INFO* pInfo, Collider* c1, Collider* c2)
+        -> bool {  return /* NOT IMPLEMENTED */ false;  };
+
+}
+
+void CollisionDetector::Fill_CollisionInfo(CONTACT_INFO* pInfo)
+{
+    /* Fill A's Collision Info */
+    pInfo->tCollisionA.pCounterObject = pInfo->B->Get_Object();
+    pInfo->tCollisionA.pCounterCollider = pInfo->B;
+    pInfo->tCollisionA.vPoint = pInfo->vPoint;
+
+    /* Fill B's Collision Info */
+    pInfo->tCollisionB.pCounterObject = pInfo->A->Get_Object();
+    pInfo->tCollisionB.pCounterCollider = pInfo->A;
+    pInfo->tCollisionB.vPoint = pInfo->vPoint;
 }
 
 

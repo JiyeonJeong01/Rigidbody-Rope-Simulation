@@ -16,7 +16,7 @@ HRESULT Sphere::Ready_Mesh(unsigned long dwColor, float fRadius, int iSlice)
 {
 	m_dwColor = dwColor;
 	m_fRadius = fRadius;
-	m_fillMode = D3DFILL_WIREFRAME;
+	m_fillMode = D3DFILL_SOLID;
 
 	// Create Mesh
 	LPD3DXMESH pMesh = NULL;
@@ -55,7 +55,7 @@ HRESULT Sphere::Ready_Mesh(unsigned long dwColor, float fRadius, int iSlice)
 	{
 		VTXCOL vtx;
 		vtx.vPosition = pSrcVertices[i].position;
-		vtx.dwColor = m_dwColor;
+		vtx.dwColor = D3DCOLOR_ARGB(255, MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255));
 		pDstVertices[i] = vtx;
 	}
 

@@ -3,7 +3,6 @@
 #include "Management.h"
 #include "FollowCamera.h"
 #include "InputSystem.h"
-#include "Box.h"
 #include "Sphere.h"
 #include "Transform.h"
 #include "Rigidbody.h"
@@ -11,7 +10,6 @@
 #include "DebugHelper.h"
 #include "Anchor.h"
 #include "BoxCollider.h"
-#include "Ground.h"
 #include "SpringJoint.h"
 #include "Rope.h"
 
@@ -30,35 +28,38 @@ HRESULT Player::Ready_GameObject()
     D3DXCreateLine(m_pGraphicDevice, &m_pLine);
 
 	m_pMainMesh = Sphere::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0), 1.f, 10);
-	m_pAssistMesh = Box::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0),{3.f, 0.3f, 0.3f});
+    /*  회전 확인을 위한 보조 메쉬 */
+	//m_pAssistMesh = Box::Create(m_pGraphicDevice, this, D3DCOLOR_ARGB(255, 0, 255, 0),{3.f, 0.3f, 0.3f});
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
-	//m_pCollider = BoxCollider::Create(m_pGraphicDevice, this);
+    /* sphere mesh일 때 off */
+	//m_pCollider = BoxCollider::Create(m_pGraphicDevice, this);  
 
-    // Rigidbody
+    /* ===== Rigidbody ===== */
 	BODY body;
 	body.fAngularDrag = 0.1f;
-	body.fDrag = 1.f;
-	body.fRestitution = 0.5f;
-	body.fFriction = 10.f;
+	body.fDrag = 2.f;
+	body.fRestitution = 0.7f;
+	body.fFriction = 8.f;
 	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
     body.eGeoType = SPHERE;
 
-    // Rigidbody Lock 기능
-    body.tRotationLock = { true, false, true };
+    // Rigidbody Lock 기능 off
+    // body.tRotationLock = { true, false, true };
     // body.tPositionLock = { false, true, false };
 
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 
-    // SpringJoint 
-	m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
+    /* ===== SpringJoint ===== */
+    m_pSpringJoint = SpringJoint::Create(m_pGraphicDevice, this);
 	m_pSpringJoint->Set_Damper(m_fDamper);
 	m_pSpringJoint->Set_Spring(m_fSpring);
 	m_pSpringJoint->Set_RestLength(m_fRest);
     m_pSpringJoint->Set_Active(false);
 
+    /* ===== Cam Setting ===== */
 	Vec3 vEye = { 0.f, 5.f, -10.f };
 	Vec3 vAt = { 0.f, 0.f, 0.f };
 	Vec3 vUp = { 0.f, 1.f, 0.f };
@@ -134,7 +135,7 @@ void Player::FixedUpdate_GameObject(const float& fTimeDElta)
     // 점프
     if (InputSystem::GetInstance()->Get_KeyDown(VK_SPACE))
     {
-        m_pRigidbody->Add_LinearImpulse({ vCurVel.x, fSpeed, vCurVel.z });
+        m_pRigidbody->Add_LinearImpulse({ vCurVel.x, fSpeed * 8.f, vCurVel.z });
     }
 
     // 회전 테스트
@@ -160,7 +161,7 @@ void Player::Render_GameObject()
 
 	m_pGraphicDevice->SetTransform(D3DTS_WORLD, m_pTransform->Get_WorldMatrix());
 	m_pMainMesh->Render_Mesh();
-    m_pAssistMesh->Render_Mesh();
+    // m_pAssistMesh->Render_Mesh();
 
     Draw_Crosshair();
 
@@ -176,16 +177,19 @@ void Player::On_CollisionStay(const COLLISION& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
-	m_pMainMesh->Set_Highlight(true);
-	m_pAssistMesh->Set_Highlight(true);
+    /* 충돌 확인을 위한 메쉬 색 변경 */
+	// m_pMainMesh->Set_Highlight(true);
+	// m_pAssistMesh->Set_Highlight(true);
     m_bGround = true;
 }
 
 void Player::On_CollisionExit(const COLLISION& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
-	m_pMainMesh->Set_Highlight(false);
-	m_pAssistMesh->Set_Highlight(false);
+
+    /* 충돌 확인을 위한 메쉬 색 변경 */
+	// m_pMainMesh->Set_Highlight(false);
+	// m_pAssistMesh->Set_Highlight(false);
     m_bGround = false;
 }
 
@@ -278,7 +282,7 @@ Player* Player::Create(LPDIRECT3DDEVICE9 pGraphicDevice)
 void Player::Release()
 {
     Safe_Release(m_pMainMesh);
-    Safe_Release(m_pAssistMesh);
+    // Safe_Release(m_pAssistMesh);
     Safe_Release(m_pLine);
 
 	Object::Release();

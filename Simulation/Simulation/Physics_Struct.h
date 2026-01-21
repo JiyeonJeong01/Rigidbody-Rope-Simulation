@@ -45,16 +45,26 @@ typedef struct tagBody
     AXIS_MASK   tPositionLock;
 }BODY;
 
+typedef struct tagCollision
+{
+    class Object*       pCounterObject;			// 충돌 당한 오브젝트
+    class Collider*     pCounterCollider;		// 충돌 당한 오브젝트의 콜라이더
+
+    Vec3			vPoint;
+}COLLISION;
+
 typedef struct tagContactInfo
 {
-	Collider*	A;
-	Collider*	B;
-	Vec3		vResolveN_A;		// A가 겹침을 해결하는 방향
-	Vec3		vPenetrateN_A;	// A가 침범하는 방향
-	Vec3		vN_PlaneA;
-	Vec3		vN_PlaneB;
-	Vec3		vPoint;
-	float		fDepth;
+    COLLISION   tCollisionA{};
+    COLLISION   tCollisionB{};
+	Collider*	A{};
+	Collider*	B{};
+	Vec3		vResolveN_A{};		// A가 겹침을 해결하는 방향
+	Vec3		vPenetrateN_A{};	// A가 침범하는 방향
+	Vec3		vN_PlaneA{};
+	Vec3		vN_PlaneB{};
+	Vec3		vPoint{};
+	float		fDepth{};
 }CONTACT_INFO;
 
 typedef struct tagPairKey

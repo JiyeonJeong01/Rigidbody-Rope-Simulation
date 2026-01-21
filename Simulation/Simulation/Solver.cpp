@@ -123,7 +123,7 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 		vVel_Tangent = VectorHelper::Get_Normalized(vVel_Tangent);
 
 		// 상대 속도를 접선에 투영 : 표면을 따라 미끄러지는 실제 속도 성분 
-		float vt = VectorHelper::DotProduct(vVel_Rel, vVel_Tangent);
+		float fNumeratorT = VectorHelper::DotProduct(vVel_Rel, vVel_Tangent);
 
 		// 마찰이 만들 회전 계산하기
 		// 물체가 마찰로 인해 회전할 축 구하기
@@ -143,7 +143,7 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 		// => fDenominator를 분모로 사용하여, 움직임의 민감도로 작용하게 한다. 
 		float fDenominatorT = bA->fInvMass + bB->fInvMass + fMagSq_TAxis_A * fInvInertiaT_A + fMagSq_TAxis_B * fInvInertiaT_B;
 
-		float fImpulseT = -vt / fDenominatorT;
+		float fImpulseT = -fNumeratorT / fDenominatorT;
 
 		// 마찰 임펄스가 노멀 임펄스가 허용하는 최대치를 넘지 않도록 제한한다.
 		float mu = sqrtf(bA->fFriction * bB->fFriction);

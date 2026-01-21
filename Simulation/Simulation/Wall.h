@@ -2,6 +2,7 @@
 #include "Object.h"
 
 class Transform;
+class Rigidbody;
 class PlaneCollider;
 class Plane;
 

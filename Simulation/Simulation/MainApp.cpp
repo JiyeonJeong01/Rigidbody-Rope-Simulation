@@ -28,7 +28,7 @@ HRESULT MainApp::Ready_MainApp()
     if (FAILED(Ready_Scene(m_pGraphicDev)))
         return E_FAIL;
 
-    Ready_Ground();
+    Ready_GroundAndCeiling();
     Ready_Wall();
 
     PhysicsWorld::GetInstance()->Ready_System(m_pGraphicDev);
@@ -36,12 +36,12 @@ HRESULT MainApp::Ready_MainApp()
     Raycast::GetInstance()->Ready_Raycast(m_pGraphicDev);
 
     m_pPlayer = Player::Create(m_pGraphicDev);
-    m_pPlayer->Get_Transform()->Set_Position(-25.f, 10.f, 0.f);
+    m_pPlayer->Get_Transform()->Set_Position(-40.f, 10.f, 0.f);
     Management::GetInstance()->Add_Object(m_pPlayer);
 
-    //Object* pEnemy = Enemy::Create(m_pGraphicDev);
-    //m_ObjectList.push_back(pEnemy);
-    //Management::GetInstance()->Add_Object(pEnemy);
+    Object* pEnemy = Enemy::Create(m_pGraphicDev);
+    pEnemy->Get_Transform()->Set_Position(-40.f, 10.f, 60.f);
+    Management::GetInstance()->Add_Object(pEnemy);
 
     return S_OK;
 }
@@ -125,12 +125,12 @@ HRESULT MainApp::Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev)
     return S_OK;
 }
 
-HRESULT MainApp::Ready_Ground()
+HRESULT MainApp::Ready_GroundAndCeiling()
 {
     int iCntX = 3;
     int iCntZ = 20;
-    float fSizeX = 50;
-    float fSizeZ = 50;
+    float fSizeX = 80;
+    float fSizeZ = 80;
     float fStartX = iCntX * 0.5f * fSizeX;
     float fStartZ = 0;// iCntZ * 0.5f * fSizeZ;
     fStartX *= -1.f;
@@ -146,6 +146,19 @@ HRESULT MainApp::Ready_Ground()
 	    }
     }
 
+    iCntX = 1;
+    iCntZ = 20;
+    fStartX = -25.f;
+    for (int i = 0; i < iCntX; ++i)
+    {
+	    for (int j = 0; j < iCntZ; ++j)
+	    {
+            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
+            pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, 80.f, fStartZ + j * fSizeZ);
+            Management::GetInstance()->Add_Object(pGround);
+	    }
+    }
+
     return S_OK;
 }
 
@@ -153,8 +166,8 @@ HRESULT MainApp::Ready_Wall()
 {
     int iCntX = 4;
     int iCntZ = 20;
-    float fSizeX = 50;
-    float fSizeY = 50;
+    float fSizeX = 80;
+    float fSizeY = 80;
     float fStartX = iCntX * 0.5f * fSizeX;
     float fStartZ = 0;// iCntZ * 0.5f * fSizeY;
     fStartX *= -1.f;
@@ -164,8 +177,18 @@ HRESULT MainApp::Ready_Wall()
     {
         for (int j = 0; j < iCntZ; ++j)
         {
-            Object* pWall = Wall::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 180), MathHelper::Random_Int(0, 180), MathHelper::Random_Int(0, 180)), fSizeX, fSizeY);
-            pWall->Get_Transform()->Set_Position(fStartX + i * fSizeX, fSizeY * 0.3f, fStartZ + j * fSizeY);
+            Object* pWall = Wall::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255)), fSizeX, fSizeY);
+            pWall->Get_Transform()->Set_Position(fStartX + i * fSizeX, fSizeY * 0.1f, fStartZ + j * fSizeY);
+
+            if (i == 1)
+            {
+                pWall->Get_Transform()->Rotate(AXIS_Z, 30);
+            }
+            if (i == 2)
+            {
+                pWall->Get_Transform()->Rotate(AXIS_Z, 110);
+            }
+
             Management::GetInstance()->Add_Object(pWall);
         }
     }

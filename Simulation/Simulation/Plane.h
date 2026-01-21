@@ -14,7 +14,7 @@ public:
 	HRESULT			Ready_Mesh(unsigned long dwColor, float fWidth, float fHeight);
 
 private:
-	float					m_fWidth, m_fHeight;
+	float			m_fWidth, m_fHeight;
 
 public:
 	static Plane* Create(LPDIRECT3DDEVICE9 pGraphicDevice, Object* pOwner,

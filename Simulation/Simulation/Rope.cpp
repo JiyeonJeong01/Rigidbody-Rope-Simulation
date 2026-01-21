@@ -3,9 +3,7 @@
 
 #include "Raycast.h"
 #include "Transform.h"
-#include "SpringJoint.h"
 #include "Anchor.h"
-#include "Camera.h"
 #include "Management.h"
 #include "Player.h"
 
@@ -168,8 +166,8 @@ void Rope::Extend_Rope(const float& fTimeDelta)
         {
             static_cast<Player*>(m_pOwner)->Start_Swing(m_vAnchor);
             m_eState = ROPE_STATE::GRAPPLING;
-            m_pAnchor->Set_Active(true);
-            m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
+            // m_pAnchor->Set_Active(true);
+            // m_pAnchor->Get_Transform()->Set_Position(m_vAnchor);
         }
 
         m_vTrialDir *= -1.f;
