@@ -89,8 +89,10 @@ https://velog.io/@jizzvibe/series/Rope-Simulation
 
 ### 참고자료
 https://github.com/NathanMacLeod/physics3D/tree/master/Game 
+충돌 시 임펄스를 처리하는 과정을 참고했습니다. 
 
 https://github.com/siggraphcontact/rigidBodyTutorial
+관성 텐서 및 회전 처리에 대한 전반적인 흐름을 참고했습니다.
 
 https://github.com/godotengine/godot
-
+물리 적용 순서를 참고했습니다. 
