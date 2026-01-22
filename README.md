@@ -96,3 +96,6 @@ https://github.com/siggraphcontact/rigidBodyTutorial
 
 https://github.com/godotengine/godot
 물리 적용 순서를 참고했습니다. 
+
+https://www.youtube.com/watch?v=8nENcDnxeVE&t=111s
+로프의 흔들리는 효과를 참고했습니다.
