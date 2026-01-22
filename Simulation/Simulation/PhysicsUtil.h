@@ -3,7 +3,7 @@
 
 namespace PhysicsUtil
 {
-    void Set_StaticBody(BODY& b)
+    void Set_StaticBody(BODY_DESC& b)
     {
         b.eBodyType = STATIC;
         b.fInvMass = 0.f;
@@ -11,7 +11,7 @@ namespace PhysicsUtil
         b.bGravity = false;
     }
 
-    void Set_DynamicBody(BODY& b)
+    void Set_DynamicBody(BODY_DESC& b)
     {
         b.eBodyType = DYNAMIC;
         b.fMass = (b.fMass <= 0.f ? 1.f : b.fMass);
@@ -19,7 +19,7 @@ namespace PhysicsUtil
         b.bGravity = true;
     }
 
-    void Set_KinematicBody(BODY& b)
+    void Set_KinematicBody(BODY_DESC& b)
     {
         b.eBodyType = KINEMATIC;
         b.fInvMass = 0.f;
@@ -29,7 +29,7 @@ namespace PhysicsUtil
         b.bGravity = false;
     }
 
-    inline void ApplyPositionLock(BODY& b)
+    inline void ApplyPositionLock(BODY_DESC& b)
     {
         if (b.tPositionLock.bX)
         { b.vLinearVel.x = 0.f; b.vForceAccum.x = 0.f; }
@@ -39,7 +39,7 @@ namespace PhysicsUtil
         { b.vLinearVel.z = 0.f; b.vForceAccum.z = 0.f; }
     }
 
-    inline void ApplyRotationLock(BODY& b)
+    inline void ApplyRotationLock(BODY_DESC& b)
     {
         if (b.tRotationLock.bX)
         { b.vAngularVel.x = 0.f; b.vTorqueAccum.x = 0.f; }

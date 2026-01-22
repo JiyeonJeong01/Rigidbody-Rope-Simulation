@@ -43,7 +43,76 @@ HRESULT PlaneCollider::Resolve_Dependency()
 		Calc_EquationOfPlane();
 
     return S_OK;
-} 
+}
+
+void PlaneCollider::Update_AABB()
+{
+    const Vec3 vCenter = Get_Transform()->Get_Position();
+
+    // 월드 공간에서의 노멀 벡터
+    Vec3 n = m_vNorm;
+    n = VectorHelper::Get_Normalized(n);
+
+    // 무한 평면
+    if (m_bInfinite)
+    {
+        const float INF_EXT = 1e6f;   // 필요하면 더 키우거나 월드 크기로
+        const float THICK = 1e-2f;  // 평면 두께(얇은 AABB)
+
+        Vec3 vExt = { INF_EXT, INF_EXT, INF_EXT };
+
+        // 평면은 얇으니까 노멀 방향으로만 얇게 만들고 싶으면 아래처럼 할 수도 있음
+        m_tAABB.vMin = vCenter - vExt;
+        m_tAABB.vMax = vCenter + vExt;
+        return;
+    }
+
+    // 평면의 회전을 고려하여 u, v, n이 서로 직교하는 로컬 좌표계 만들기
+    Vec3 vRef = Vec3(0, 1, 0);
+    if (fabsf(VectorHelper::DotProduct(vRef, n)) > 0.99f)
+        vRef = Vec3(1, 0, 0);
+
+    Vec3 vU = VectorHelper::Get_Normalized(VectorHelper::CrossProduct(vRef, n));
+    Vec3 vV = VectorHelper::Get_Normalized(VectorHelper::CrossProduct(n, vU));
+
+    const float fHalfW = m_vDimension.x * 0.5f;
+    const float fHalfH = m_vDimension.y * 0.5f;
+
+    // 4개 코너 계산
+    const Vec3 c0 = vCenter + vU * fHalfW + vV * fHalfH;
+    const Vec3 c1 = vCenter + vU * fHalfW - vV * fHalfH;
+    const Vec3 c2 = vCenter - vU * fHalfW + vV * fHalfH;
+    const Vec3 c3 = vCenter - vU * fHalfW - vV * fHalfH;
+
+    // min/max 뽑기
+    Vec3 vMin = c0;
+    Vec3 vMax = c0;
+
+    auto Expand = [&](const Vec3& p)
+        {
+            vMin.x = (p.x < vMin.x) ? p.x : vMin.x;
+            vMin.y = (p.y < vMin.y) ? p.y : vMin.y;
+            vMin.z = (p.z < vMin.z) ? p.z : vMin.z;
+
+            vMax.x = (p.x > vMax.x) ? p.x : vMax.x;
+            vMax.y = (p.y > vMax.y) ? p.y : vMax.y;
+            vMax.z = (p.z > vMax.z) ? p.z : vMax.z;
+        };
+
+    Expand(c1);
+    Expand(c2);
+    Expand(c3);
+
+    // 평면은 두께가 0이라 AABB가 너무 얇으면 브로드페이즈에서 누락될 수 있음
+    const float thickEps = 1e-2f;
+
+    vMin.x -= thickEps; vMin.y -= thickEps; vMin.z -= thickEps;
+    vMax.x += thickEps; vMax.y += thickEps; vMax.z += thickEps;
+
+    m_tAABB.vMin = vMin;
+    m_tAABB.vMax = vMax;
+}
+
 
 void PlaneCollider::Calc_EquationOfPlane()
 {

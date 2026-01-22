@@ -22,13 +22,13 @@ HRESULT Solver::Ready_System()
 	return S_OK;
 }
 
-void Solver::Solve_Contacts(CONTACT_INFO* pInfo)
+void Solver::Solve_Contacts(CONTACT_DESC* pInfo)
 {
 	Solve_ImpulseAndFriction(pInfo);
 	Solve_Penetration(pInfo);
 }
 
-void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
+void Solver::Solve_ImpulseAndFriction(CONTACT_DESC* pInfo)
 {
 	// 멀어지는 중이었다면 solve하지 않기 
 	if (Is_Seperating(pInfo))
@@ -38,8 +38,8 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 	Collider* B = pInfo->B;
 	Transform* tA = A->Get_Transform();
 	Transform* tB = B->Get_Transform();
-	BODY* bA = PhysicsWorld::GetInstance()->Try_GetBody(A->Get_Rigidbody()->Get_BodyID());
-	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(B->Get_Rigidbody()->Get_BodyID());
+	BODY_DESC* bA = PhysicsWorld::GetInstance()->Try_GetBody(A->Get_Rigidbody()->Get_BodyID());
+	BODY_DESC* bB = PhysicsWorld::GetInstance()->Try_GetBody(B->Get_Rigidbody()->Get_BodyID());
 
 
 	// ==================================================== // 
@@ -165,7 +165,7 @@ void Solver::Solve_ImpulseAndFriction(CONTACT_INFO* pInfo)
 	}
 }
 
-void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
+void Solver::Solve_Penetration(CONTACT_DESC* pInfo)
 {
 	if (pInfo == nullptr || pInfo->A == nullptr || pInfo->B == nullptr)
 		return;
@@ -176,8 +176,8 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	Collider* A = pInfo->A;
 	Collider* B = pInfo->B;
 
-	BODY* bA = PhysicsWorld::GetInstance()->Try_GetBody(A->Get_Rigidbody()->Get_BodyID());
-	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(B->Get_Rigidbody()->Get_BodyID());
+	BODY_DESC* bA = PhysicsWorld::GetInstance()->Try_GetBody(A->Get_Rigidbody()->Get_BodyID());
+	BODY_DESC* bB = PhysicsWorld::GetInstance()->Try_GetBody(B->Get_Rigidbody()->Get_BodyID());
 	if (!bA || !bB)
 		return;
 
@@ -205,7 +205,7 @@ void Solver::Solve_Penetration(CONTACT_INFO* pInfo)
 	}
 }
 
-void Solver::Add_ImpulseAtPoint(Transform* pTransform, BODY* b, const Vec3& impulse, const Vec3& point)
+void Solver::Add_ImpulseAtPoint(Transform* pTransform, BODY_DESC* b, const Vec3& impulse, const Vec3& point)
 {
 	if (b->eBodyType != DYNAMIC)
 		return;
@@ -229,13 +229,13 @@ void Solver::Add_ImpulseAtPoint(Transform* pTransform, BODY* b, const Vec3& impu
 	b->vAngularVel += deltaW;
 }
 
-bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
+bool Solver::Is_Seperating(CONTACT_DESC* pInfo)
 {
 	// vResolveN_A : "A를 B에게서 멀어지게 하는 방향" (A separation direction)
 	// vRel = vB - vA : A 기준에서 본 B의 상대속도
 
-	BODY* bA = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->A->Get_Rigidbody()->Get_BodyID());
-	BODY* bB = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->B->Get_Rigidbody()->Get_BodyID());
+	BODY_DESC* bA = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->A->Get_Rigidbody()->Get_BodyID());
+	BODY_DESC* bB = PhysicsWorld::GetInstance()->Try_GetBody(pInfo->B->Get_Rigidbody()->Get_BodyID());
 
 	Vec3 vA, vB;
 	if (bA->eBodyType == STATIC)
@@ -257,7 +257,7 @@ bool Solver::Is_Seperating(CONTACT_INFO* pInfo)
 	return vn < -eps;
 }
 
-Vec3 Solver::Calc_PointVelocity(BODY* b, const Vec3& vPoint)
+Vec3 Solver::Calc_PointVelocity(BODY_DESC* b, const Vec3& vPoint)
 {
 	if (b->eBodyType == STATIC)
 		return VectorHelper::Zero();
@@ -267,7 +267,7 @@ Vec3 Solver::Calc_PointVelocity(BODY* b, const Vec3& vPoint)
 	return b->vLinearVel + vRot;
 }
 
-float Solver::Calc_InvInertiaOfAxis(Transform* pTransform, BODY* b, const Vec3& vAxis)
+float Solver::Calc_InvInertiaOfAxis(Transform* pTransform, BODY_DESC* b, const Vec3& vAxis)
 {
 	if (VectorHelper::Is_Zero(vAxis))
 		return 0.f;

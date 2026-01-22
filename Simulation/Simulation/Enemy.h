@@ -18,9 +18,9 @@ public:
 	void			LateUpdate_GameObject(const float& fTimeDelta);
 	void			Render_GameObject();
 
-	void			On_CollisionEnter(const COLLISION& tCollision) override;
-	void			On_CollisionStay(const COLLISION& tCollision) override;
-	void			On_CollisionExit(const COLLISION& tCollision) override;
+	void			On_CollisionEnter(const COLLISION_DESC& tCollision) override;
+	void			On_CollisionStay(const COLLISION_DESC& tCollision) override;
+	void			On_CollisionExit(const COLLISION_DESC& tCollision) override;
 
 private:
 	Rigidbody*		m_pRigidbody;

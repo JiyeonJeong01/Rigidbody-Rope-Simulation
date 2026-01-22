@@ -21,9 +21,9 @@ public:
 
     void            Active_Highlight(bool bColor);
 
-	void			On_CollisionEnter(const COLLISION& tCollision) override;
-	void			On_CollisionStay(const COLLISION& tCollision) override;
-	void			On_CollisionExit(const COLLISION& tCollision) override;
+	void			On_CollisionEnter(const COLLISION_DESC& tCollision) override;
+	void			On_CollisionStay(const COLLISION_DESC& tCollision) override;
+	void			On_CollisionExit(const COLLISION_DESC& tCollision) override;
 
 private:
 	PlaneCollider*	m_pCollider;

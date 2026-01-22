@@ -141,7 +141,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     HWND hWnd = CreateWindowW(
         szWindowClass,
         szTitle,
-        WS_POPUP,              // 테두리 제거
+        WS_OVERLAPPEDWINDOW,              // 테두리 제거
         0, 0,
         screenW,
         screenH,
@@ -175,7 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		HWND hConsole = GetConsoleWindow();
 		MoveWindow(hConsole, 0, 50, 600, 800, TRUE);
-		//MoveWindow(hWnd, 600, 50, WINCX, WINCY, TRUE);
+		MoveWindow(hWnd, 600, 50, WINCX, WINCY, TRUE);
 	}
 	break;
 

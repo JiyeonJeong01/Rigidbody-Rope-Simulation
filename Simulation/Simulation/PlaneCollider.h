@@ -12,6 +12,7 @@ public:
 	int				Update_Component(const float& fTimeDelta) override;
 	void			LateUpdate_Component(const float& fTimeDelta) override;
 	HRESULT			Resolve_Dependency() override;
+    void            Update_AABB() override;
 
 private :
 	void			Calc_EquationOfPlane();

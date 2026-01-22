@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Component.h"
+#include "Physics_Struct.h"
 
 class Rigidbody;
 
@@ -11,6 +12,7 @@ protected:
 
 public :
 	virtual GEOMETRY_TYPE		Get_GeometryType()							PURE;
+    virtual void                Update_AABB();
 
 	uint_fast16_t				Get_ColliderID() const						{ return m_iId;}	
 	void						Set_ColliderID(uint_fast16_t iId)			{ m_iId = iId; }
@@ -29,8 +31,16 @@ public :
 	void						Set_Scale(const float& fScale)				{ m_fScale = fScale; }
 
 	Rigidbody*					Get_Rigidbody();
+    const AABB_DESC&            Get_AABB()  const                           { return m_tAABB;}
+    COL_TYPE                    Get_ColType() const                         { return m_eColType; }
+    void                        Set_ColType(COL_TYPE eType)                 { m_eColType = eType; }
 
 protected :
+    virtual void                Calc_AABB() {};
+
+protected :
+    AABB_DESC                   m_tAABB;
+    COL_TYPE                    m_eColType;
 	uint_fast16_t				m_iId;
 	Rigidbody*					m_pRigidbody;
 	BODY_TYPE					m_eBodyType;

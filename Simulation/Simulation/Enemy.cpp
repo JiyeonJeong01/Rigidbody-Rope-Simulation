@@ -27,8 +27,9 @@ HRESULT Enemy::Ready_GameObject()
 	m_pTransform->Set_Position(3.f, 0.f, 0.f);
 
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
+    m_pCollider->Set_ColType(COL_TYPE::C_DYNAMIC);
 
-	BODY body;
+	BODY_DESC body;
 	body.eBodyType = DYNAMIC;
 	body.fAngularDrag = 0.f;
 	body.fDrag = 0.5f;
@@ -62,17 +63,17 @@ void Enemy::Render_GameObject()
 	m_pMesh->Render_Mesh();
 }
 
-void Enemy::On_CollisionEnter(const COLLISION& tCollision)
+void Enemy::On_CollisionEnter(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
 }
 
-void Enemy::On_CollisionStay(const COLLISION& tCollision)
+void Enemy::On_CollisionStay(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 }
 
-void Enemy::On_CollisionExit(const COLLISION& tCollision)
+void Enemy::On_CollisionExit(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
 }

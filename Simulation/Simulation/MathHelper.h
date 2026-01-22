@@ -56,4 +56,9 @@ namespace MathHelper
             a.z + (b.z - a.z) * t
         };
     }
+
+    static int FloorToInt(float f)
+	{
+        return static_cast<int>(floor(f));
+	}
 }

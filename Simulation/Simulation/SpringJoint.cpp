@@ -39,7 +39,7 @@ void SpringJoint::Fixed_Update(const float& fTimeDelta)
 	if (!m_bActive || (m_pRigidbody == nullptr && !Find_Rigidbody()))
 		return ;
 
-	BODY* b = PhysicsWorld::GetInstance()->Try_GetBody(m_pRigidbody->Get_BodyID());
+	BODY_DESC* b = PhysicsWorld::GetInstance()->Try_GetBody(m_pRigidbody->Get_BodyID());
 	if (!b) return ;
 
 	const Vec3 vPos = Get_Transform()->Get_Position();

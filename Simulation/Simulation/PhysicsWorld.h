@@ -3,6 +3,7 @@
 
 class CollisionDetector;
 class Solver;
+class UniformGrid;
 
 class Rigidbody;
 
@@ -18,19 +19,21 @@ public :
 	int				Update_System(float fTimeDelta);
 
     /* Collision */
-	void					Add_ContactInfo(CONTACT_INFO tinfo);
+	void					Add_ContactInfo(CONTACT_DESC tinfo);
 	void					Add_ContactPair(PAIR_KEY key);
 	void					Add_Collider(Collider* pCollider);
 	void					Remove_Collider(Collider* pCollider);
     void					Invoke_CollisionEvent();
-    const vector<Collider*>& Get_Colliders() { return m_vecCollider; }
+    const vector<Collider*>& Get_Colliders() { return m_AllColliders; }
     Collider*               Find_ColliderByID(uint32_t id);
+    void                    Query_StaticOverlap(const AABB_DESC& tAABB, _Out_ vector<Collider*>* outOverlaps);
+    void                    Find_StaticCollider();
 
 
     /* Rigidbody */
-	uint_fast32_t			Create_Body(BODY tBody);
+	uint_fast32_t			Create_Body(BODY_DESC tBody);
 	void					Remove_Body(uint_fast32_t iID);
-	BODY*					Try_GetBody(uint_fast32_t iID);
+	BODY_DESC*				Try_GetBody(uint_fast32_t iID);
 
     /* Raycast */
 	bool					Detect_Ray(struct tagRaycastHit* tOut, struct tagRay* pRay);
@@ -42,6 +45,7 @@ private :
 	void					Apply_Damping(float fTimeDelta);
 	void					Integrate_Velocities(float fTimeDelta);
 
+
     /* Rigidbody */
 
 
@@ -49,10 +53,11 @@ private :
 	LPDIRECT3DDEVICE9		m_pGraphicDevice;
 
     /* Collision */
-    CollisionDetector* m_pCollisionDetector;
+    CollisionDetector*      m_pCollisionDetector;
+    UniformGrid*            m_pGrid;
 
-    vector<Collider*>		m_vecCollider;
-    list<CONTACT_INFO>		m_ContactInfosList;
+    vector<Collider*>		m_AllColliders;
+    list<CONTACT_DESC>		m_ContactInfosList;
 	unordered_set<PAIR_KEY, PAIR_KEY_HASH>		m_prevPair;
 	unordered_set<PAIR_KEY, PAIR_KEY_HASH>		m_CurPair;
 
@@ -64,7 +69,7 @@ private :
 	static unsigned int s_iCurCBodyCnt;
 
     /* Rigidbody */
-	vector<BODY>			m_vecBodies;
+	vector<BODY_DESC>			m_vecBodies;
 
     /* Physics Setting */
 	std::vector<uint32_t> m_freeIds;

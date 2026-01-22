@@ -12,18 +12,18 @@ class Solver
 
 public :
 	HRESULT		Ready_System();
-	void		Solve_Contacts(CONTACT_INFO* pInfo);
+	void		Solve_Contacts(CONTACT_DESC* pInfo);
 
 private :
-	void		Solve_ImpulseAndFriction(CONTACT_INFO* pInfo);
-	void		Solve_Penetration(CONTACT_INFO* pInfo);
+	void		Solve_ImpulseAndFriction(CONTACT_DESC* pInfo);
+	void		Solve_Penetration(CONTACT_DESC* pInfo);
 
-	bool		Is_Seperating(CONTACT_INFO* pInfo);
+	bool		Is_Seperating(CONTACT_DESC* pInfo);
 
-	Vec3		Calc_PointVelocity(BODY* b, const Vec3& vPoint);
-	float		Calc_InvInertiaOfAxis(Transform* pTransform, BODY* b, const Vec3& vAxis);
+	Vec3		Calc_PointVelocity(BODY_DESC* b, const Vec3& vPoint);
+	float		Calc_InvInertiaOfAxis(Transform* pTransform, BODY_DESC* b, const Vec3& vAxis);
 
-	void		Add_ImpulseAtPoint(Transform* pTransform, BODY* b, const Vec3& impulse, const Vec3& point);
+	void		Add_ImpulseAtPoint(Transform* pTransform, BODY_DESC* b, const Vec3& impulse, const Vec3& point);
 
 private :
 	LPDIRECT3DDEVICE9		m_pGraphicDevice;

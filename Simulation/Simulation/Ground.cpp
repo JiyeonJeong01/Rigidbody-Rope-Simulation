@@ -31,7 +31,7 @@ HRESULT Ground::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSiz
 	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
 	m_pCollider->Set_IsInfinite(false);
 
-	BODY body;
+	BODY_DESC body;
 	body.eBodyType = STATIC;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 
@@ -67,17 +67,17 @@ void Ground::Active_Highlight(bool bColor)
     m_pMesh->Set_Highlight(bColor);
 }
 
-void Ground::On_CollisionEnter(const COLLISION& tCollision)
+void Ground::On_CollisionEnter(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
 }
 
-void Ground::On_CollisionStay(const COLLISION& tCollision)
+void Ground::On_CollisionStay(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 }
 
-void Ground::On_CollisionExit(const COLLISION& tCollision)
+void Ground::On_CollisionExit(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
 }

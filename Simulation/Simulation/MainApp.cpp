@@ -39,9 +39,26 @@ HRESULT MainApp::Ready_MainApp()
     m_pPlayer->Get_Transform()->Set_Position(-40.f, 10.f, 0.f);
     Management::GetInstance()->Add_Object(m_pPlayer);
 
-    Object* pEnemy = Enemy::Create(m_pGraphicDev);
-    pEnemy->Get_Transform()->Set_Position(-40.f, 10.f, 60.f);
-    Management::GetInstance()->Add_Object(pEnemy);
+    const Vec3 basePos = { -40.f, 10.f, 60.f };
+
+    for (int i = 0; i < 10; ++i)
+    {
+        Object* pEnemy = Enemy::Create(m_pGraphicDev);
+
+        float offsetX = (i % 5) * 5.f;      
+        float offsetY = (i / 5) * 10.f;     
+        float offsetZ = (i % 3) * 7.f;      
+
+        pEnemy->Get_Transform()->Set_Position(
+            basePos.x + offsetX,
+            basePos.y + offsetY,
+            basePos.z + offsetZ
+        );
+
+        Management::GetInstance()->Add_Object(pEnemy);
+    }
+
+    PhysicsWorld::GetInstance()->Find_StaticCollider();
 
     return S_OK;
 }
@@ -127,34 +144,22 @@ HRESULT MainApp::Ready_Scene(LPDIRECT3DDEVICE9 pGraphicDev)
 
 HRESULT MainApp::Ready_GroundAndCeiling()
 {
-    int iCntX = 3;
-    int iCntZ = 20;
-    float fSizeX = 80;
-    float fSizeZ = 80;
-    float fStartX = iCntX * 0.5f * fSizeX;
-    float fStartZ = 0;// iCntZ * 0.5f * fSizeZ;
-    fStartX *= -1.f;
-    fStartZ *= -1.f;
-
-    for (int i = 0; i < iCntX; ++i)
+    for (int i = 0; i < g_iCntX; ++i)
     {
-	    for (int j = 0; j < iCntZ; ++j)
+	    for (int j = 0; j < g_iCntZ; ++j)
 	    {
-            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
-            pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, -5.f, fStartZ + j * fSizeZ);
+            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), g_fSize, g_fSize);
+            pGround->Get_Transform()->Set_Position(g_fStartX + i * g_fSize, -5.f, g_fStartZ + j * g_fSize);
             Management::GetInstance()->Add_Object(pGround);
 	    }
     }
 
-    iCntX = 1;
-    iCntZ = 20;
-    fStartX = -25.f;
-    for (int i = 0; i < iCntX; ++i)
+    for (int i = 0; i < g_iCntX; ++i)
     {
-	    for (int j = 0; j < iCntZ; ++j)
+	    for (int j = 0; j < g_iCntZ; ++j)
 	    {
-            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), fSizeX, fSizeZ);
-            pGround->Get_Transform()->Set_Position(fStartX + i * fSizeX, 80.f, fStartZ + j * fSizeZ);
+            Object* pGround = Ground::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255), MathHelper::Random_Int(0, 255)), g_fSize, g_fSize);
+            pGround->Get_Transform()->Set_Position(g_fStartX + i * g_fSize, 80.f, g_fStartZ + j * g_fSize);
             Management::GetInstance()->Add_Object(pGround);
 	    }
     }
@@ -164,21 +169,13 @@ HRESULT MainApp::Ready_GroundAndCeiling()
 
 HRESULT MainApp::Ready_Wall()
 {
-    int iCntX = 4;
-    int iCntZ = 20;
-    float fSizeX = 80;
-    float fSizeY = 80;
-    float fStartX = iCntX * 0.5f * fSizeX;
-    float fStartZ = 0;// iCntZ * 0.5f * fSizeY;
-    fStartX *= -1.f;
-    fStartZ *= -1.f;
 
-    for (int i = 0; i < iCntX; ++i)
+    for (int i = 0; i < g_iCntX + 1; ++i)
     {
-        for (int j = 0; j < iCntZ; ++j)
+        for (int j = 0; j < g_iCntZ; ++j)
         {
-            Object* pWall = Wall::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255)), fSizeX, fSizeY);
-            pWall->Get_Transform()->Set_Position(fStartX + i * fSizeX, fSizeY * 0.1f, fStartZ + j * fSizeY);
+            Object* pWall = Wall::Create(m_pGraphicDev, D3DCOLOR_ARGB(255, MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255), MathHelper::Random_Int(100, 255)), g_fSize, g_fSize);
+            pWall->Get_Transform()->Set_Position(g_fStartX + i * g_fSize, g_fSize * 0.1f, g_fStartZ + j * g_fSize);
 
             if (i == 1)
             {

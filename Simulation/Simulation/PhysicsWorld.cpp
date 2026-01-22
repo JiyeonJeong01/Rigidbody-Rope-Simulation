@@ -1,17 +1,22 @@
 ﻿#include "pch.h"
 #include "PhysicsWorld.h"
-#include "Object.h"
-#include "Collider.h"
+
 #include "CollisionDetector.h"
 #include "Solver.h"
-#include "Transform.h"
+#include "UniformGrid.h"
 #include "PhysicsUtil.h"
+
+#include "Object.h"
+#include "Collider.h"
+#include "Transform.h"
+
 IMPLEMENT_SINGLETON(PhysicsWorld)
 
 unsigned int PhysicsWorld::s_iCurColCnt = 0;
 unsigned int PhysicsWorld::s_iCurCBodyCnt = 0;
 
 PhysicsWorld::PhysicsWorld()
+    : m_pGraphicDevice(nullptr), m_pCollisionDetector(nullptr), m_pGrid(nullptr), m_pSolver(nullptr)
 {
 }
 
@@ -26,6 +31,11 @@ HRESULT PhysicsWorld::Ready_System(LPDIRECT3DDEVICE9 pGraphicDevice)
 
 	m_pCollisionDetector = CollisionDetector::Create();
 	m_pSolver = Solver::Create(pGraphicDevice);
+
+    m_pGrid = UniformGrid::Create(pGraphicDevice,
+        {g_fStartX, -5.f, g_fStartZ},
+        {g_fStartX + g_iCntX * g_fSize, g_fSize * 2.f, g_fStartZ + g_fSize * g_iCntZ},
+                    g_fSize * 0.5f);
 
 	return S_OK;
 }
@@ -45,8 +55,13 @@ int PhysicsWorld::Update_System(float fTimeDelta)
     // inte
     Integrate_Velocities(fTimeDelta);
 
-    // Generate 
-    m_pCollisionDetector->Generate_ContactInfo();
+    // Detect Collision and Generate Contact Info
+    for (auto* p : m_AllColliders)
+        if (p) p->Update_AABB();
+
+    vector<COLLIDER_PAIR> pairs;
+    m_pCollisionDetector->Generate_BroadPhase_Pairs(m_AllColliders, pairs);
+    m_pCollisionDetector->Process_NarrowPhase(pairs);
 
     // Solve
     for (int i = 0; i < 1; ++i)
@@ -54,7 +69,7 @@ int PhysicsWorld::Update_System(float fTimeDelta)
             m_pSolver->Solve_Contacts(&contact);
 
     // Apply Lock
-    for (BODY& b : m_vecBodies)
+    for (BODY_DESC& b : m_vecBodies)
     {
         PhysicsUtil::ApplyPositionLock(b);
         PhysicsUtil::ApplyRotationLock(b);
@@ -64,7 +79,7 @@ int PhysicsWorld::Update_System(float fTimeDelta)
 	return 0;
 }
 
-void PhysicsWorld::Add_ContactInfo(CONTACT_INFO tinfo)
+void PhysicsWorld::Add_ContactInfo(CONTACT_DESC tinfo)
 {
 	m_ContactInfosList.push_back(tinfo);
 }
@@ -76,7 +91,7 @@ void PhysicsWorld::Add_ContactPair(PAIR_KEY key)
 
 void PhysicsWorld::Add_Collider(Collider* pCollider)
 {
-	m_vecCollider.push_back(pCollider);
+	m_AllColliders.push_back(pCollider);
     pCollider->Set_ColliderID(s_iCurColCnt++);
 }
 
@@ -85,11 +100,11 @@ void PhysicsWorld::Remove_Collider(Collider* pCollider)
 	if (!pCollider)
 		return;
 
-	auto it = std::remove(m_vecCollider.begin(), m_vecCollider.end(), pCollider);
-	m_vecCollider.erase(it, m_vecCollider.end());
+	auto it = std::remove(m_AllColliders.begin(), m_AllColliders.end(), pCollider);
+	m_AllColliders.erase(it, m_AllColliders.end());
 }
 
-uint_fast32_t PhysicsWorld::Create_Body(BODY body)
+uint_fast32_t PhysicsWorld::Create_Body(BODY_DESC body)
 {
     if (body.eBodyType == STATIC)
         PhysicsUtil::Set_StaticBody(body);
@@ -112,7 +127,7 @@ uint_fast32_t PhysicsWorld::Create_Body(BODY body)
 
 void PhysicsWorld::Remove_Body(uint_fast32_t iID)
 {
-    if (BODY* b = Try_GetBody(iID))
+    if (BODY_DESC* b = Try_GetBody(iID))
     {
         b->bActive = false;
         b->vForceAccum = { 0,0,0 };
@@ -123,12 +138,12 @@ void PhysicsWorld::Remove_Body(uint_fast32_t iID)
     m_freeIds.push_back(iID);
 }
 
-BODY* PhysicsWorld::Try_GetBody(uint_fast32_t iID)
+BODY_DESC* PhysicsWorld::Try_GetBody(uint_fast32_t iID)
 {
     if (iID >= m_vecBodies.size())
         return nullptr;
 
-    BODY& b = m_vecBodies[iID];
+    BODY_DESC& b = m_vecBodies[iID];
     if (!b.bActive)
         return nullptr;
 
@@ -149,8 +164,8 @@ void PhysicsWorld::Invoke_CollisionEvent()
         Collider* pB = Find_ColliderByID(k.bKey);
         if (!pA || !pB) continue;
 
-        COLLISION tA{};
-        COLLISION tB{};
+        COLLISION_DESC tA{};
+        COLLISION_DESC tB{};
 
         if (m_prevPair.find(k) == m_prevPair.end())
         {
@@ -179,8 +194,8 @@ void PhysicsWorld::Invoke_CollisionEvent()
         Collider* pB = Find_ColliderByID(k.bKey);
         if (!pA || !pB) continue;
 
-        COLLISION tA{};
-        COLLISION tB{};
+        COLLISION_DESC tA{};
+        COLLISION_DESC tB{};
 
         pA->Get_Object()->On_CollisionExit(tA);
         pB->Get_Object()->On_CollisionExit(tB);
@@ -196,7 +211,7 @@ void PhysicsWorld::Invoke_CollisionEvent()
 
 Collider* PhysicsWorld::Find_ColliderByID(uint32_t id)
 {
-    for (Collider* pCol : m_vecCollider)
+    for (Collider* pCol : m_AllColliders)
     {
         if (pCol->Get_ColliderID() == id)
             return pCol;
@@ -204,9 +219,23 @@ Collider* PhysicsWorld::Find_ColliderByID(uint32_t id)
     return nullptr;
 }
 
+void PhysicsWorld::Query_StaticOverlap(const AABB_DESC& tAABB, _Out_ vector<Collider*>* outOverlaps)
+{
+    m_pGrid->Query_StaticOverlap(tAABB, outOverlaps);
+}
+
+void PhysicsWorld::Find_StaticCollider()
+{
+    for (auto* p : m_AllColliders)
+        if (p)
+            p->Update_AABB();
+
+    m_pGrid->Find_StaticCollider(m_AllColliders);
+}
+
 void PhysicsWorld::Accumulate_Forces()
 {
-    for (BODY& b : m_vecBodies)
+    for (BODY_DESC& b : m_vecBodies)
     {
         if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
@@ -221,7 +250,7 @@ void PhysicsWorld::Accumulate_Forces()
 
 void PhysicsWorld::Integrate_Forces(float fTimeDelta)
 {
-    for (BODY& b : m_vecBodies)
+    for (BODY_DESC& b : m_vecBodies)
     {
         if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
@@ -260,7 +289,7 @@ void PhysicsWorld::Integrate_Forces(float fTimeDelta)
 void PhysicsWorld::Apply_Damping(float fTimeDelta)
 {
 
-    for (BODY& b : m_vecBodies)
+    for (BODY_DESC& b : m_vecBodies)
     {
         if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;
@@ -287,7 +316,7 @@ void PhysicsWorld::Apply_Damping(float fTimeDelta)
 
 void PhysicsWorld::Integrate_Velocities(float fTimeDelta)
 {
-    for (BODY& b : m_vecBodies)
+    for (BODY_DESC& b : m_vecBodies)
     {
         if (!b.bActive || b.eBodyType != DYNAMIC)
             continue;

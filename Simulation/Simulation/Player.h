@@ -24,9 +24,9 @@ public :
 	void				FixedUpdate_GameObject(const float& fTimeDElta);
 	void				Render_GameObject();
 
-	void				On_CollisionEnter(const COLLISION& tCollision) override;
-	void				On_CollisionStay(const COLLISION& tCollision) override;
-	void				On_CollisionExit(const COLLISION& tCollision) override;
+	void				On_CollisionEnter(const COLLISION_DESC& tCollision) override;
+	void				On_CollisionStay(const COLLISION_DESC& tCollision) override;
+	void				On_CollisionExit(const COLLISION_DESC& tCollision) override;
 
     void                Start_Swing(Vec3 vAnchor);
 
@@ -53,7 +53,7 @@ private :
     // Variables
 	bool				m_bSwing{};
 	Vec3				m_vAnchor;
-    float               m_fSpring = 25.f;
+    float               m_fSpring = 35.f;
     float               m_fDamper = 5.f;
     float               m_fRest = 0.5f;
     bool                m_bGround{};

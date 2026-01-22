@@ -33,7 +33,7 @@ HRESULT Wall::Ready_GameObject(unsigned long dwColor, float fSizeX, float fSizeY
 	m_pCollider->Set_Dimension({ fSizeX, fSizeY });
 	m_pCollider->Set_IsInfinite(false);
 
-	BODY body;
+	BODY_DESC body;
 	body.eBodyType = STATIC;
 	m_pRigidbody = Rigidbody::Create(m_pGraphicDevice, this, body);
 
@@ -67,17 +67,17 @@ void Wall::Active_Highlight(bool bColor)
     m_pMesh->Set_Highlight(bColor);
 }
 
-void Wall::On_CollisionEnter(const COLLISION& tCollision)
+void Wall::On_CollisionEnter(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
 }
 
-void Wall::On_CollisionStay(const COLLISION& tCollision)
+void Wall::On_CollisionStay(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 }
 
-void Wall::On_CollisionExit(const COLLISION& tCollision)
+void Wall::On_CollisionExit(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
 }

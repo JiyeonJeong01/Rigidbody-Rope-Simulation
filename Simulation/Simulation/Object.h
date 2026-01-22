@@ -26,9 +26,9 @@ public:
 	void					Add_Component(wstring wsKey, Component* pComponent) { m_mapComponents.insert({ wsKey, pComponent }); }
 	Component*				Find_Component(wstring wsKey);
 
-	virtual void			On_CollisionEnter(const COLLISION& tCollision) {};
-	virtual void			On_CollisionStay(const COLLISION& tCollision) {};
-	virtual void			On_CollisionExit(const COLLISION& tCollision) {};
+	virtual void			On_CollisionEnter(const COLLISION_DESC& tCollision) {};
+	virtual void			On_CollisionStay(const COLLISION_DESC& tCollision) {};
+	virtual void			On_CollisionExit(const COLLISION_DESC& tCollision) {};
 
 	virtual HRESULT			Resolve_Dependencies();
 

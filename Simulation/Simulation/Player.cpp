@@ -33,14 +33,16 @@ HRESULT Player::Ready_GameObject()
 
 	m_pTransform = Transform::Create(m_pGraphicDevice, this);
 	m_pCollider = SphereCollider::Create(m_pGraphicDevice, this);
+    m_pCollider->Set_ColType(COL_TYPE::C_DYNAMIC);
+
     /* sphere mesh일 때 off */
 	//m_pCollider = BoxCollider::Create(m_pGraphicDevice, this);  
 
     /* ===== Rigidbody ===== */
-	BODY body;
+	BODY_DESC body;
 	body.fAngularDrag = 0.1f;
 	body.fDrag = 2.f;
-	body.fRestitution = 0.7f;
+	body.fRestitution = 0.8f;
 	body.fFriction = 8.f;
 	body.fMass = 10.f;
 	body.fInvMass = 1.f / body.fMass;
@@ -168,12 +170,12 @@ void Player::Render_GameObject()
     Object::Render_GameObject();
 }
 
-void Player::On_CollisionEnter(const COLLISION& tCollision)
+void Player::On_CollisionEnter(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionEnter(tCollision);
 }
 
-void Player::On_CollisionStay(const COLLISION& tCollision)
+void Player::On_CollisionStay(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionStay(tCollision);
 
@@ -183,7 +185,7 @@ void Player::On_CollisionStay(const COLLISION& tCollision)
     m_bGround = true;
 }
 
-void Player::On_CollisionExit(const COLLISION& tCollision)
+void Player::On_CollisionExit(const COLLISION_DESC& tCollision)
 {
 	Object::On_CollisionExit(tCollision);
 
@@ -220,7 +222,7 @@ void Player::Handle_PlayerInput(const float& fTimeDelta)
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_X))
 	{
         float fDegree = lMouseMove / 20.f;
-        m_fYawDegree += fDegree;
+        m_fYawDegree -= fDegree;
 		m_pCamera->Yaw(fDegree);
 	}
 	if (lMouseMove = InputSystem::GetInstance()->Get_DIMouseMove(MOUSEMOVESTATE::DIMS_Y))

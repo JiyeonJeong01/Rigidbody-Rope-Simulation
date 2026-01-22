@@ -43,7 +43,30 @@ typedef struct tagBody
 
     AXIS_MASK   tRotationLock;
     AXIS_MASK   tPositionLock;
-}BODY;
+}BODY_DESC;
+
+typedef struct tagAABB
+{
+    Vec3 vMin{};
+    Vec3 vMax{};
+}AABB_DESC;
+
+typedef struct tagGridCoord
+{
+    int iX{}, iY{}, iZ{};
+}GRID_COORD;
+
+typedef struct tagColPair
+{
+    Collider* A{};
+    Collider* B{};
+    tagColPair(Collider* a, Collider* b) : A(a), B(b) {}
+}COLLIDER_PAIR;
+
+typedef struct tagGridKey
+{
+    int iX{}, iY{}, iZ{};
+}GRID_KEY;
 
 typedef struct tagCollision
 {
@@ -51,12 +74,12 @@ typedef struct tagCollision
     class Collider*     pCounterCollider;		// 충돌 당한 오브젝트의 콜라이더
 
     Vec3			vPoint;
-}COLLISION;
+}COLLISION_DESC;
 
 typedef struct tagContactInfo
 {
-    COLLISION   tCollisionA{};
-    COLLISION   tCollisionB{};
+    COLLISION_DESC   tCollisionA{};
+    COLLISION_DESC   tCollisionB{};
 	Collider*	A{};
 	Collider*	B{};
 	Vec3		vResolveN_A{};		// A가 겹침을 해결하는 방향
@@ -65,7 +88,7 @@ typedef struct tagContactInfo
 	Vec3		vN_PlaneB{};
 	Vec3		vPoint{};
 	float		fDepth{};
-}CONTACT_INFO;
+}CONTACT_DESC;
 
 typedef struct tagPairKey
 {
@@ -103,4 +126,4 @@ typedef struct PairKeyHash
 typedef struct tagSpringJoingInfo
 {
 	
-}SPRING_JOINT_INFO;
+}SPRINGJOINT_DESC;

@@ -12,6 +12,8 @@ public:
 	void			LateUpdate_Component(const float& fTimeDelta) override;
 	HRESULT			Resolve_Dependency() override;
 
+    void            Update_AABB() override;
+
 public :
 	GEOMETRY_TYPE	Get_GeometryType() override			{ return SPHERE; }
 

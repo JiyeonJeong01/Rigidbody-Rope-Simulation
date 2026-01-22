@@ -18,7 +18,7 @@ Rigidbody::~Rigidbody()
 {
 }
 
-HRESULT Rigidbody::Ready_Component(BODY* b)
+HRESULT Rigidbody::Ready_Component(BODY_DESC* b)
 {
     if (FAILED(Component::Ready_Component()))
         return E_FAIL;
@@ -47,7 +47,7 @@ int Rigidbody::Update_Component(const float& fTimeDelta)
 	if (m_eCachedBodyType != DYNAMIC)
 		return 0;
 
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	b->vCOM = m_pTransform->Get_Position();
 
 	return 0;
@@ -69,7 +69,7 @@ void Rigidbody::Fixed_Update(const float& fTimeDelta)
 		return ;
 }
 
-void Rigidbody::Calc_Dimension(BODY* b)
+void Rigidbody::Calc_Dimension(BODY_DESC* b)
 {
 	UINT iVtxCnt = 0;
 	VIBuffer* pVIBuffer = static_cast<VIBuffer*>(m_pOwner->Find_Component(L"Buffer"));
@@ -103,7 +103,7 @@ void Rigidbody::Calc_Dimension(BODY* b)
 	pVIBuffer->Get_VertexBuffer()->Unlock();
 }
 
-void Rigidbody::Calc_Inertia(BODY* b)
+void Rigidbody::Calc_Inertia(BODY_DESC* b)
 {
 	// 물리 공식을 따른 Rigidbody 형상에 따른 Inertia Tensor 계산하기 
 	D3DXMatrixIdentity(&b->matInertiaTensor);
@@ -137,7 +137,7 @@ void Rigidbody::Calc_Inertia(BODY* b)
 	D3DXMatrixInverse(&b->matInvInertiaTensor, 0, &b->matInertiaTensor);
 }
 
-void Rigidbody::Calc_COM(BODY* b)
+void Rigidbody::Calc_COM(BODY_DESC* b)
 {
 	b->vCOM = m_pTransform->Get_Position();
 }
@@ -147,7 +147,7 @@ float Rigidbody::Calc_InvInertiaOfAxis(const Vec3& vAxis)
 	if (VectorHelper::Is_Zero(vAxis) || m_eCachedBodyType != DYNAMIC)
 		return 0.f; 
 
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	if (!b) return 0.f;
 
 	Vec3 vBaseAxis = VectorHelper::Get_Normalized(vAxis);
@@ -170,7 +170,7 @@ void Rigidbody::Translate(const Vec3 vDeltaPos)
 	if (m_eCachedBodyType == STATIC)
 		return;
 
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	if (!b)
 		return;
 
@@ -183,7 +183,7 @@ void Rigidbody::Add_LinearImpulse(Vec3 vImpulse)
 	if (m_eCachedBodyType != DYNAMIC)
 		return;
 
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	if (!b) return;
 
 	b->vLinearVel += vImpulse * b->fInvMass;
@@ -194,7 +194,7 @@ void Rigidbody::Add_Force(Vec3 vForce)
 	if (m_eCachedBodyType != DYNAMIC)
 		return;
 
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	if (!b) return;
 
 	b->vForceAccum += vForce;
@@ -205,7 +205,7 @@ void Rigidbody::Add_Torque(Vec3 vTorque)
 	if (m_eCachedBodyType != DYNAMIC)
 		return;
 
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	if (!b) return;
 
 	b->vTorqueAccum += vTorque;
@@ -216,7 +216,7 @@ void Rigidbody::Set_LinearVelocity(const Vec3& vVel)
     if (m_eCachedBodyType != DYNAMIC)
         return;
 
-    BODY* b = Try_GetMyBody();
+    BODY_DESC* b = Try_GetMyBody();
     if (!b) return;
 
     b->vLinearVel = vVel;
@@ -227,16 +227,16 @@ void Rigidbody::Set_AngularVelocity(const Vec3& vVel)
     if (m_eCachedBodyType != DYNAMIC)
         return;
 
-    BODY* b = Try_GetMyBody();
+    BODY_DESC* b = Try_GetMyBody();
     if (!b) return;
 
     b->vAngularVel = vVel;
 }
 
-const BODY& Rigidbody::Get_BodyInfo()
+const BODY_DESC& Rigidbody::Get_BodyInfo()
 {
-    BODY* b = Try_GetMyBody();
-    if (!b) return BODY{};
+    BODY_DESC* b = Try_GetMyBody();
+    if (!b) return BODY_DESC{};
     else return *b;
 }
 
@@ -245,7 +245,7 @@ Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint)
 	if (m_eCachedBodyType == STATIC)
 		return VectorHelper::Zero();
 
-	const BODY* b = Try_GetMyBody();
+	const BODY_DESC* b = Try_GetMyBody();
 
 	Vec3 vComToPoint = vPoint - b->vCOM;
 	Vec3 vRot = VectorHelper::CrossProduct(b->vAngularVel, vComToPoint);
@@ -254,12 +254,12 @@ Vec3 Rigidbody::Get_PointVelocity(const Vec3& vPoint)
 
 Vec3 Rigidbody::Get_COM()
 {
-	BODY* b = Try_GetMyBody();
+	BODY_DESC* b = Try_GetMyBody();
 	b->vCOM = m_pTransform->Get_Position();
 	return b->vCOM;
 }
 
-Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, BODY tBody)
+Rigidbody* Rigidbody::Create(LPDIRECT3DDEVICE9 pGraphicDev, Object* pOwner, BODY_DESC tBody)
 {
 	Rigidbody* pBody = new Rigidbody(pGraphicDev, pOwner);
 	if (FAILED(pBody->Ready_Component(&tBody)))
